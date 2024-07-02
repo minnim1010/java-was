@@ -55,8 +55,7 @@ public class Main {
                 ClientSocket clientSocket = serverSocket.acceptClient();
                 threadPool.submit(() -> {
                     try (clientSocket) {
-                        int port = clientSocket.getPort();
-                        log.debug("Client connected: port %d", port);
+                        log.debug("Client connected: port " + clientSocket.getPort());
 
                         String requestStr = clientSocket.read();
                         MyHttpRequest request = httpParser.parse(requestStr)

@@ -13,9 +13,12 @@ public record MyHttpRequest(String method,
 
     @Override
     public String toString() {
-        return "MyHttpRequest{ " + method + ' ' + path + '\n' +
-                headers.toString() + "\n" +
-                ", body='" + body + '\'' +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("[Request]\n");
+        sb.append(method).append(" ").append(path).append("\n");
+        headers.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
+        sb.append("\n");
+        sb.append(body);
+        return sb.toString();
     }
 }
