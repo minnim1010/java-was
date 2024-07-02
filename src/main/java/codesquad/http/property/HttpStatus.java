@@ -38,15 +38,6 @@ public enum HttpStatus {
         this.statusMessage = statusMessage;
     }
 
-    public static HttpStatus valueOf(int statusCode) {
-        for (HttpStatus status : values()) {
-            if (status.statusCode == statusCode) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("No matching constant for [" + statusCode + "]");
-    }
-
     public int getStatusCode() {
         return statusCode;
     }

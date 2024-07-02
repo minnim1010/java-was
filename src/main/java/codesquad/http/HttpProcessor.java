@@ -73,7 +73,7 @@ public class HttpProcessor {
         if (staticFilePath.endsWith(".svg")) {
             return "image/svg+xml";
         }
-        if (staticFilePath.endsWith(".html")) {
+        if (staticFilePath.endsWith(".ico")) {
             return "image/png";
         }
 

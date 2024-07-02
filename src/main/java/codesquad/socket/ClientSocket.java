@@ -4,12 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClientSocket implements AutoCloseable {
-
-    private static final Logger log = LoggerFactory.getLogger(ClientSocket.class);
 
     private final Socket socket;
 
@@ -22,16 +18,19 @@ public class ClientSocket implements AutoCloseable {
     }
 
     public String read() throws IOException {
-        InputStream inputStream = this.socket.getInputStream();
-        byte[] buffer = new byte[1024];
+        final int buffer_size = 1024;
 
-        int length = inputStream.read(buffer);
-        if (length == -1) {
-            throw new IOException("Connection closed");
-        }
-        String result = new String(buffer);
-        log.debug(result);
-        return result;
+        InputStream inputStream = this.socket.getInputStream();
+        StringBuilder input = new StringBuilder();
+        byte[] buffer = new byte[buffer_size];
+        int length = 0;
+
+        do {
+            length = inputStream.read(buffer);
+            input.append(new String(buffer, 0, length));
+        } while (length == buffer_size);
+
+        return input.toString();
     }
 
     public void write(String response) throws IOException {
