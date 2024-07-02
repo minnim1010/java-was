@@ -2,6 +2,8 @@ package codesquad.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import codesquad.http.property.HttpStatus;
+import codesquad.http.property.HttpVersion;
 import java.util.Collections;
 import java.util.HashMap;
 import org.junit.jupiter.api.DisplayName;

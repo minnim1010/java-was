@@ -2,6 +2,8 @@ package codesquad.http;
 
 import static codesquad.utils.FilePathFinder.findStaticFilePath;
 
+import codesquad.http.property.HttpStatus;
+import codesquad.http.property.HttpVersion;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,6 +40,8 @@ public class HttpProcessor {
     }
 
     private String processPostRequest(MyHttpRequest httpRequest) {
+        // todo implement post request
+
         return "";
     }
 
@@ -60,15 +64,17 @@ public class HttpProcessor {
     private Map<String, String> processHeader(MyHttpRequest httpRequest, String staticFilePath) {
         Map<String, String> responseHeader = new HashMap<>();
         responseHeader.put("Content-Type", processAcceptHeader(httpRequest, staticFilePath));
-//        responseHeader.put("Content-Encoding", processEncodingHeader(httpRequest));
         return responseHeader;
     }
 
     private String processAcceptHeader(MyHttpRequest httpRequest, String staticFilePath) {
         String acceptHeaderValue = httpRequest.getHeader("Accept");
 
-        if (staticFilePath.endsWith(".svg") || staticFilePath.endsWith(".ico")) {
+        if (staticFilePath.endsWith(".svg")) {
             return "image/svg+xml";
+        }
+        if (staticFilePath.endsWith(".html")) {
+            return "image/png";
         }
 
         int firstAcceptValueIndex = acceptHeaderValue.indexOf(",");
@@ -77,13 +83,5 @@ public class HttpProcessor {
         }
 
         return "text/plain";
-    }
-
-    private String processEncodingHeader(MyHttpRequest httpRequest) {
-        String path = httpRequest.path();
-        if (path.endsWith(".svg") || path.endsWith(".ico")) {
-            return "gzip";
-        }
-        return "";
     }
 }

@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.property;
 
 public enum HttpStatus {
     // 1xx Informational

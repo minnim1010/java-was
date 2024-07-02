@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.property;
 
 public enum HttpVersion {
     HTTP_1_0("HTTP/1.0"),
