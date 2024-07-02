@@ -19,8 +19,11 @@ public class ClientSocket {
         this.socket = socket;
     }
 
-    public String read() throws IOException {
+    public int getPort() {
+        return this.socket.getPort();
+    }
 
+    public String read() throws IOException {
         try {
             InputStream inputStream = this.socket.getInputStream();
             byte[] buffer = new byte[1024];
@@ -44,6 +47,7 @@ public class ClientSocket {
             outputStream.write(response.getBytes());
             outputStream.flush();
         } catch (IOException e) {
+            logger.error(e.getMessage());
             throw e;
         }
     }

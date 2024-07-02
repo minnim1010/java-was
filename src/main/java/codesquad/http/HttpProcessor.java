@@ -16,17 +16,6 @@ public class HttpProcessor {
         this.httpResponseFormatter = httpResponseFormatter;
     }
 
-    private static char[] loadStaticFile(String staticFilePath) throws IOException {
-        char[] buffer = new char[500000];
-        try (BufferedReader br = new BufferedReader(new FileReader(staticFilePath))) {
-            int length = br.read(buffer);
-            if (length == -1) {
-                throw new IOException("File not found");
-            }
-        }
-        return buffer;
-    }
-
     public String processRequest(MyHttpRequest httpRequest) throws IOException {
         String method = httpRequest.method();
 
@@ -35,6 +24,17 @@ public class HttpProcessor {
             case "POST" -> processPostRequest(httpRequest);
             default -> throw new IllegalArgumentException("Invalid method");
         };
+    }
+
+    private String loadStaticFile(String staticFilePath) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(staticFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        return sb.toString();
     }
 
     private String processPostRequest(MyHttpRequest httpRequest) {
@@ -46,13 +46,13 @@ public class HttpProcessor {
         String staticFilePath = findStaticFilePath(path);
 
         Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
-        char[] buffer = loadStaticFile(staticFilePath);
+        String staticFile = loadStaticFile(staticFilePath);
         HttpStatus status = HttpStatus.OK;
 
         MyHttpResponse myHttpResponse = new MyHttpResponse(HttpVersion.HTTP_1_1,
                 status,
                 responseHeader,
-                new String(buffer));
+                staticFile);
 
         return httpResponseFormatter.formatResponse(myHttpResponse);
     }

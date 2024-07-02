@@ -50,7 +50,7 @@ public class HttpParser {
         }
     }
 
-    private static String parseMethod(String[] requestLine) {
+    private String parseMethod(String[] requestLine) {
         String method = requestLine[0];
 
         return switch (method.toUpperCase()) {
