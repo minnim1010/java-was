@@ -1,6 +1,5 @@
-package codesquad.parser;
+package codesquad.http;
 
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +10,7 @@ public class HttpParser {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpParser.class);
 
-    public Optional<MyHttpRequest> parse(String httpRequestStr) throws URISyntaxException {
+    public Optional<MyHttpRequest> parse(String httpRequestStr) {
         try{
             String[] lines = httpRequestStr.split("\n");
 
@@ -19,7 +18,6 @@ public class HttpParser {
             String method = parseMethod(requestLine);
             String path = requestLine[1];
 
-            // Parse headers
             Map<String, String> headers = new HashMap<>();
             int i = 1;
             for (; i < lines.length; i++) {
@@ -31,7 +29,7 @@ public class HttpParser {
                     break;
                 }
                 String[] header = line.split(": ");
-                headers.put(header[0], header[1]);
+                headers.put(header[0], header[1].substring(0, header[1].length() - 1));
             }
 
             StringBuilder body = new StringBuilder();
@@ -41,13 +39,15 @@ public class HttpParser {
                 }
             }
 
-            return Optional.of(new MyHttpRequest(method, path, headers, body.toString()));
+            MyHttpRequest httpRequest = new MyHttpRequest(method, path, headers, body.toString());
+            logger.debug(httpRequest.toString());
+
+            return Optional.of(httpRequest);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.debug(e.getMessage());
+            logger.error(e.getMessage());
+            throw e;
         }
-
-        return Optional.empty();
     }
 
     private static String parseMethod(String[] requestLine) {

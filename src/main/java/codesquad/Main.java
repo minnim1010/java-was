@@ -1,11 +1,12 @@
 package codesquad;
 
-import codesquad.parser.HttpParser;
-import codesquad.parser.MyHttpRequest;
+import codesquad.http.HttpParser;
+import codesquad.http.HttpProcessor;
+import codesquad.http.HttpResponseFormatter;
+import codesquad.http.MyHttpRequest;
 import codesquad.socket.ClientSocket;
 import codesquad.socket.ServerSocket;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,8 @@ public class Main {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static final HttpParser httpParser = new HttpParser();
+    private static final HttpResponseFormatter httpResponseFormatter = new HttpResponseFormatter();
+    private static final HttpProcessor httpProcessor = new HttpProcessor(httpResponseFormatter);
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket();) {
@@ -24,17 +27,18 @@ public class Main {
 
                     String requestStr = clientSocket.read();
                     MyHttpRequest request = httpParser.parse(requestStr)
-                                    .orElseThrow(() -> new IllegalArgumentException("Invalid request"));
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid request"));
 
-                    clientSocket.write("message");
-                } catch (URISyntaxException | IOException e) {
+                    String response = httpProcessor.processRequest(request);
+                    clientSocket.write(response);
+                } catch (IOException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         } catch (Exception e) {
-            e.getMessage();
+            e.printStackTrace();
         }
     }
 }

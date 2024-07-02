@@ -1,5 +1,7 @@
 package codesquad.socket;
 
+import static codesquad.utils.StringUtils.EMPTY;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,7 +19,8 @@ public class ClientSocket {
         this.socket = socket;
     }
 
-    public String read() {
+    public String read() throws IOException {
+
         try {
             InputStream inputStream = this.socket.getInputStream();
             byte[] buffer = new byte[1024];
@@ -33,18 +36,15 @@ public class ClientSocket {
             logger.error(e.getMessage());
         }
 
-        return "";
+        return EMPTY;
     }
 
-    public void write(String message) {
+    public void write(String response) throws IOException {
         try (OutputStream outputStream = this.socket.getOutputStream();) {
-            outputStream.write("HTTP/1.1 200 OK\r\n".getBytes());
-            outputStream.write("Content-Type: text/html\r\n".getBytes());
-            outputStream.write("\r\n".getBytes());
-            outputStream.write("<h1>Hello</h1>\r\n".getBytes());
+            outputStream.write(response.getBytes());
             outputStream.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 }
