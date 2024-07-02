@@ -19,7 +19,7 @@ public class HttpParser {
         String[] lines = httpRequestStr.split(CRLF);
 
         String[] requestLine = lines[0].split(BLANK);
-        String method = parseMethod(requestLine);
+        String method = parseMethod(requestLine[0]);
         String path = requestLine[1];
         HttpVersion version = HttpVersion.of(requestLine[2]);
 
@@ -27,7 +27,14 @@ public class HttpParser {
         int curLineIdx = 1;
         while (curLineIdx < lines.length && lines[curLineIdx].contains(HEADER_DELIMITER)) {
             String[] header = lines[curLineIdx++].split(HEADER_DELIMITER);
-            headers.put(header[0], header[1]);
+            String headerType = header[0];
+            String headerValue = header[1];
+
+            if (headers.containsKey(header[0])) {
+                headers.put(headerType, headers.get(headerType) + ", " + headerValue);
+            } else {
+                headers.put(header[0], header[1]);
+            }
         }
 
         StringBuilder body = new StringBuilder();
@@ -43,10 +50,9 @@ public class HttpParser {
         return Optional.of(httpRequest);
     }
 
-    private String parseMethod(String[] requestLine) {
-        String method = requestLine[0];
-
+    private String parseMethod(String method) {
         return switch (method.toUpperCase()) {
+            // todo method enum으로 정의하기
             case "GET" -> "GET";
             case "POST" -> "POST";
             default -> throw new UnsupportedOperationException("Unsupported HTTP method: " + method);
