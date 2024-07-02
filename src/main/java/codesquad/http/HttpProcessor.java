@@ -20,7 +20,7 @@ public class HttpProcessor {
         this.httpResponseFormatter = httpResponseFormatter;
     }
 
-    public String processRequest(MyHttpRequest httpRequest) throws IOException {
+    public String processRequest(HttpRequest httpRequest) throws IOException {
         String method = httpRequest.method();
 
         return switch (method) {
@@ -30,7 +30,7 @@ public class HttpProcessor {
         };
     }
 
-    private String processGet(MyHttpRequest httpRequest) throws IOException {
+    private String processGet(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.path();
         String staticFilePath = findStaticFilePath(path);
 
@@ -40,15 +40,15 @@ public class HttpProcessor {
 
         HttpStatus status = HttpStatus.OK;
 
-        MyHttpResponse myHttpResponse = new MyHttpResponse(httpRequest.version(),
+        HttpResponse httpResponse = new HttpResponse(httpRequest.version(),
                 status,
                 responseHeader,
                 staticFile);
 
-        return httpResponseFormatter.formatResponse(myHttpResponse);
+        return httpResponseFormatter.formatResponse(httpResponse);
     }
 
-    private String processPost(MyHttpRequest httpRequest) {
+    private String processPost(HttpRequest httpRequest) {
         // todo implement post request
 
         return "";
@@ -65,13 +65,13 @@ public class HttpProcessor {
         return sb.toString();
     }
 
-    private Map<String, String> processHeader(MyHttpRequest httpRequest, String staticFilePath) {
+    private Map<String, String> processHeader(HttpRequest httpRequest, String staticFilePath) {
         Map<String, String> responseHeader = new HashMap<>();
         responseHeader.put("Content-Type", processAcceptHeader(httpRequest, staticFilePath));
         return responseHeader;
     }
 
-    private String processAcceptHeader(MyHttpRequest httpRequest, String staticFilePath) {
+    private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
 
         ContentTypeConfig contentTypeConfig = ContentTypeConfig.fromFileExtension(fileExtension);

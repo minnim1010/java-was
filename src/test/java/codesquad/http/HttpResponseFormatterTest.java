@@ -23,7 +23,7 @@ class HttpResponseFormatterTest {
     class HTTP_응답_포맷을_만든다 {
         @Test
         void 헤더가_없는_경우() {
-            MyHttpResponse httpResponse = new MyHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK, new HashMap<>(),
+            HttpResponse httpResponse = new HttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK, new HashMap<>(),
                     "Hello, World!");
 
             String result = formatter.formatResponse(httpResponse);
@@ -34,7 +34,7 @@ class HttpResponseFormatterTest {
 
         @Test
         void 헤더가_있는_경우() {
-            MyHttpResponse httpResponse = new MyHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK,
+            HttpResponse httpResponse = new HttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK,
                     Collections.singletonMap("Content-Type", "text/html"), "Hello, World!");
 
             String result = formatter.formatResponse(httpResponse);
@@ -45,7 +45,7 @@ class HttpResponseFormatterTest {
 
         @Test
         void 여러_헤더가_있는_경우() {
-            MyHttpResponse httpResponse = new MyHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK,
+            HttpResponse httpResponse = new HttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK,
                     new HashMap<>() {{
                         put("Content-Type", "text/html");
                         put("Content-Length", "12");

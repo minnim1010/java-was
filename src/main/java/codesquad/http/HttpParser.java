@@ -15,7 +15,7 @@ public class HttpParser {
 
     private static final Logger log = LoggerFactory.getLogger(HttpParser.class);
 
-    public Optional<MyHttpRequest> parse(String httpRequestStr) {
+    public Optional<HttpRequest> parse(String httpRequestStr) {
         String[] lines = httpRequestStr.split(CRLF);
 
         String[] requestLine = lines[0].split(BLANK);
@@ -44,7 +44,7 @@ public class HttpParser {
             }
         }
 
-        MyHttpRequest httpRequest = new MyHttpRequest(method, path, version, headers, body.toString());
+        HttpRequest httpRequest = new HttpRequest(method, path, version, headers, body.toString());
         log.debug(httpRequest.toString());
 
         return Optional.of(httpRequest);

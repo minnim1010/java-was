@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class HttpResponseFormatter {
 
-    public String formatResponse(MyHttpResponse httpResponse) {
+    public String formatResponse(HttpResponse httpResponse) {
         return String.format("%s %d %s\r%n%s\r%n%s",
                 httpResponse.version().getVersion(),
                 httpResponse.status().getStatusCode(),

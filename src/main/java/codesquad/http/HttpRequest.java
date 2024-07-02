@@ -7,11 +7,11 @@ import static codesquad.utils.StringUtils.NEW_LINE;
 import codesquad.http.property.HttpVersion;
 import java.util.Map;
 
-public record MyHttpRequest(String method,
-                            String path,
-                            HttpVersion version,
-                            Map<String, String> headers,
-                            String body) {
+public record HttpRequest(String method,
+                          String path,
+                          HttpVersion version,
+                          Map<String, String> headers,
+                          String body) {
 
     public String getHeader(String key) {
         return headers.get(key);

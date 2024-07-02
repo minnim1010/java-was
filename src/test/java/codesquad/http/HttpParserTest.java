@@ -22,7 +22,7 @@ class HttpParserTest {
         void 헤더를_가지지_않는_요청인_경우() {
             String httpRequestStr = "GET /index.html HTTP/1.1\r\n\r\n";
 
-            Optional<MyHttpRequest> result = parser.parse(httpRequestStr);
+            Optional<HttpRequest> result = parser.parse(httpRequestStr);
 
             assertTrue(result.isPresent());
             assertEquals("GET", result.get().method());
@@ -35,7 +35,7 @@ class HttpParserTest {
         void 헤더를_가진_요청인_경우() {
             String httpRequestStr = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
 
-            Optional<MyHttpRequest> result = parser.parse(httpRequestStr);
+            Optional<HttpRequest> result = parser.parse(httpRequestStr);
 
             assertTrue(result.isPresent());
             assertEquals("GET", result.get().method());
@@ -56,7 +56,7 @@ class HttpParserTest {
                     \r
                     """;
 
-            Optional<MyHttpRequest> result = parser.parse(httpRequestStr);
+            Optional<HttpRequest> result = parser.parse(httpRequestStr);
 
             assertTrue(result.isPresent());
             assertEquals("GET", result.get().method());
@@ -83,7 +83,7 @@ class HttpParserTest {
                     \r
                     """;
 
-            Optional<MyHttpRequest> result = parser.parse(httpRequestStr);
+            Optional<HttpRequest> result = parser.parse(httpRequestStr);
 
             assertTrue(result.isPresent());
             assertEquals("GET", result.get().method());
@@ -101,7 +101,7 @@ class HttpParserTest {
         void 바디가_있는_요청인_경우() {
             String httpRequestStr = "POST /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\nHello, World!";
 
-            Optional<MyHttpRequest> result = parser.parse(httpRequestStr);
+            Optional<HttpRequest> result = parser.parse(httpRequestStr);
 
             assertTrue(result.isPresent());
             assertEquals("POST", result.get().method());

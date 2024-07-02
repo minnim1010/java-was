@@ -2,8 +2,8 @@ package codesquad;
 
 import codesquad.http.HttpParser;
 import codesquad.http.HttpProcessor;
+import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponseFormatter;
-import codesquad.http.MyHttpRequest;
 import codesquad.socket.ClientSocket;
 import codesquad.socket.ServerSocket;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class Main {
                         log.debug("Client connected: port " + clientSocket.getPort());
 
                         String requestStr = clientSocket.read();
-                        MyHttpRequest request = httpParser.parse(requestStr)
+                        HttpRequest request = httpParser.parse(requestStr)
                                 .orElseThrow(() -> new IllegalArgumentException("Invalid request"));
 
                         String response = httpProcessor.processRequest(request);
