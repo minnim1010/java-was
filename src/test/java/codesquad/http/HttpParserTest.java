@@ -27,6 +27,7 @@ class HttpParserTest {
             assertTrue(result.isPresent());
             assertEquals("GET", result.get().method());
             assertEquals("/index.html", result.get().path());
+            assertEquals("HTTP/1.1", result.get().version().getVersion());
             assertEquals("www.example.com", result.get().getHeader("Host"));
         }
 
@@ -39,6 +40,7 @@ class HttpParserTest {
             assertTrue(result.isPresent());
             assertEquals("GET", result.get().method());
             assertEquals("/index.html", result.get().path());
+            assertEquals("HTTP/1.1", result.get().version().getVersion());
             assertTrue(result.get().headers().isEmpty());
         }
 
@@ -51,6 +53,7 @@ class HttpParserTest {
             assertTrue(result.isPresent());
             assertEquals("POST", result.get().method());
             assertEquals("/index.html", result.get().path());
+            assertEquals("HTTP/1.1", result.get().version().getVersion());
             assertEquals("www.example.com", result.get().getHeader("Host"));
             assertEquals("Hello, World!", result.get().body());
         }

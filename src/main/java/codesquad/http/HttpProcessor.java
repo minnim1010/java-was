@@ -3,7 +3,6 @@ package codesquad.http;
 import static codesquad.utils.FilePathFinder.findStaticFilePath;
 
 import codesquad.http.property.HttpStatus;
-import codesquad.http.property.HttpVersion;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,6 +27,28 @@ public class HttpProcessor {
         };
     }
 
+    private String processGetRequest(MyHttpRequest httpRequest) throws IOException {
+        String path = httpRequest.path();
+        String staticFilePath = findStaticFilePath(path);
+
+        Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
+        String staticFile = loadStaticFile(staticFilePath);
+        HttpStatus status = HttpStatus.OK;
+
+        MyHttpResponse myHttpResponse = new MyHttpResponse(httpRequest.version(),
+                status,
+                responseHeader,
+                staticFile);
+
+        return httpResponseFormatter.formatResponse(myHttpResponse);
+    }
+
+    private String processPostRequest(MyHttpRequest httpRequest) {
+        // todo implement post request
+
+        return "";
+    }
+
     private String loadStaticFile(String staticFilePath) throws IOException {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(staticFilePath))) {
@@ -37,28 +58,6 @@ public class HttpProcessor {
             }
         }
         return sb.toString();
-    }
-
-    private String processPostRequest(MyHttpRequest httpRequest) {
-        // todo implement post request
-
-        return "";
-    }
-
-    private String processGetRequest(MyHttpRequest httpRequest) throws IOException {
-        String path = httpRequest.path();
-        String staticFilePath = findStaticFilePath(path);
-
-        Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
-        String staticFile = loadStaticFile(staticFilePath);
-        HttpStatus status = HttpStatus.OK;
-
-        MyHttpResponse myHttpResponse = new MyHttpResponse(HttpVersion.HTTP_1_1,
-                status,
-                responseHeader,
-                staticFile);
-
-        return httpResponseFormatter.formatResponse(myHttpResponse);
     }
 
     private Map<String, String> processHeader(MyHttpRequest httpRequest, String staticFilePath) {

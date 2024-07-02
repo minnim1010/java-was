@@ -1,5 +1,8 @@
 package codesquad.http;
 
+import static codesquad.http.HttpConstraints.CRLF;
+
+import codesquad.http.property.HttpVersion;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,11 +14,12 @@ public class HttpParser {
     private static final Logger log = LoggerFactory.getLogger(HttpParser.class);
 
     public Optional<MyHttpRequest> parse(String httpRequestStr) {
-        String[] lines = httpRequestStr.split("\n");
+        String[] lines = httpRequestStr.split(CRLF);
 
         String[] requestLine = lines[0].split(" ");
         String method = parseMethod(requestLine);
         String path = requestLine[1];
+        HttpVersion version = HttpVersion.of(requestLine[2]);
 
         Map<String, String> headers = new HashMap<>();
         int curLineIdx = 1;
@@ -28,7 +32,7 @@ public class HttpParser {
                 break;
             }
             String[] header = line.split(": ");
-            headers.put(header[0], header[1].substring(0, header[1].length() - 1));
+            headers.put(header[0], header[1]);
         }
 
         StringBuilder body = new StringBuilder();
@@ -38,7 +42,7 @@ public class HttpParser {
             }
         }
 
-        MyHttpRequest httpRequest = new MyHttpRequest(method, path, headers, body.toString());
+        MyHttpRequest httpRequest = new MyHttpRequest(method, path, version, headers, body.toString());
         log.debug(httpRequest.toString());
 
         return Optional.of(httpRequest);
