@@ -4,6 +4,7 @@ import static codesquad.http.HttpConstraints.CRLF;
 import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
 import static codesquad.utils.StringUtils.BLANK;
 
+import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class HttpParser {
         String[] lines = httpRequestStr.split(CRLF);
 
         String[] requestLine = lines[0].split(BLANK);
-        String method = parseMethod(requestLine[0]);
+        HttpMethod method = HttpMethod.of(requestLine[0]);
         String path = requestLine[1];
         HttpVersion version = HttpVersion.of(requestLine[2]);
 
@@ -38,24 +39,14 @@ public class HttpParser {
         }
 
         StringBuilder body = new StringBuilder();
-        if (method.equalsIgnoreCase("POST")) {
-            for (curLineIdx = curLineIdx + 1; curLineIdx < lines.length; curLineIdx++) {
-                body.append(lines[curLineIdx]);
-            }
+
+        for (curLineIdx = curLineIdx + 1; curLineIdx < lines.length; curLineIdx++) {
+            body.append(lines[curLineIdx]);
         }
 
         HttpRequest httpRequest = new HttpRequest(method, path, version, headers, body.toString());
         log.debug(httpRequest.toString());
 
         return Optional.of(httpRequest);
-    }
-
-    private String parseMethod(String method) {
-        return switch (method.toUpperCase()) {
-            // todo method enum으로 정의하기
-            case "GET" -> "GET";
-            case "POST" -> "POST";
-            default -> throw new UnsupportedOperationException("Unsupported HTTP method: " + method);
-        };
     }
 }

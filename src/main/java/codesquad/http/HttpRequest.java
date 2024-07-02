@@ -4,10 +4,11 @@ import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
 import static codesquad.utils.StringUtils.BLANK;
 import static codesquad.utils.StringUtils.NEW_LINE;
 
+import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import java.util.Map;
 
-public record HttpRequest(String method,
+public record HttpRequest(HttpMethod method,
                           String path,
                           HttpVersion version,
                           Map<String, String> headers,

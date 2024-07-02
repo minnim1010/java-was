@@ -5,6 +5,7 @@ import static codesquad.utils.FileUtils.findStaticFilePath;
 import static codesquad.utils.FileUtils.getFileExtension;
 
 import codesquad.constants.ContentTypeConfig;
+import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpStatus;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,12 +22,11 @@ public class HttpProcessor {
     }
 
     public String processRequest(HttpRequest httpRequest) throws IOException {
-        String method = httpRequest.method();
+        HttpMethod method = httpRequest.method();
 
         return switch (method) {
-            case "GET" -> processGet(httpRequest);
-            case "POST" -> processPost(httpRequest);
-            default -> throw new IllegalArgumentException("Invalid method");
+            case GET -> processGet(httpRequest);
+            case POST -> processPost(httpRequest);
         };
     }
 
