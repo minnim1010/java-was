@@ -57,4 +57,20 @@ class HttpResponseFormatterTest {
             assertEquals(expected, result);
         }
     }
+
+    @Test
+    void Internal_Server_Error_응답을_만든다() {
+        String result = formatter.createServerErrorResponse();
+
+        String expected = "HTTP/1.1 500 Internal Server Error\r\n\r\n";
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void Bad_Request_응답을_만든다() {
+        String result = formatter.createBadRequestResponse();
+
+        String expected = "HTTP/1.1 400 Bad Request\r\n\r\n";
+        assertEquals(expected, result);
+    }
 }

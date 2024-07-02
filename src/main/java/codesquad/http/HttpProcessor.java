@@ -1,11 +1,9 @@
 package codesquad.http;
 
-import static codesquad.constants.ContentTypeConfig.UNKNOWN;
 import static codesquad.utils.FileUtils.findStaticFilePath;
 import static codesquad.utils.FileUtils.getFileExtension;
 
 import codesquad.constants.ContentTypeConfig;
-import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpStatus;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,46 +13,36 @@ import java.util.Map;
 
 public class HttpProcessor {
 
-    private final HttpResponseFormatter httpResponseFormatter;
-
-    public HttpProcessor(HttpResponseFormatter httpResponseFormatter) {
-        this.httpResponseFormatter = httpResponseFormatter;
-    }
-
-    public String processRequest(HttpRequest httpRequest) throws IOException {
-        HttpMethod method = httpRequest.method();
-
-        return switch (method) {
+    public HttpResponse processRequest(HttpRequest httpRequest) throws IOException {
+        return switch (httpRequest.method()) {
             case GET -> processGet(httpRequest);
             case POST -> processPost(httpRequest);
         };
     }
 
-    private String processGet(HttpRequest httpRequest) throws IOException {
+    private HttpResponse processGet(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.path();
         String staticFilePath = findStaticFilePath(path);
 
         Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
 
-        String staticFile = loadStaticFile(staticFilePath);
+        String staticFile = loadFile(staticFilePath);
 
         HttpStatus status = HttpStatus.OK;
 
-        HttpResponse httpResponse = new HttpResponse(httpRequest.version(),
+        return new HttpResponse(httpRequest.version(),
                 status,
                 responseHeader,
                 staticFile);
-
-        return httpResponseFormatter.formatResponse(httpResponse);
     }
 
-    private String processPost(HttpRequest httpRequest) {
+    private HttpResponse processPost(HttpRequest httpRequest) {
         // todo implement post request
 
-        return "";
+        return null;
     }
 
-    private String loadStaticFile(String staticFilePath) throws IOException {
+    private String loadFile(String staticFilePath) throws IOException {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(staticFilePath))) {
             String line;
@@ -73,12 +61,11 @@ public class HttpProcessor {
 
     private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
-
-        ContentTypeConfig contentTypeConfig = ContentTypeConfig.fromFileExtension(fileExtension);
+        String contentType = ContentTypeConfig.getContentTypeByExtension(fileExtension);
 
         String acceptHeaderValue = httpRequest.getHeader("Accept");
-        if (acceptHeaderValue.contains(contentTypeConfig.getContentType())) {
-            return contentTypeConfig.getContentType();
+        if (acceptHeaderValue.contains(contentType)) {
+            return contentType;
         }
 
         int firstAcceptValueIndex = acceptHeaderValue.indexOf(",");
@@ -86,6 +73,6 @@ public class HttpProcessor {
             return acceptHeaderValue.substring(0, firstAcceptValueIndex);
         }
 
-        return UNKNOWN.getContentType();
+        return ContentTypeConfig.UNKNOWN.getContentType();
     }
 }
