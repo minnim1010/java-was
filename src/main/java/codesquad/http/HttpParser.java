@@ -1,6 +1,8 @@
 package codesquad.http;
 
 import static codesquad.http.HttpConstraints.CRLF;
+import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
+import static codesquad.utils.StringUtils.BLANK;
 
 import codesquad.http.property.HttpVersion;
 import java.util.HashMap;
@@ -16,22 +18,15 @@ public class HttpParser {
     public Optional<MyHttpRequest> parse(String httpRequestStr) {
         String[] lines = httpRequestStr.split(CRLF);
 
-        String[] requestLine = lines[0].split(" ");
+        String[] requestLine = lines[0].split(BLANK);
         String method = parseMethod(requestLine);
         String path = requestLine[1];
         HttpVersion version = HttpVersion.of(requestLine[2]);
 
         Map<String, String> headers = new HashMap<>();
         int curLineIdx = 1;
-        for (; curLineIdx < lines.length; curLineIdx++) {
-            String line = lines[curLineIdx];
-            if (line.isEmpty()) {
-                break;
-            }
-            if (!line.contains(": ")) {
-                break;
-            }
-            String[] header = line.split(": ");
+        while (curLineIdx < lines.length && lines[curLineIdx].contains(HEADER_DELIMITER)) {
+            String[] header = lines[curLineIdx++].split(HEADER_DELIMITER);
             headers.put(header[0], header[1]);
         }
 
