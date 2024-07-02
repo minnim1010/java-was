@@ -1,7 +1,10 @@
 package codesquad.http;
 
-import static codesquad.utils.FilePathFinder.findStaticFilePath;
+import static codesquad.constants.ContentTypeConfig.UNKNOWN;
+import static codesquad.utils.FileUtils.findStaticFilePath;
+import static codesquad.utils.FileUtils.getFileExtension;
 
+import codesquad.constants.ContentTypeConfig;
 import codesquad.http.property.HttpStatus;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,18 +24,20 @@ public class HttpProcessor {
         String method = httpRequest.method();
 
         return switch (method) {
-            case "GET" -> processGetRequest(httpRequest);
-            case "POST" -> processPostRequest(httpRequest);
+            case "GET" -> processGet(httpRequest);
+            case "POST" -> processPost(httpRequest);
             default -> throw new IllegalArgumentException("Invalid method");
         };
     }
 
-    private String processGetRequest(MyHttpRequest httpRequest) throws IOException {
+    private String processGet(MyHttpRequest httpRequest) throws IOException {
         String path = httpRequest.path();
         String staticFilePath = findStaticFilePath(path);
 
         Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
+
         String staticFile = loadStaticFile(staticFilePath);
+
         HttpStatus status = HttpStatus.OK;
 
         MyHttpResponse myHttpResponse = new MyHttpResponse(httpRequest.version(),
@@ -43,7 +48,7 @@ public class HttpProcessor {
         return httpResponseFormatter.formatResponse(myHttpResponse);
     }
 
-    private String processPostRequest(MyHttpRequest httpRequest) {
+    private String processPost(MyHttpRequest httpRequest) {
         // todo implement post request
 
         return "";
@@ -67,13 +72,13 @@ public class HttpProcessor {
     }
 
     private String processAcceptHeader(MyHttpRequest httpRequest, String staticFilePath) {
-        String acceptHeaderValue = httpRequest.getHeader("Accept");
+        String fileExtension = getFileExtension(staticFilePath);
 
-        if (staticFilePath.endsWith(".svg")) {
-            return "image/svg+xml";
-        }
-        if (staticFilePath.endsWith(".ico")) {
-            return "image/png";
+        ContentTypeConfig contentTypeConfig = ContentTypeConfig.fromFileExtension(fileExtension);
+
+        String acceptHeaderValue = httpRequest.getHeader("Accept");
+        if (acceptHeaderValue.contains(contentTypeConfig.getContentType())) {
+            return contentTypeConfig.getContentType();
         }
 
         int firstAcceptValueIndex = acceptHeaderValue.indexOf(",");
@@ -81,6 +86,6 @@ public class HttpProcessor {
             return acceptHeaderValue.substring(0, firstAcceptValueIndex);
         }
 
-        return "text/plain";
+        return UNKNOWN.getContentType();
     }
 }
