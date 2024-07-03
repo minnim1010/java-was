@@ -1,6 +1,7 @@
 package codesquad;
 
 import codesquad.error.HttpRequestParseException;
+import codesquad.error.ResourceNotFoundException;
 import codesquad.http.HttpParser;
 import codesquad.http.HttpProcessor;
 import codesquad.http.HttpRequest;
@@ -63,6 +64,8 @@ public class Main {
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
                 responseStr = httpResponseFormatter.createBadRequestResponse();
+            } else if (e instanceof ResourceNotFoundException) {
+                responseStr = httpResponseFormatter.createNotFoundResponse();
             } else {
                 responseStr = httpResponseFormatter.createServerErrorResponse();
             }

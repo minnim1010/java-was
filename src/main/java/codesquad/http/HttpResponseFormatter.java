@@ -43,4 +43,12 @@ public class HttpResponseFormatter {
                 new HashMap<>(),
                 ""));
     }
+
+    public String createNotFoundResponse() {
+        return formatResponse(new HttpResponse(
+                HttpVersion.HTTP_1_1,
+                HttpStatus.NOT_FOUND,
+                new HashMap<>(),
+                ""));
+    }
 }

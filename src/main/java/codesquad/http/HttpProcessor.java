@@ -4,9 +4,10 @@ import static codesquad.utils.FileUtils.findStaticFilePath;
 import static codesquad.utils.FileUtils.getFileExtension;
 
 import codesquad.constants.ContentTypeConfig;
+import codesquad.error.ResourceNotFoundException;
 import codesquad.http.property.HttpStatus;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,14 +44,17 @@ public class HttpProcessor {
     }
 
     private String loadFile(String staticFilePath) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(staticFilePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
+        File file = new File(staticFilePath);
+        if (!file.exists()) {
+            throw new ResourceNotFoundException("File not found" + staticFilePath);
         }
-        return sb.toString();
+
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            byte[] fileBytes = new byte[(int) file.length()];
+            fileInputStream.read(fileBytes);
+
+            return new String(fileBytes);
+        }
     }
 
     private Map<String, String> processHeader(HttpRequest httpRequest, String staticFilePath) {
