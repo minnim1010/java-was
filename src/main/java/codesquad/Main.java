@@ -46,29 +46,33 @@ public class Main {
             log.debug("Client connected: port " + clientSocket.getPort());
 
             String input = clientSocket.read();
-
-            HttpResponse response = null;
-            String responseStr = null;
-            try {
-                HttpRequest request = httpParser.parse(input);
-                response = httpProcessor.processRequest(request);
-            } catch (Exception e) {
-                if (e instanceof HttpRequestParseException) {
-                    responseStr = httpResponseFormatter.createBadRequestResponse();
-                } else {
-                    responseStr = httpResponseFormatter.createServerErrorResponse();
-                }
-                log.error(e.getMessage(), e);
-            }
-
-            if (responseStr != null) {
-                responseStr = httpResponseFormatter.formatResponse(response);
-            }
-
+            String responseStr = processHttp(input);
             clientSocket.write(responseStr);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    private static String processHttp(String input) {
+        HttpResponse response = null;
+        String responseStr = null;
+
+        try {
+            HttpRequest request = httpParser.parse(input);
+            response = httpProcessor.processRequest(request);
+        } catch (Exception e) {
+            if (e instanceof HttpRequestParseException) {
+                responseStr = httpResponseFormatter.createBadRequestResponse();
+            } else {
+                responseStr = httpResponseFormatter.createServerErrorResponse();
+            }
+            log.error(e.getMessage(), e);
+        }
+
+        if (response != null) {
+            responseStr = httpResponseFormatter.formatResponse(response);
+        }
+        return responseStr;
     }
 
     private static void shutdownServer(ExecutorService threadPool, ServerSocket serverSocket) {

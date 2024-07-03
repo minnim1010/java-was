@@ -1,4 +1,5 @@
-import codesquad.Main;
+package codesquad;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,7 +25,7 @@ class IntegrationTest {
 
         Thread.sleep(1000);
 
-        ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/python3", "src/test/java/WebTest.py");
+        ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/python3", "src/test/java/codesquad/WebTest.py");
         Process process = processBuilder.start();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

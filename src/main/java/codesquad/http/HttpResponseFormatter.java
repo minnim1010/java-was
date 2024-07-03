@@ -10,8 +10,8 @@ public class HttpResponseFormatter {
     public String formatResponse(HttpResponse httpResponse) {
         return String.format("%s %d %s\r%n%s\r%n%s",
                 httpResponse.version().getVersion(),
-                httpResponse.status().getStatusCode(),
-                httpResponse.status().getStatusMessage(),
+                httpResponse.status().getCode(),
+                httpResponse.status().getMessage(),
                 formatHeaders(httpResponse.headers()),
                 httpResponse.body());
     }

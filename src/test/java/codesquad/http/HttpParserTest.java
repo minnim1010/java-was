@@ -2,9 +2,9 @@ package codesquad.http;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("HTTP 요청 파싱 테스트")
 class HttpParserTest {
+
     private HttpParser parser = new HttpParser();
 
     @Nested
@@ -23,14 +24,14 @@ class HttpParserTest {
         void 헤더를_가지지_않는_요청인_경우() {
             String httpRequestStr = "GET /index.html HTTP/1.1\r\n\r\n";
 
-            Optional<HttpRequest> resultOpt = parser.parse(httpRequestStr);
+            HttpRequest resultOpt = parser.parse(httpRequestStr);
 
             assertAll(
-                    () -> assertTrue(resultOpt.isPresent()),
-                    () -> assertEquals("GET", resultOpt.get().method().getDisplayName()),
-                    () -> assertEquals("/index.html", resultOpt.get().path()),
-                    () -> assertEquals("HTTP/1.1", resultOpt.get().version().getVersion()),
-                    () -> assertTrue(resultOpt.get().headers().isEmpty())
+                    () -> assertNotNull(resultOpt),
+                    () -> assertEquals("GET", resultOpt.method().getDisplayName()),
+                    () -> assertEquals("/index.html", resultOpt.path()),
+                    () -> assertEquals("HTTP/1.1", resultOpt.version().getVersion()),
+                    () -> assertTrue(resultOpt.headers().isEmpty())
             );
         }
 
@@ -38,14 +39,14 @@ class HttpParserTest {
         void 헤더를_가진_요청인_경우() {
             String httpRequestStr = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
 
-            Optional<HttpRequest> resultOpt = parser.parse(httpRequestStr);
+            HttpRequest resultOpt = parser.parse(httpRequestStr);
 
             assertAll(
-                    () -> assertTrue(resultOpt.isPresent()),
-                    () -> assertEquals("GET", resultOpt.get().method().getDisplayName()),
-                    () -> assertEquals("/index.html", resultOpt.get().path()),
-                    () -> assertEquals("HTTP/1.1", resultOpt.get().version().getVersion()),
-                    () -> assertEquals("www.example.com", resultOpt.get().getHeader("Host"))
+                    () -> assertNotNull(resultOpt),
+                    () -> assertEquals("GET", resultOpt.method().getDisplayName()),
+                    () -> assertEquals("/index.html", resultOpt.path()),
+                    () -> assertEquals("HTTP/1.1", resultOpt.version().getVersion()),
+                    () -> assertEquals("www.example.com", resultOpt.getHeader("Host"))
             );
         }
 
@@ -61,19 +62,19 @@ class HttpParserTest {
                     \r
                     """;
 
-            Optional<HttpRequest> resultOpt = parser.parse(httpRequestStr);
+            HttpRequest resultOpt = parser.parse(httpRequestStr);
 
             assertAll(
-                    () -> assertTrue(resultOpt.isPresent()),
-                    () -> assertEquals("GET", resultOpt.get().method().getDisplayName()),
-                    () -> assertEquals("/index.html", resultOpt.get().path()),
-                    () -> assertEquals("HTTP/1.1", resultOpt.get().version().getVersion()),
+                    () -> assertNotNull(resultOpt),
+                    () -> assertEquals("GET", resultOpt.method().getDisplayName()),
+                    () -> assertEquals("/index.html", resultOpt.path()),
+                    () -> assertEquals("HTTP/1.1", resultOpt.version().getVersion()),
                     () -> assertEquals("text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8",
-                            resultOpt.get().getHeader("Accept")),
-                    () -> assertEquals("en-US,en;q=0.5", resultOpt.get().getHeader("Accept-Language")),
-                    () -> assertEquals("gzip, deflate, br", resultOpt.get().getHeader("Accept-Encoding")),
-                    () -> assertEquals("keep-alive", resultOpt.get().getHeader("Connection")),
-                    () -> assertEquals("1", resultOpt.get().getHeader("Upgrade-Insecure-Requests"))
+                            resultOpt.getHeader("Accept")),
+                    () -> assertEquals("en-US,en;q=0.5", resultOpt.getHeader("Accept-Language")),
+                    () -> assertEquals("gzip, deflate, br", resultOpt.getHeader("Accept-Encoding")),
+                    () -> assertEquals("keep-alive", resultOpt.getHeader("Connection")),
+                    () -> assertEquals("1", resultOpt.getHeader("Upgrade-Insecure-Requests"))
             );
         }
 
@@ -90,19 +91,19 @@ class HttpParserTest {
                     \r
                     """;
 
-            Optional<HttpRequest> resultOpt = parser.parse(httpRequestStr);
+            HttpRequest resultOpt = parser.parse(httpRequestStr);
 
             assertAll(
-                    () -> assertTrue(resultOpt.isPresent()),
-                    () -> assertEquals("GET", resultOpt.get().method().getDisplayName()),
-                    () -> assertEquals("/index.html", resultOpt.get().path()),
-                    () -> assertEquals("HTTP/1.1", resultOpt.get().version().getVersion()),
+                    () -> assertNotNull(resultOpt),
+                    () -> assertEquals("GET", resultOpt.method().getDisplayName()),
+                    () -> assertEquals("/index.html", resultOpt.path()),
+                    () -> assertEquals("HTTP/1.1", resultOpt.version().getVersion()),
                     () -> assertEquals("text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8",
-                            resultOpt.get().getHeader("Accept")),
-                    () -> assertEquals("en-US,en;q=0.5", resultOpt.get().getHeader("Accept-Language")),
-                    () -> assertEquals("gzip, deflate, br", resultOpt.get().getHeader("Accept-Encoding")),
-                    () -> assertEquals("keep-alive", resultOpt.get().getHeader("Connection")),
-                    () -> assertEquals("1", resultOpt.get().getHeader("Upgrade-Insecure-Requests"))
+                            resultOpt.getHeader("Accept")),
+                    () -> assertEquals("en-US,en;q=0.5", resultOpt.getHeader("Accept-Language")),
+                    () -> assertEquals("gzip, deflate, br", resultOpt.getHeader("Accept-Encoding")),
+                    () -> assertEquals("keep-alive", resultOpt.getHeader("Connection")),
+                    () -> assertEquals("1", resultOpt.getHeader("Upgrade-Insecure-Requests"))
             );
         }
 
@@ -110,15 +111,15 @@ class HttpParserTest {
         void 바디가_있는_요청인_경우() {
             String httpRequestStr = "POST /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\nHello, World!";
 
-            Optional<HttpRequest> resultOpt = parser.parse(httpRequestStr);
+            HttpRequest resultOpt = parser.parse(httpRequestStr);
 
             assertAll(
-                    () -> assertTrue(resultOpt.isPresent()),
-                    () -> assertEquals("POST", resultOpt.get().method().getDisplayName()),
-                    () -> assertEquals("/index.html", resultOpt.get().path()),
-                    () -> assertEquals("HTTP/1.1", resultOpt.get().version().getVersion()),
-                    () -> assertEquals("www.example.com", resultOpt.get().getHeader("Host")),
-                    () -> assertEquals("Hello, World!", resultOpt.get().body())
+                    () -> assertNotNull(resultOpt),
+                    () -> assertEquals("POST", resultOpt.method().getDisplayName()),
+                    () -> assertEquals("/index.html", resultOpt.path()),
+                    () -> assertEquals("HTTP/1.1", resultOpt.version().getVersion()),
+                    () -> assertEquals("www.example.com", resultOpt.getHeader("Host")),
+                    () -> assertEquals("Hello, World!", resultOpt.body())
             );
         }
     }
