@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import codesquad.error.ResourceNotFoundException;
+import codesquad.http.message.HttpRequest;
+import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import java.util.HashMap;

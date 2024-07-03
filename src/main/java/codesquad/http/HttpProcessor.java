@@ -5,6 +5,8 @@ import static codesquad.utils.FileUtils.getFileExtension;
 
 import codesquad.constants.ContentTypeConfig;
 import codesquad.error.ResourceNotFoundException;
+import codesquad.http.message.HttpRequest;
+import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 import java.io.File;
 import java.io.FileInputStream;

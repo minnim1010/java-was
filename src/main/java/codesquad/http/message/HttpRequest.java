@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.message;
 
 import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
 import static codesquad.utils.StringUtils.BLANK;

@@ -1,5 +1,6 @@
 package codesquad.http;
 
+import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;
 import java.util.HashMap;

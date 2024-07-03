@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.message;
 
 import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;

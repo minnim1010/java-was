@@ -5,6 +5,7 @@ import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
 import static codesquad.utils.StringUtils.BLANK;
 
 import codesquad.error.HttpRequestParseException;
+import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import java.util.HashMap;
