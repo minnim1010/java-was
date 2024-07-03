@@ -1,6 +1,6 @@
-package codesquad.constants;
+package codesquad.http.header;
 
-public enum ContentTypeConfig {
+public enum ContentType {
     HTML("html", "text/html"),
     HTM("htm", "text/html"),
     CSS("css", "text/css"),
@@ -27,13 +27,13 @@ public enum ContentTypeConfig {
     private final String fileExtension;
     private final String contentType;
 
-    ContentTypeConfig(String fileExtension, String contentType) {
+    ContentType(String fileExtension, String contentType) {
         this.fileExtension = fileExtension;
         this.contentType = contentType;
     }
 
     public static String getContentTypeByExtension(String fileExtension) {
-        for (ContentTypeConfig config : values()) {
+        for (ContentType config : values()) {
             if (config.fileExtension.equalsIgnoreCase(fileExtension)) {
                 return config.contentType;
             }
@@ -41,8 +41,8 @@ public enum ContentTypeConfig {
         return UNKNOWN.contentType;
     }
 
-    public static ContentTypeConfig fromFileExtension(String fileExtension) {
-        for (ContentTypeConfig config : values()) {
+    public static ContentType fromFileExtension(String fileExtension) {
+        for (ContentType config : values()) {
             if (config.fileExtension.equalsIgnoreCase(fileExtension)) {
                 return config;
             }

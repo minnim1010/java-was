@@ -3,8 +3,8 @@ package codesquad.http;
 import static codesquad.utils.FileUtils.findStaticFilePath;
 import static codesquad.utils.FileUtils.getFileExtension;
 
-import codesquad.constants.ContentTypeConfig;
 import codesquad.error.ResourceNotFoundException;
+import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
@@ -66,7 +66,7 @@ public class HttpProcessor {
 
     private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
-        String contentType = ContentTypeConfig.getContentTypeByExtension(fileExtension);
+        String contentType = ContentType.getContentTypeByExtension(fileExtension);
 
         String acceptHeaderValue = httpRequest.getHeader("Accept");
         if (acceptHeaderValue.contains(contentType) || acceptHeaderValue.contains("*/*")) {
@@ -78,7 +78,7 @@ public class HttpProcessor {
             return acceptHeaderValue.substring(0, firstAcceptValueIndex);
         }
 
-        return ContentTypeConfig.UNKNOWN.getContentType();
+        return ContentType.UNKNOWN.getContentType();
         //todo 없으면 406 Not Acceptable
     }
 }
