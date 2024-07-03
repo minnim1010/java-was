@@ -1,28 +1,79 @@
 package codesquad;
 
+import codesquad.http.HttpParser;
+import codesquad.http.HttpProcessor;
+import codesquad.http.HttpResponseFormatter;
+import codesquad.http.MyHttpRequest;
+import codesquad.socket.ClientSocket;
+import codesquad.socket.ServerSocket;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(8080); // 8080 포트에서 서버를 엽니다.
-        System.out.println("Listening for connection on port 8080 ....");
 
-        while (true) { // 무한 루프를 돌며 클라이언트의 연결을 기다립니다.
-            try (Socket clientSocket = serverSocket.accept()) { // 클라이언트 연결을 수락합니다.
-                System.out.println("Client connected");
+    private static final int REQUEST_THREADS = 10;
 
-                // HTTP 응답을 생성합니다.
-                OutputStream clientOutput = clientSocket.getOutputStream();
-                clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
-                clientOutput.write("Content-Type: text/html\r\n".getBytes());
-                clientOutput.write("\r\n".getBytes());
-                clientOutput.write("<h1>Hello</h1>\r\n".getBytes()); // 응답 본문으로 "Hello"를 보냅니다.
-                clientOutput.flush();
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+    private static final HttpParser httpParser = new HttpParser();
+    private static final HttpResponseFormatter httpResponseFormatter = new HttpResponseFormatter();
+    private static final HttpProcessor httpProcessor = new HttpProcessor(httpResponseFormatter);
+
+    public static void main(String[] args) {
+        ExecutorService threadPool = Executors.newFixedThreadPool(REQUEST_THREADS);
+        boolean isRunning = true;
+
+        try (ServerSocket serverSocket = new ServerSocket();) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                log.info("Shutting down server...");
+                threadPool.shutdown();
+                try {
+                    if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                        threadPool.shutdownNow();
+                        if (!threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                            log.error("Thread pool did not terminate");
+                        }
+                    }
+                } catch (InterruptedException ie) {
+                    threadPool.shutdownNow();
+                    Thread.currentThread().interrupt();
+                } finally {
+                    try {
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        log.error("Error closing server socket", e);
+                    }
+                }
+                log.info("Server shutdown complete");
+            }));
+
+            while (isRunning) {
+                ClientSocket clientSocket = serverSocket.acceptClient();
+                threadPool.submit(() -> {
+                    try (clientSocket) {
+                        log.debug("Client connected: port " + clientSocket.getPort());
+
+                        String requestStr = clientSocket.read();
+                        MyHttpRequest request = httpParser.parse(requestStr)
+                                .orElseThrow(() -> new IllegalArgumentException("Invalid request"));
+
+                        String response = httpProcessor.processRequest(request);
+                        clientSocket.write(response);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        e.printStackTrace();
+                    }
+                });
             }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            threadPool.shutdown();
         }
     }
 }
