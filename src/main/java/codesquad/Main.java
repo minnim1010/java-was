@@ -31,7 +31,8 @@ public class Main {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownServer(threadPool, serverSocket)));
 
             while (isRunning) {
-                threadPool.submit(() -> processClientRequest(serverSocket));
+                ClientSocket clientSocket = serverSocket.acceptClient();
+                threadPool.submit(() -> processClientRequest(clientSocket));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -40,24 +41,31 @@ public class Main {
         }
     }
 
-    private static void processClientRequest(ServerSocket serverSocket) {
-        try (ClientSocket clientSocket = serverSocket.acceptClient()) {
+    private static void processClientRequest(ClientSocket clientSocket) {
+        try (clientSocket) {
             log.debug("Client connected: port " + clientSocket.getPort());
 
             String input = clientSocket.read();
 
+            HttpResponse response = null;
+            String responseStr = null;
             try {
-                HttpRequest request = httpParser.parse(input)
-                        .orElseThrow(() -> new HttpRequestParseException("Invalid request"));
-                HttpResponse response = httpProcessor.processRequest(request);
-                clientSocket.write(httpResponseFormatter.formatResponse(response));
-            } catch (HttpRequestParseException e) {
-                clientSocket.write(httpResponseFormatter.createBadRequestResponse());
-                log.error(e.getMessage(), e);
+                HttpRequest request = httpParser.parse(input);
+                response = httpProcessor.processRequest(request);
             } catch (Exception e) {
-                clientSocket.write(httpResponseFormatter.createServerErrorResponse());
+                if (e instanceof HttpRequestParseException) {
+                    responseStr = httpResponseFormatter.createBadRequestResponse();
+                } else {
+                    responseStr = httpResponseFormatter.createServerErrorResponse();
+                }
                 log.error(e.getMessage(), e);
             }
+
+            if (responseStr != null) {
+                responseStr = httpResponseFormatter.formatResponse(response);
+            }
+
+            clientSocket.write(responseStr);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
