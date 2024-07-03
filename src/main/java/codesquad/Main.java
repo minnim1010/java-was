@@ -47,35 +47,35 @@ public class Main {
             log.debug("Client connected: port " + clientSocket.getPort());
 
             String input = clientSocket.read();
-            String responseStr = processHttp(input);
-            clientSocket.write(responseStr);
+            byte[] output = processHttp(input);
+            clientSocket.write(output);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    private static String processHttp(String input) {
+    private static byte[] processHttp(String input) throws IOException {
         HttpResponse response = null;
-        String responseStr = null;
+        byte[] responseResult = null;
 
         try {
             HttpRequest request = httpParser.parse(input);
             response = httpProcessor.processRequest(request);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
-                responseStr = httpResponseFormatter.createBadRequestResponse();
+                responseResult = httpResponseFormatter.createBadRequestResponse();
             } else if (e instanceof ResourceNotFoundException) {
-                responseStr = httpResponseFormatter.createNotFoundResponse();
+                responseResult = httpResponseFormatter.createNotFoundResponse();
             } else {
-                responseStr = httpResponseFormatter.createServerErrorResponse();
+                responseResult = httpResponseFormatter.createServerErrorResponse();
             }
             log.error(e.getMessage(), e);
         }
 
         if (response != null) {
-            responseStr = httpResponseFormatter.formatResponse(response);
+            responseResult = httpResponseFormatter.formatResponse(response);
         }
-        return responseStr;
+        return responseResult;
     }
 
     private static void shutdownServer(ExecutorService threadPool, ServerSocket serverSocket) {

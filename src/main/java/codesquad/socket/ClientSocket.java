@@ -33,9 +33,9 @@ public class ClientSocket implements AutoCloseable {
         return input.toString();
     }
 
-    public void write(String response) throws IOException {
+    public void write(byte[] output) throws IOException {
         OutputStream outputStream = this.socket.getOutputStream();
-        outputStream.write(response.getBytes());
+        outputStream.write(output);
         outputStream.flush();
     }
 

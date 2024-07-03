@@ -7,8 +7,7 @@ import java.util.Map;
 public record HttpResponse(HttpVersion version,
                            HttpStatus status,
                            Map<String, String> headers,
-                           String body) {
-
+                           byte[] body) {
 
     public String getHeader(String key) {
         return headers.get(key);

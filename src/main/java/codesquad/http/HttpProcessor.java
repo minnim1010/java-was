@@ -29,14 +29,14 @@ public class HttpProcessor {
 
         Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
 
-        String staticFile = loadFile(staticFilePath);
+        byte[] fileContent = loadFile(staticFilePath);
 
         HttpStatus status = HttpStatus.OK;
 
         return new HttpResponse(httpRequest.version(),
                 status,
                 responseHeader,
-                staticFile);
+                fileContent);
     }
 
     private HttpResponse processPost(HttpRequest httpRequest) {
@@ -45,7 +45,7 @@ public class HttpProcessor {
         return null;
     }
 
-    private String loadFile(String staticFilePath) throws IOException {
+    private byte[] loadFile(String staticFilePath) throws IOException {
         File file = new File(staticFilePath);
         if (!file.exists()) {
             throw new ResourceNotFoundException("File not found" + staticFilePath);
@@ -54,8 +54,7 @@ public class HttpProcessor {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             byte[] fileBytes = new byte[(int) file.length()];
             fileInputStream.read(fileBytes);
-
-            return new String(fileBytes);
+            return fileBytes;
         }
     }
 
@@ -70,7 +69,7 @@ public class HttpProcessor {
         String contentType = ContentTypeConfig.getContentTypeByExtension(fileExtension);
 
         String acceptHeaderValue = httpRequest.getHeader("Accept");
-        if (acceptHeaderValue.contains(contentType)) {
+        if (acceptHeaderValue.contains(contentType) || acceptHeaderValue.contains("*/*")) {
             return contentType;
         }
 
