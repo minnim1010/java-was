@@ -1,5 +1,6 @@
 package codesquad.http;
 
+import static codesquad.http.header.HeaderField.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,11 +41,13 @@ class HttpProcessorTest {
                             put("Accept", "text/html");
                         }
                     }, "");
+            HttpResponse response = new HttpResponse();
 
-            HttpResponse response = processor.processRequest(request);
+            processor.processRequest(request, response);
 
-            assertEquals(200, response.status().getCode());
-            assertEquals("text/html", response.headers().get("Content-Type"));
+            assertEquals("HTTP/1.1", response.getVersion().getDisplayName());
+            assertEquals(200, response.getStatus().getCode());
+            assertEquals("text/html", response.getHeader(CONTENT_TYPE.getFieldName()));
         }
 
         @Test
@@ -55,8 +58,9 @@ class HttpProcessorTest {
                     new HashMap<>() {{
                         put("Accept", "text/html");
                     }}, "");
+            HttpResponse response = new HttpResponse();
 
-            assertThrows(ResourceNotFoundException.class, () -> processor.processRequest(request));
+            assertThrows(ResourceNotFoundException.class, () -> processor.processRequest(request, response));
         }
     }
 }

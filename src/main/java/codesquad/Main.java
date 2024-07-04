@@ -2,9 +2,9 @@ package codesquad;
 
 import codesquad.error.HttpRequestParseException;
 import codesquad.error.ResourceNotFoundException;
+import codesquad.http.HttpErrorResponseBuilder;
 import codesquad.http.HttpParser;
 import codesquad.http.HttpProcessor;
-import codesquad.http.HttpResponseFormatter;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.socket.ClientSocket;
@@ -21,7 +21,7 @@ public class Main {
     private static final int REQUEST_THREADS = 10;
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static final HttpParser httpParser = new HttpParser();
-    private static final HttpResponseFormatter httpResponseFormatter = new HttpResponseFormatter();
+    private static final HttpErrorResponseBuilder httpErrorResponseBuilder = new HttpErrorResponseBuilder();
     private static final HttpProcessor httpProcessor = new HttpProcessor();
 
     public static void main(String[] args) {
@@ -55,25 +55,26 @@ public class Main {
     }
 
     private static byte[] processHttp(String input) throws IOException {
-        HttpResponse response = null;
+        HttpRequest request = null;
+        HttpResponse response = new HttpResponse();
         byte[] responseResult = null;
 
         try {
-            HttpRequest request = httpParser.parse(input);
-            response = httpProcessor.processRequest(request);
+            request = httpParser.parse(input);
+            httpProcessor.processRequest(request, response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
-                responseResult = httpResponseFormatter.createBadRequestResponse();
+                responseResult = httpErrorResponseBuilder.createBadRequestResponse(request, response);
             } else if (e instanceof ResourceNotFoundException) {
-                responseResult = httpResponseFormatter.createNotFoundResponse();
+                responseResult = httpErrorResponseBuilder.createNotFoundResponse(request, response);
             } else {
-                responseResult = httpResponseFormatter.createServerErrorResponse();
+                responseResult = httpErrorResponseBuilder.createServerErrorResponse(request, response);
             }
             log.error(e.getMessage(), e);
         }
 
-        if (response != null) {
-            responseResult = httpResponseFormatter.formatResponse(response);
+        if (responseResult == null) {
+            responseResult = response.format();
         }
         return responseResult;
     }

@@ -24,7 +24,7 @@ public record HttpRequest(HttpMethod method,
         sb.append("[Request]").append(NEW_LINE);
         sb.append(method).append(BLANK)
                 .append(path).append(BLANK)
-                .append(version.getVersion()).append(NEW_LINE);
+                .append(version.getDisplayName()).append(NEW_LINE);
         headers.forEach((key, value) -> sb.append(key).append(HEADER_DELIMITER).append(value).append(NEW_LINE));
         sb.append("\n");
         sb.append(body);

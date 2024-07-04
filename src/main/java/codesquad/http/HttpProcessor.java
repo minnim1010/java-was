@@ -1,84 +1,58 @@
 package codesquad.http;
 
+import static codesquad.http.header.HeaderField.ACCEPT;
+import static codesquad.http.header.HeaderField.CONTENT_TYPE;
 import static codesquad.utils.FileUtils.findStaticFilePath;
 import static codesquad.utils.FileUtils.getFileExtension;
 
-import codesquad.error.ResourceNotFoundException;
+import codesquad.error.UnSupportedMediaTypeException;
 import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
-import java.io.File;
-import java.io.FileInputStream;
+import codesquad.utils.FileUtils;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HttpProcessor {
 
-    public HttpResponse processRequest(HttpRequest httpRequest) throws IOException {
-        return switch (httpRequest.method()) {
-            case GET -> processGet(httpRequest);
-            case POST -> processPost(httpRequest);
-        };
+    public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+        switch (httpRequest.method()) {
+            case GET -> processGet(httpRequest, httpResponse);
+            case POST -> processPost(httpRequest, httpResponse);
+            default -> throw new UnsupportedOperationException("Unsupported HTTP Method " + httpRequest.method());
+        }
     }
 
-    private HttpResponse processGet(HttpRequest httpRequest) throws IOException {
+    private void processGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         String path = httpRequest.path();
         String staticFilePath = findStaticFilePath(path);
 
-        Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
+        httpResponse.setHeader(CONTENT_TYPE.getFieldName(), processAcceptHeader(httpRequest, staticFilePath));
 
-        byte[] fileContent = loadFile(staticFilePath);
+        byte[] fileContent = FileUtils.loadFile(staticFilePath);
+        httpResponse.setBody(fileContent);
 
-        HttpStatus status = HttpStatus.OK;
-
-        return new HttpResponse(httpRequest.version(),
-                status,
-                responseHeader,
-                fileContent);
+        httpResponse.setStatus(HttpStatus.OK);
+        httpResponse.setVersion(httpRequest.version());
     }
 
-    private HttpResponse processPost(HttpRequest httpRequest) {
+    private void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
         // todo implement post request
-
-        return null;
-    }
-
-    private byte[] loadFile(String staticFilePath) throws IOException {
-        File file = new File(staticFilePath);
-        if (!file.exists()) {
-            throw new ResourceNotFoundException("File not found" + staticFilePath);
-        }
-
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            byte[] fileBytes = new byte[(int) file.length()];
-            fileInputStream.read(fileBytes);
-            return fileBytes;
-        }
-    }
-
-    private Map<String, String> processHeader(HttpRequest httpRequest, String staticFilePath) {
-        Map<String, String> responseHeader = new HashMap<>();
-        responseHeader.put("Content-Type", processAcceptHeader(httpRequest, staticFilePath));
-        return responseHeader;
     }
 
     private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
+        if (fileExtension.isEmpty()) {
+            return ContentType.UNKNOWN.getContentType();
+        }
+
         String contentType = ContentType.getContentTypeByExtension(fileExtension);
 
-        String acceptHeaderValue = httpRequest.getHeader("Accept");
+        String acceptHeaderValue = httpRequest.getHeader(ACCEPT.getFieldName());
         if (acceptHeaderValue.contains(contentType) || acceptHeaderValue.contains("*/*")) {
             return contentType;
         }
 
-        int firstAcceptValueIndex = acceptHeaderValue.indexOf(",");
-        if (firstAcceptValueIndex != -1) {
-            return acceptHeaderValue.substring(0, firstAcceptValueIndex);
-        }
-
-        return ContentType.UNKNOWN.getContentType();
-        //todo 없으면 406 Not Acceptable
+        throw new UnSupportedMediaTypeException("Unsupported Media Type " + fileExtension);
     }
 }
