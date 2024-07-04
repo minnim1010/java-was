@@ -28,6 +28,13 @@ public class HttpResponse {
         this.body = new byte[0];
     }
 
+    public HttpResponse(HttpStatus status) {
+        this.version = HttpVersion.HTTP_1_1;
+        this.headers = new HashMap<>();
+        this.body = new byte[0];
+        this.status = status;
+    }
+
     public HttpResponse(HttpVersion version, HttpStatus status, Map<String, String> headers, byte[] body) {
         this.version = version;
         this.status = status;

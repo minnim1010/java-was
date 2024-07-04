@@ -5,6 +5,7 @@ import codesquad.error.ResourceNotFoundException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
+import codesquad.http.property.HttpStatus;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ public class HttpProcessor {
 
     private static final HttpParser httpParser = new HttpParser();
     private static final HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
-    private static final HttpErrorResponseBuilder httpErrorResponseBuilder = new HttpErrorResponseBuilder();
 
     public byte[] process(String input) throws IOException {
         HttpRequest request = null;
@@ -27,13 +27,14 @@ public class HttpProcessor {
             response.setDateHeader();
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
-                response = httpErrorResponseBuilder.createBadRequestResponse(request, response);
+                response = new HttpResponse(HttpStatus.BAD_REQUEST);
             } else if (e instanceof ResourceNotFoundException) {
-                response = httpErrorResponseBuilder.createNotFoundResponse(request, response);
+                response = new HttpResponse(HttpStatus.NOT_FOUND);
+            } else if (e instanceof UnsupportedOperationException) {
+                response = new HttpResponse(HttpStatus.NOT_ACCEPTABLE);
             } else {
-                response = httpErrorResponseBuilder.createServerErrorResponse(request, response);
+                response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            //todo 406 처리해줘야
             log.error(e.getMessage(), e);
         }
 
