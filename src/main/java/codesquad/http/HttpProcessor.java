@@ -1,5 +1,8 @@
 package codesquad.http;
 
+import static codesquad.http.header.HeaderField.DATE;
+
+import codesquad.config.GlobalConfig;
 import codesquad.error.HttpRequestParseException;
 import codesquad.error.ResourceNotFoundException;
 import codesquad.http.message.HttpRequest;
@@ -7,6 +10,9 @@ import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpStatus;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,13 +24,12 @@ public class HttpProcessor {
     private static final HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
 
     public byte[] process(String input) throws IOException {
-        HttpRequest request = null;
         HttpResponse response = new HttpResponse();
 
         try {
-            request = httpParser.parse(input);
+            HttpRequest request = httpParser.parse(input);
             httpRequestProcessor.processRequest(request, response);
-            response.setDateHeader();
+            setDateHeader(response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
                 response = new HttpResponse(HttpStatus.BAD_REQUEST);
@@ -39,5 +44,13 @@ public class HttpProcessor {
         }
 
         return response.format();
+    }
+
+    private void setDateHeader(HttpResponse httpResponse) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", GlobalConfig.LOCALE);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
+        String date = dateFormat.format(new Date());
+
+        httpResponse.setHeader(DATE.getFieldName(), date);
     }
 }

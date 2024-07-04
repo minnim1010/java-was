@@ -1,20 +1,15 @@
 package codesquad.http.message;
 
 import static codesquad.http.header.HeaderField.CONTENT_LENGTH;
-import static codesquad.http.header.HeaderField.DATE;
 
-import codesquad.config.GlobalConfig;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TimeZone;
 
 public class HttpResponse {
 
@@ -109,13 +104,5 @@ public class HttpResponse {
         outputStream.write(body);
 
         return outputStream.toByteArray();
-    }
-
-    public void setDateHeader() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", GlobalConfig.LOCALE);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
-        String date = dateFormat.format(new Date());
-
-        setHeader(DATE.getFieldName(), date);
     }
 }
