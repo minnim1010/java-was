@@ -12,7 +12,7 @@ public final class FileUtils {
     private FileUtils() {
     }
 
-    public static String findStaticFilePath(String fileName) {
+    public static String findAbsoluteFilePath(String fileName) {
         return PROJECT_PATH + "/src/main/resources/static" + fileName;
     }
 
@@ -24,9 +24,14 @@ public final class FileUtils {
         return fileName.substring(lastIndexOf + 1);
     }
 
+    public static boolean isExists(String filePath) {
+        File file = new File(filePath);
+        return file.exists() && file.isFile();
+    }
+
     public static byte[] loadFile(String filePath) throws IOException {
         File file = new File(filePath);
-        if (!file.exists()) {
+        if (!file.exists() || file.isDirectory()) {
             throw new ResourceNotFoundException("Resource not found" + filePath);
         }
 

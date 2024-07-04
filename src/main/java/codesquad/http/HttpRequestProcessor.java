@@ -2,9 +2,11 @@ package codesquad.http;
 
 import static codesquad.http.header.HeaderField.ACCEPT;
 import static codesquad.http.header.HeaderField.CONTENT_TYPE;
-import static codesquad.utils.FileUtils.findStaticFilePath;
+import static codesquad.utils.FileUtils.findAbsoluteFilePath;
 import static codesquad.utils.FileUtils.getFileExtension;
 
+import codesquad.config.GlobalConfig;
+import codesquad.error.ResourceNotFoundException;
 import codesquad.error.UnSupportedMediaTypeException;
 import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
@@ -25,16 +27,44 @@ public class HttpRequestProcessor {
 
     private void processGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         String path = httpRequest.path();
-        String staticFilePath = findStaticFilePath(path);
+        String filePath = findFilePath(path);
 
-        httpResponse.setHeader(CONTENT_TYPE.getFieldName(), processAcceptHeader(httpRequest, staticFilePath));
-
-        byte[] fileContent = FileUtils.loadFile(staticFilePath);
+        httpResponse.setHeader(CONTENT_TYPE.getFieldName(), processAcceptHeader(httpRequest, filePath));
+        byte[] fileContent = loadFile(filePath);
         httpResponse.setBody(fileContent);
 
         httpResponse.setStatus(HttpStatus.OK);
         httpResponse.setVersion(httpRequest.version());
     }
+
+    private String findFilePath(String path) {
+        String absoluteFilePath = findAbsoluteFilePath(path);
+
+        if (FileUtils.isExists(absoluteFilePath)) {
+            return absoluteFilePath;
+        }
+
+        return GlobalConfig.DEFAULT_PAGES.stream()
+                .map(defaultPage -> absoluteFilePath + "/" + defaultPage)
+                .filter(FileUtils::isExists)
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found" + absoluteFilePath));
+    }
+
+    private byte[] loadFile(String staticFilePath) throws IOException {
+        if (FileUtils.isExists(staticFilePath)) {
+            return FileUtils.loadFile(staticFilePath);
+        }
+
+        String alterFilePath = GlobalConfig.DEFAULT_PAGES.stream()
+                .map(defaultPage -> staticFilePath + "/" + defaultPage)
+                .filter(FileUtils::isExists)
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found" + staticFilePath));
+
+        return FileUtils.loadFile(alterFilePath);
+    }
+
 
     private void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
         // todo implement post request
