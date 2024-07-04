@@ -5,6 +5,7 @@ import codesquad.error.ResourceNotFoundException;
 import codesquad.http.HttpErrorResponseBuilder;
 import codesquad.http.HttpParser;
 import codesquad.http.HttpProcessor;
+import codesquad.http.config.GlobalConfig;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.socket.ClientSocket;
@@ -18,14 +19,13 @@ import org.slf4j.LoggerFactory;
 
 public class Main {
 
-    private static final int REQUEST_THREADS = 10;
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static final HttpParser httpParser = new HttpParser();
     private static final HttpErrorResponseBuilder httpErrorResponseBuilder = new HttpErrorResponseBuilder();
     private static final HttpProcessor httpProcessor = new HttpProcessor();
 
     public static void main(String[] args) {
-        ExecutorService threadPool = Executors.newFixedThreadPool(REQUEST_THREADS);
+        ExecutorService threadPool = Executors.newFixedThreadPool(GlobalConfig.REQUEST_THREADS);
         boolean isRunning = true;
 
         try (ServerSocket serverSocket = new ServerSocket();) {
