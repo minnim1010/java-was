@@ -1,11 +1,11 @@
 package codesquad;
 
+import codesquad.config.GlobalConfig;
 import codesquad.error.HttpRequestParseException;
 import codesquad.error.ResourceNotFoundException;
 import codesquad.http.HttpErrorResponseBuilder;
 import codesquad.http.HttpParser;
 import codesquad.http.HttpProcessor;
-import codesquad.http.config.GlobalConfig;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.socket.ClientSocket;

@@ -3,7 +3,7 @@ package codesquad.http.message;
 import static codesquad.http.header.HeaderField.CONTENT_LENGTH;
 import static codesquad.http.header.HeaderField.DATE;
 
-import codesquad.http.config.GlobalConfig;
+import codesquad.config.GlobalConfig;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;
 import java.io.ByteArrayOutputStream;

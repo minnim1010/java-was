@@ -1,4 +1,4 @@
-package codesquad.http.config;
+package codesquad.config;
 
 import java.util.Locale;
 
