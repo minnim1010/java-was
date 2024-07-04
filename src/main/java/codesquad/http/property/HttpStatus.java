@@ -30,24 +30,24 @@ public enum HttpStatus {
     BAD_GATEWAY(502, "Bad Gateway"),
     SERVICE_UNAVAILABLE(503, "Service Unavailable");
 
-    private final int statusCode;
-    private final String statusMessage;
+    private final int code;
+    private final String message;
 
-    HttpStatus(int statusCode, String statusMessage) {
-        this.statusCode = statusCode;
-        this.statusMessage = statusMessage;
+    HttpStatus(int code, String message) {
+        this.code = code;
+        this.message = message;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public int getCode() {
+        return code;
     }
 
-    public String getStatusMessage() {
-        return statusMessage;
+    public String getMessage() {
+        return message;
     }
 
     @Override
     public String toString() {
-        return statusCode + " " + statusMessage;
+        return code + " " + message;
     }
 }

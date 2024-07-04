@@ -1,79 +1,76 @@
 package codesquad.http;
 
-import static codesquad.utils.FilePathFinder.findStaticFilePath;
+import static codesquad.utils.FileUtils.findStaticFilePath;
+import static codesquad.utils.FileUtils.getFileExtension;
 
+import codesquad.error.ResourceNotFoundException;
+import codesquad.http.header.ContentType;
+import codesquad.http.message.HttpRequest;
+import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpProcessor {
 
-    private final HttpResponseFormatter httpResponseFormatter;
-
-    public HttpProcessor(HttpResponseFormatter httpResponseFormatter) {
-        this.httpResponseFormatter = httpResponseFormatter;
-    }
-
-    public String processRequest(MyHttpRequest httpRequest) throws IOException {
-        String method = httpRequest.method();
-
-        return switch (method) {
-            case "GET" -> processGetRequest(httpRequest);
-            case "POST" -> processPostRequest(httpRequest);
-            default -> throw new IllegalArgumentException("Invalid method");
+    public HttpResponse processRequest(HttpRequest httpRequest) throws IOException {
+        return switch (httpRequest.method()) {
+            case GET -> processGet(httpRequest);
+            case POST -> processPost(httpRequest);
         };
     }
 
-    private String processGetRequest(MyHttpRequest httpRequest) throws IOException {
+    private HttpResponse processGet(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.path();
         String staticFilePath = findStaticFilePath(path);
 
         Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
-        String staticFile = loadStaticFile(staticFilePath);
+
+        byte[] fileContent = loadFile(staticFilePath);
+
         HttpStatus status = HttpStatus.OK;
 
-        MyHttpResponse myHttpResponse = new MyHttpResponse(httpRequest.version(),
+        return new HttpResponse(httpRequest.version(),
                 status,
                 responseHeader,
-                staticFile);
-
-        return httpResponseFormatter.formatResponse(myHttpResponse);
+                fileContent);
     }
 
-    private String processPostRequest(MyHttpRequest httpRequest) {
+    private HttpResponse processPost(HttpRequest httpRequest) {
         // todo implement post request
 
-        return "";
+        return null;
     }
 
-    private String loadStaticFile(String staticFilePath) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(staticFilePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
+    private byte[] loadFile(String staticFilePath) throws IOException {
+        File file = new File(staticFilePath);
+        if (!file.exists()) {
+            throw new ResourceNotFoundException("File not found" + staticFilePath);
         }
-        return sb.toString();
+
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            byte[] fileBytes = new byte[(int) file.length()];
+            fileInputStream.read(fileBytes);
+            return fileBytes;
+        }
     }
 
-    private Map<String, String> processHeader(MyHttpRequest httpRequest, String staticFilePath) {
+    private Map<String, String> processHeader(HttpRequest httpRequest, String staticFilePath) {
         Map<String, String> responseHeader = new HashMap<>();
         responseHeader.put("Content-Type", processAcceptHeader(httpRequest, staticFilePath));
         return responseHeader;
     }
 
-    private String processAcceptHeader(MyHttpRequest httpRequest, String staticFilePath) {
-        String acceptHeaderValue = httpRequest.getHeader("Accept");
+    private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {
+        String fileExtension = getFileExtension(staticFilePath);
+        String contentType = ContentType.getContentTypeByExtension(fileExtension);
 
-        if (staticFilePath.endsWith(".svg")) {
-            return "image/svg+xml";
-        }
-        if (staticFilePath.endsWith(".ico")) {
-            return "image/png";
+        String acceptHeaderValue = httpRequest.getHeader("Accept");
+        if (acceptHeaderValue.contains(contentType) || acceptHeaderValue.contains("*/*")) {
+            return contentType;
         }
 
         int firstAcceptValueIndex = acceptHeaderValue.indexOf(",");
@@ -81,6 +78,7 @@ public class HttpProcessor {
             return acceptHeaderValue.substring(0, firstAcceptValueIndex);
         }
 
-        return "text/plain";
+        return ContentType.UNKNOWN.getContentType();
+        //todo 없으면 406 Not Acceptable
     }
 }
