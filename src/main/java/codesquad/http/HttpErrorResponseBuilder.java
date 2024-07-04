@@ -19,7 +19,7 @@ public class HttpErrorResponseBuilder {
     }
 
     private HttpResponse createErrorResponse(HttpRequest request, HttpResponse response, HttpStatus status) {
-        response.setVersion(request.version());
+        response.setVersion(request.getVersion());
         response.setStatus(status);
 
         return response;

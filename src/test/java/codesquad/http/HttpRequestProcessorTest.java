@@ -7,9 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import codesquad.error.ResourceNotFoundException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.property.HttpMethod;
-import codesquad.http.property.HttpVersion;
-import java.util.HashMap;
+import codesquad.utils.Fixture;
+import java.net.URISyntaxException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -33,14 +32,7 @@ class HttpRequestProcessorTest {
     class GET_요청을_처리한다 {
         @Test
         void 존재하는_정적_파일_요청을_처리할_수_있다() throws Exception {
-            HttpRequest request = new HttpRequest(HttpMethod.GET,
-                    "/index.html",
-                    HttpVersion.HTTP_1_1,
-                    new HashMap<>() {
-                        {
-                            put("Accept", "text/html");
-                        }
-                    }, "");
+            HttpRequest request = Fixture.createHttpGetRequest();
             HttpResponse response = new HttpResponse();
 
             processor.processRequest(request, response);
@@ -51,13 +43,8 @@ class HttpRequestProcessorTest {
         }
 
         @Test
-        void 존재하지_않는_정적_파일_요청_시_예외가_발생한다() {
-            HttpRequest request = new HttpRequest(HttpMethod.GET,
-                    "/nonexistent.html",
-                    HttpVersion.HTTP_1_1,
-                    new HashMap<>() {{
-                        put("Accept", "text/html");
-                    }}, "");
+        void 존재하지_않는_정적_파일_요청_시_예외가_발생한다() throws URISyntaxException {
+            HttpRequest request = Fixture.createHttpGetRequest("/not_found_really.html");
             HttpResponse response = new HttpResponse();
 
             assertThrows(ResourceNotFoundException.class, () -> processor.processRequest(request, response));

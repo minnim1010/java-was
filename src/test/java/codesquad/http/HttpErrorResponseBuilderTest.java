@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.utils.Fixture;
-import java.io.IOException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -20,7 +19,7 @@ class HttpErrorResponseBuilderTest {
     private HttpErrorResponseBuilder httpErrorResponseBuilder = new HttpErrorResponseBuilder();
 
     @Test
-    void Internal_Server_Error_응답을_만든다() throws IOException {
+    void Internal_Server_Error_응답을_만든다() throws Exception {
         HttpRequest request = Fixture.createHttpGetRequest();
         HttpResponse response = new HttpResponse();
 
@@ -33,7 +32,7 @@ class HttpErrorResponseBuilderTest {
     }
 
     @Test
-    void Bad_Request_응답을_만든다() throws IOException {
+    void Bad_Request_응답을_만든다() throws Exception {
         HttpRequest request = Fixture.createHttpGetRequest();
         HttpResponse response = new HttpResponse();
 
@@ -46,7 +45,7 @@ class HttpErrorResponseBuilderTest {
     }
 
     @Test
-    void Not_Found_응답을_만든다() throws IOException {
+    void Not_Found_응답을_만든다() throws Exception {
         HttpRequest request = Fixture.createHttpGetRequest();
         HttpResponse response = new HttpResponse();
 

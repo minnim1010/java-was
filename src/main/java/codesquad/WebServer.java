@@ -1,10 +1,7 @@
 package codesquad;
 
 import codesquad.config.GlobalConfig;
-import codesquad.http.HttpErrorResponseBuilder;
-import codesquad.http.HttpParser;
 import codesquad.http.HttpProcessor;
-import codesquad.http.HttpRequestProcessor;
 import codesquad.socket.ClientSocket;
 import codesquad.socket.ServerSocket;
 import java.io.IOException;
@@ -17,11 +14,7 @@ import org.slf4j.LoggerFactory;
 public class WebServer {
 
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
-    private static final HttpParser httpParser = new HttpParser();
-    private static final HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
-    private static final HttpErrorResponseBuilder httpErrorResponseBuilder = new HttpErrorResponseBuilder();
-    private static final HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor,
-            httpErrorResponseBuilder);
+    private static final HttpProcessor httpProcessor = new HttpProcessor();
 
     public void run() {
         ExecutorService threadPool = Executors.newFixedThreadPool(GlobalConfig.REQUEST_THREADS);
@@ -79,4 +72,3 @@ public class WebServer {
         log.info("Server shutdown complete");
     }
 }
-

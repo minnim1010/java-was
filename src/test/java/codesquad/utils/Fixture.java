@@ -3,6 +3,8 @@ package codesquad.utils;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public final class Fixture {
@@ -17,9 +19,20 @@ public final class Fixture {
      *
      * @return HttpRequest object
      */
-    public static HttpRequest createHttpGetRequest() {
+    public static HttpRequest createHttpGetRequest() throws URISyntaxException {
         return new HttpRequest(HttpMethod.GET,
-                "/index.html",
+                new URI("/index.html"),
+                HttpVersion.HTTP_1_1,
+                new HashMap<>() {
+                    {
+                        put("Accept", "text/html");
+                    }
+                }, "");
+    }
+
+    public static HttpRequest createHttpGetRequest(String uri) throws URISyntaxException {
+        return new HttpRequest(HttpMethod.GET,
+                new URI(uri),
                 HttpVersion.HTTP_1_1,
                 new HashMap<>() {
                     {

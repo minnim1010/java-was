@@ -11,30 +11,41 @@ import codesquad.error.UnSupportedMediaTypeException;
 import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
+import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpStatus;
 import codesquad.utils.FileUtils;
 import java.io.IOException;
 
 public class HttpRequestProcessor {
 
+    private static final RequestHandlerResolver REQUEST_HANDLER_RESOLVER = new RequestHandlerResolver();
+
     public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        switch (httpRequest.method()) {
-            case GET -> processGet(httpRequest, httpResponse);
-            case POST -> processPost(httpRequest, httpResponse);
-            default -> throw new UnsupportedOperationException("Unsupported HTTP Method " + httpRequest.method());
+        HttpMethod method = httpRequest.getMethod();
+        String path = httpRequest.getUri().getPath();
+
+        RequestHandler requestHandler = REQUEST_HANDLER_RESOLVER.resolve(path);
+        if (requestHandler == null) {
+            responseStaticFile(httpRequest, httpResponse);
+            return;
+        }
+
+        switch (method) {
+            case GET -> requestHandler.processGet(httpRequest, httpResponse);
+            case POST -> requestHandler.processPost(httpRequest, httpResponse);
+            default -> throw new UnsupportedOperationException("Unsupported HTTP Method " + method);
         }
     }
 
-    private void processGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String path = httpRequest.path();
+    private void responseStaticFile(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+        String path = httpRequest.getUri().getPath();
         String filePath = findFilePath(path);
-
-        httpResponse.setHeader(CONTENT_TYPE.getFieldName(), processAcceptHeader(httpRequest, filePath));
         byte[] fileContent = loadFile(filePath);
+        httpResponse.setHeader(CONTENT_TYPE.getFieldName(), processAcceptHeader(httpRequest, filePath));
         httpResponse.setBody(fileContent);
 
         httpResponse.setStatus(HttpStatus.OK);
-        httpResponse.setVersion(httpRequest.version());
+        httpResponse.setVersion(httpRequest.getVersion());
     }
 
     private String findFilePath(String path) {
@@ -63,11 +74,6 @@ public class HttpRequestProcessor {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found" + staticFilePath));
 
         return FileUtils.loadFile(alterFilePath);
-    }
-
-
-    private void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
-        // todo implement post request
     }
 
     private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {

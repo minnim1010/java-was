@@ -12,17 +12,9 @@ public class HttpProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(HttpProcessor.class);
 
-    private final HttpParser httpParser;
-    private final HttpRequestProcessor httpRequestProcessor;
-    private final HttpErrorResponseBuilder httpErrorResponseBuilder;
-
-    public HttpProcessor(HttpParser httpParser,
-                         HttpRequestProcessor httpRequestProcessor,
-                         HttpErrorResponseBuilder httpErrorResponseBuilder) {
-        this.httpParser = httpParser;
-        this.httpRequestProcessor = httpRequestProcessor;
-        this.httpErrorResponseBuilder = httpErrorResponseBuilder;
-    }
+    private static final HttpParser httpParser = new HttpParser();
+    private static final HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
+    private static final HttpErrorResponseBuilder httpErrorResponseBuilder = new HttpErrorResponseBuilder();
 
     public byte[] process(String input) throws IOException {
         HttpRequest request = null;
@@ -40,6 +32,7 @@ public class HttpProcessor {
             } else {
                 response = httpErrorResponseBuilder.createServerErrorResponse(request, response);
             }
+            //todo 406 처리해줘야
             log.error(e.getMessage(), e);
         }
 
