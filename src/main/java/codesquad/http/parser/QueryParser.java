@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.parser;
 
 import codesquad.error.QueryParseException;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.parser;
 
 import static codesquad.http.HttpConstraints.CRLF;
 import static codesquad.http.HttpConstraints.HEADER_DELIMITER;

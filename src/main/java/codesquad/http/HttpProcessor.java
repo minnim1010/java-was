@@ -4,6 +4,7 @@ import codesquad.error.HttpRequestParseException;
 import codesquad.error.ResourceNotFoundException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
+import codesquad.http.parser.HttpParser;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
