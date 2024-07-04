@@ -84,8 +84,6 @@ public class HttpResponse {
      * @throws IOException
      */
     public byte[] format() throws IOException {
-        setDefaultHeader();
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         String statusLine = version.getDisplayName() + " " +
@@ -106,7 +104,7 @@ public class HttpResponse {
         return outputStream.toByteArray();
     }
 
-    private void setDefaultHeader() {
+    public void setDateHeader() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", GlobalConfig.LOCALE);
         dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
         String date = dateFormat.format(new Date());

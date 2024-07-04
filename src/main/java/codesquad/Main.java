@@ -1,13 +1,10 @@
 package codesquad;
 
 import codesquad.config.GlobalConfig;
-import codesquad.error.HttpRequestParseException;
-import codesquad.error.ResourceNotFoundException;
 import codesquad.http.HttpErrorResponseBuilder;
 import codesquad.http.HttpParser;
 import codesquad.http.HttpProcessor;
-import codesquad.http.message.HttpRequest;
-import codesquad.http.message.HttpResponse;
+import codesquad.http.HttpRequestProcessor;
 import codesquad.socket.ClientSocket;
 import codesquad.socket.ServerSocket;
 import java.io.IOException;
@@ -21,8 +18,10 @@ public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     private static final HttpParser httpParser = new HttpParser();
+    private static final HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
     private static final HttpErrorResponseBuilder httpErrorResponseBuilder = new HttpErrorResponseBuilder();
-    private static final HttpProcessor httpProcessor = new HttpProcessor();
+    private static final HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor,
+            httpErrorResponseBuilder);
 
     public static void main(String[] args) {
         ExecutorService threadPool = Executors.newFixedThreadPool(GlobalConfig.REQUEST_THREADS);
@@ -47,36 +46,11 @@ public class Main {
             log.debug("Client connected: port " + clientSocket.getPort());
 
             String input = clientSocket.read();
-            byte[] output = processHttp(input);
+            byte[] output = httpProcessor.process(input);
             clientSocket.write(output);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
-    }
-
-    private static byte[] processHttp(String input) throws IOException {
-        HttpRequest request = null;
-        HttpResponse response = new HttpResponse();
-        byte[] responseResult = null;
-
-        try {
-            request = httpParser.parse(input);
-            httpProcessor.processRequest(request, response);
-        } catch (Exception e) {
-            if (e instanceof HttpRequestParseException) {
-                responseResult = httpErrorResponseBuilder.createBadRequestResponse(request, response);
-            } else if (e instanceof ResourceNotFoundException) {
-                responseResult = httpErrorResponseBuilder.createNotFoundResponse(request, response);
-            } else {
-                responseResult = httpErrorResponseBuilder.createServerErrorResponse(request, response);
-            }
-            log.error(e.getMessage(), e);
-        }
-
-        if (responseResult == null) {
-            responseResult = response.format();
-        }
-        return responseResult;
     }
 
     private static void shutdownServer(ExecutorService threadPool, ServerSocket serverSocket) {

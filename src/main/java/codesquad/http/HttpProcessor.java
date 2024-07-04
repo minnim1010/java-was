@@ -1,58 +1,48 @@
 package codesquad.http;
 
-import static codesquad.http.header.HeaderField.ACCEPT;
-import static codesquad.http.header.HeaderField.CONTENT_TYPE;
-import static codesquad.utils.FileUtils.findStaticFilePath;
-import static codesquad.utils.FileUtils.getFileExtension;
-
-import codesquad.error.UnSupportedMediaTypeException;
-import codesquad.http.header.ContentType;
+import codesquad.error.HttpRequestParseException;
+import codesquad.error.ResourceNotFoundException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.property.HttpStatus;
-import codesquad.utils.FileUtils;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpProcessor {
 
-    public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        switch (httpRequest.method()) {
-            case GET -> processGet(httpRequest, httpResponse);
-            case POST -> processPost(httpRequest, httpResponse);
-            default -> throw new UnsupportedOperationException("Unsupported HTTP Method " + httpRequest.method());
-        }
+    private static final Logger log = LoggerFactory.getLogger(HttpProcessor.class);
+
+    private final HttpParser httpParser;
+    private final HttpRequestProcessor httpRequestProcessor;
+    private final HttpErrorResponseBuilder httpErrorResponseBuilder;
+
+    public HttpProcessor(HttpParser httpParser,
+                         HttpRequestProcessor httpRequestProcessor,
+                         HttpErrorResponseBuilder httpErrorResponseBuilder) {
+        this.httpParser = httpParser;
+        this.httpRequestProcessor = httpRequestProcessor;
+        this.httpErrorResponseBuilder = httpErrorResponseBuilder;
     }
 
-    private void processGet(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String path = httpRequest.path();
-        String staticFilePath = findStaticFilePath(path);
+    public byte[] process(String input) throws IOException {
+        HttpRequest request = null;
+        HttpResponse response = new HttpResponse();
 
-        httpResponse.setHeader(CONTENT_TYPE.getFieldName(), processAcceptHeader(httpRequest, staticFilePath));
-
-        byte[] fileContent = FileUtils.loadFile(staticFilePath);
-        httpResponse.setBody(fileContent);
-
-        httpResponse.setStatus(HttpStatus.OK);
-        httpResponse.setVersion(httpRequest.version());
-    }
-
-    private void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
-        // todo implement post request
-    }
-
-    private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {
-        String fileExtension = getFileExtension(staticFilePath);
-        if (fileExtension.isEmpty()) {
-            return ContentType.UNKNOWN.getContentType();
+        try {
+            request = httpParser.parse(input);
+            httpRequestProcessor.processRequest(request, response);
+            response.setDateHeader();
+        } catch (Exception e) {
+            if (e instanceof HttpRequestParseException) {
+                response = httpErrorResponseBuilder.createBadRequestResponse(request, response);
+            } else if (e instanceof ResourceNotFoundException) {
+                response = httpErrorResponseBuilder.createNotFoundResponse(request, response);
+            } else {
+                response = httpErrorResponseBuilder.createServerErrorResponse(request, response);
+            }
+            log.error(e.getMessage(), e);
         }
 
-        String contentType = ContentType.getContentTypeByExtension(fileExtension);
-
-        String acceptHeaderValue = httpRequest.getHeader(ACCEPT.getFieldName());
-        if (acceptHeaderValue.contains(contentType) || acceptHeaderValue.contains("*/*")) {
-            return contentType;
-        }
-
-        throw new UnSupportedMediaTypeException("Unsupported Media Type " + fileExtension);
+        return response.format();
     }
 }
