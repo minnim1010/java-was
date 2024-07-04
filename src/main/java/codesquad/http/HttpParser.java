@@ -9,7 +9,6 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -24,45 +23,37 @@ public class HttpParser {
         try {
             String[] lines = httpRequestStr.split(CRLF);
 
+            // start line
             String[] requestLine = lines[0].split(BLANK);
             HttpMethod method = HttpMethod.of(requestLine[0]);
-            URI uri = null;
-            try {
-                uri = new URI(requestLine[1]);
-            } catch (URISyntaxException e) {
-                throw new HttpRequestParseException("Invalid request", e);
-            }
+            URI uri = new URI(requestLine[1]);
             String query = uri.getQuery();
             Map<String, String> queryMap = queryParser.parseQuery(query);
-
             HttpVersion version = HttpVersion.of(requestLine[2]);
 
+            // headers
             Map<String, String> headers = new HashMap<>();
-            int curLineIdx = 1;
-            while (curLineIdx < lines.length && lines[curLineIdx].contains(HEADER_DELIMITER)) {
-                String[] header = lines[curLineIdx++].split(HEADER_DELIMITER);
-                String headerType = header[0];
-                String headerValue = header[1];
+            int lineIndex = 1;
+            while (lineIndex < lines.length && lines[lineIndex].contains(HEADER_DELIMITER)) {
+                String[] headerParts = lines[lineIndex++].split(HEADER_DELIMITER, 2);
+                String headerKey = headerParts[0].trim();
+                String headerValue = headerParts[1].trim();
 
-                //todo: refactor 변수명 위에 정의한 대로 수정, 분기 처리 대신 map api 사용해서 리팩토링할 있나 확인
-                if (headers.containsKey(header[0])) {
-                    headers.put(headerType, headers.get(headerType) + ", " + headerValue);
-                } else {
-                    headers.put(header[0], header[1]);
-                }
+                headers.merge(headerKey, headerValue, (existingValue, newValue) -> existingValue + ", " + newValue);
             }
 
+            // body
             StringBuilder body = new StringBuilder();
-
-            for (curLineIdx = curLineIdx + 1; curLineIdx < lines.length; curLineIdx++) {
-                body.append(lines[curLineIdx]);
+            for (lineIndex = lineIndex + 1; lineIndex < lines.length; lineIndex++) {
+                body.append(lines[lineIndex]);
             }
 
             HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body.toString());
             log.debug(httpRequest.toString());
+
             return httpRequest;
         } catch (Exception e) {
-            throw new HttpRequestParseException("Invalid request");
+            throw new HttpRequestParseException("Failed to parse HTTP request", e);
         }
     }
 }
