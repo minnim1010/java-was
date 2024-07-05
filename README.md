@@ -47,4 +47,3 @@
 - 헤더 파싱 시, 헤더 이름이 중복되는 경우는 후속 필드 행값을 쉼표로 구분하여 합쳤습니다.
   - rf: https://www.rfc-editor.org/rfc/rfc9110#name-field-order
 - 프로그램 안정성을 위해 JVM Runtime.getRuntime().addShutdownHook()을 사용하여 종료 시, 소켓 및 스레드 풀 자원을 정리하도록 했습니다.
-- 웹 상 테스트 자동화를 위해 selenium 기반 python 스크립트를 작성하여 테스트를 진행했습니다.
