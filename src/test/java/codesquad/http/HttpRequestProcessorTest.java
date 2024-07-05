@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@DisplayName("Http 요청 처리 테스트")
+@DisplayName("HTTP API 실행 및 리소스 반환 테스트")
 class HttpRequestProcessorTest {
 
     private HttpRequestProcessor processor;
