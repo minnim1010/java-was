@@ -1,84 +1,63 @@
 package codesquad.http;
 
-import static codesquad.utils.FileUtils.findStaticFilePath;
-import static codesquad.utils.FileUtils.getFileExtension;
+import static codesquad.http.header.HeaderField.DATE;
 
+import codesquad.config.GlobalConfig;
+import codesquad.error.HttpRequestParseException;
 import codesquad.error.ResourceNotFoundException;
-import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
+import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpStatus;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpProcessor {
 
-    public HttpResponse processRequest(HttpRequest httpRequest) throws IOException {
-        return switch (httpRequest.method()) {
-            case GET -> processGet(httpRequest);
-            case POST -> processPost(httpRequest);
-        };
+    private static final Logger log = LoggerFactory.getLogger(HttpProcessor.class);
+
+    private final HttpParser httpParser;
+    private final HttpRequestProcessor httpRequestProcessor;
+
+    public HttpProcessor(HttpParser httpParser,
+                         HttpRequestProcessor httpRequestProcessor) {
+        this.httpParser = httpParser;
+        this.httpRequestProcessor = httpRequestProcessor;
     }
 
-    private HttpResponse processGet(HttpRequest httpRequest) throws IOException {
-        String path = httpRequest.path();
-        String staticFilePath = findStaticFilePath(path);
+    public byte[] process(String input) throws IOException {
+        HttpResponse response = new HttpResponse();
 
-        Map<String, String> responseHeader = processHeader(httpRequest, staticFilePath);
-
-        byte[] fileContent = loadFile(staticFilePath);
-
-        HttpStatus status = HttpStatus.OK;
-
-        return new HttpResponse(httpRequest.version(),
-                status,
-                responseHeader,
-                fileContent);
-    }
-
-    private HttpResponse processPost(HttpRequest httpRequest) {
-        // todo implement post request
-
-        return null;
-    }
-
-    private byte[] loadFile(String staticFilePath) throws IOException {
-        File file = new File(staticFilePath);
-        if (!file.exists()) {
-            throw new ResourceNotFoundException("File not found" + staticFilePath);
+        try {
+            HttpRequest request = httpParser.parse(input);
+            httpRequestProcessor.processRequest(request, response);
+        } catch (Exception e) {
+            if (e instanceof HttpRequestParseException) {
+                response = new HttpResponse(HttpStatus.BAD_REQUEST);
+            } else if (e instanceof ResourceNotFoundException) {
+                response = new HttpResponse(HttpStatus.NOT_FOUND);
+            } else if (e instanceof UnsupportedOperationException) {
+                response = new HttpResponse(HttpStatus.NOT_ACCEPTABLE);
+            } else {
+                response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            log.error(e.getMessage(), e);
         }
 
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            byte[] fileBytes = new byte[(int) file.length()];
-            fileInputStream.read(fileBytes);
-            return fileBytes;
-        }
+        setDateHeader(response);
+
+        return response.format();
     }
 
-    private Map<String, String> processHeader(HttpRequest httpRequest, String staticFilePath) {
-        Map<String, String> responseHeader = new HashMap<>();
-        responseHeader.put("Content-Type", processAcceptHeader(httpRequest, staticFilePath));
-        return responseHeader;
-    }
+    private void setDateHeader(HttpResponse httpResponse) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", GlobalConfig.LOCALE);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
+        String date = dateFormat.format(new Date());
 
-    private String processAcceptHeader(HttpRequest httpRequest, String staticFilePath) {
-        String fileExtension = getFileExtension(staticFilePath);
-        String contentType = ContentType.getContentTypeByExtension(fileExtension);
-
-        String acceptHeaderValue = httpRequest.getHeader("Accept");
-        if (acceptHeaderValue.contains(contentType) || acceptHeaderValue.contains("*/*")) {
-            return contentType;
-        }
-
-        int firstAcceptValueIndex = acceptHeaderValue.indexOf(",");
-        if (firstAcceptValueIndex != -1) {
-            return acceptHeaderValue.substring(0, firstAcceptValueIndex);
-        }
-
-        return ContentType.UNKNOWN.getContentType();
-        //todo 없으면 406 Not Acceptable
+        httpResponse.setHeader(DATE.getFieldName(), date);
     }
 }

@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.parser;
 
 import static codesquad.http.HttpConstraints.CRLF;
 import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
@@ -8,6 +8,7 @@ import codesquad.error.HttpRequestParseException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -16,41 +17,43 @@ import org.slf4j.LoggerFactory;
 public class HttpParser {
 
     private static final Logger log = LoggerFactory.getLogger(HttpParser.class);
+    private static final QueryParser queryParser = new QueryParser();
 
     public HttpRequest parse(String httpRequestStr) throws HttpRequestParseException {
         try {
             String[] lines = httpRequestStr.split(CRLF);
 
+            // start line
             String[] requestLine = lines[0].split(BLANK);
             HttpMethod method = HttpMethod.of(requestLine[0]);
-            String path = requestLine[1];
+            URI uri = new URI(requestLine[1]);
+            String query = uri.getQuery();
+            Map<String, String> queryMap = queryParser.parseQuery(query);
             HttpVersion version = HttpVersion.of(requestLine[2]);
 
+            // headers
             Map<String, String> headers = new HashMap<>();
-            int curLineIdx = 1;
-            while (curLineIdx < lines.length && lines[curLineIdx].contains(HEADER_DELIMITER)) {
-                String[] header = lines[curLineIdx++].split(HEADER_DELIMITER);
-                String headerType = header[0];
-                String headerValue = header[1];
+            int lineIndex = 1;
+            while (lineIndex < lines.length && lines[lineIndex].contains(HEADER_DELIMITER)) {
+                String[] headerParts = lines[lineIndex++].split(HEADER_DELIMITER, 2);
+                String headerKey = headerParts[0].trim();
+                String headerValue = headerParts[1].trim();
 
-                if (headers.containsKey(header[0])) {
-                    headers.put(headerType, headers.get(headerType) + ", " + headerValue);
-                } else {
-                    headers.put(header[0], header[1]);
-                }
+                headers.merge(headerKey, headerValue, (existingValue, newValue) -> existingValue + ", " + newValue);
             }
 
+            // body
             StringBuilder body = new StringBuilder();
-
-            for (curLineIdx = curLineIdx + 1; curLineIdx < lines.length; curLineIdx++) {
-                body.append(lines[curLineIdx]);
+            for (lineIndex = lineIndex + 1; lineIndex < lines.length; lineIndex++) {
+                body.append(lines[lineIndex]);
             }
 
-            HttpRequest httpRequest = new HttpRequest(method, path, version, headers, body.toString());
+            HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body.toString());
             log.debug(httpRequest.toString());
+
             return httpRequest;
         } catch (Exception e) {
-            throw new HttpRequestParseException("Invalid request");
+            throw new HttpRequestParseException("Failed to parse HTTP request", e);
         }
     }
 }
