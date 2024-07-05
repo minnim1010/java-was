@@ -43,6 +43,18 @@ class HttpRequestProcessorTest {
         }
 
         @Test
+        void 디렉토리만_명시된_uri를_가진_요청인_경우_해당_디렉토리의_디폴트_파일을_반환하여_처리할_수_있다() throws Exception {
+            HttpRequest request = Fixture.createHttpGetRequest("/");
+            HttpResponse response = new HttpResponse();
+
+            processor.processRequest(request, response);
+
+            assertEquals("HTTP/1.1", response.getVersion().getDisplayName());
+            assertEquals(200, response.getStatus().getCode());
+            assertEquals("text/html", response.getHeader(CONTENT_TYPE.getFieldName()));
+        }
+
+        @Test
         void 존재하지_않는_정적_파일_요청_시_예외가_발생한다() throws URISyntaxException {
             HttpRequest request = Fixture.createHttpGetRequest("/not_found_really.html");
             HttpResponse response = new HttpResponse();
