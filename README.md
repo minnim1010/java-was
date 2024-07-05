@@ -30,7 +30,7 @@
 
 **기본 요구 사항**
 
-- “회원가입” 메뉴를 클릭하면 http://localhost:8080/register.html 로 이동, 회원가입 폼을 표시한다.
+- “회원가입” 메뉴를 클릭하면 http://localhost:8080/registeration.html 로 이동, 회원가입 폼을 표시한다.
 - 회원가입 폼에서 `가입` 버튼을 클릭하면 다음 형태로 사용자가 입력한 값이 서버에 전달되어야 한다.
   - `/create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net`
 - 사용자가 입력한 값을 파싱해 model.User 클래스에 저장한다.
