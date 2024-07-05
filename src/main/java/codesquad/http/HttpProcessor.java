@@ -20,8 +20,14 @@ public class HttpProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(HttpProcessor.class);
 
-    private static final HttpParser httpParser = new HttpParser();
-    private static final HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
+    private final HttpParser httpParser;
+    private final HttpRequestProcessor httpRequestProcessor;
+
+    public HttpProcessor(HttpParser httpParser,
+                         HttpRequestProcessor httpRequestProcessor) {
+        this.httpParser = httpParser;
+        this.httpRequestProcessor = httpRequestProcessor;
+    }
 
     public byte[] process(String input) throws IOException {
         HttpResponse response = new HttpResponse();
@@ -29,7 +35,6 @@ public class HttpProcessor {
         try {
             HttpRequest request = httpParser.parse(input);
             httpRequestProcessor.processRequest(request, response);
-            setDateHeader(response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
                 response = new HttpResponse(HttpStatus.BAD_REQUEST);
@@ -42,6 +47,8 @@ public class HttpProcessor {
             }
             log.error(e.getMessage(), e);
         }
+
+        setDateHeader(response);
 
         return response.format();
     }
