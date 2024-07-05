@@ -11,6 +11,7 @@ import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpStatus;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.TimeZone;
@@ -27,11 +28,12 @@ import org.junit.jupiter.api.Test;
 class HttpProcessorTest {
 
     private HttpProcessor httpProcessor;
+    RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
 
     @BeforeEach
     void setUp() {
         HttpParser httpParser = new HttpParser();
-        HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
+        HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
         httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
     }
 
@@ -102,7 +104,7 @@ class HttpProcessorTest {
         @Test
         void 지원되지_않는_미디어_타입이라면_406_NOT_ACCEPTABLE_응답을_반환한다() throws Exception {
             String input = "POST / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor() {
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
                     throw new UnsupportedOperationException();
@@ -119,7 +121,7 @@ class HttpProcessorTest {
         @Test
         void 예기치_않은_예외가_발생하면_500_INTERNAL_SERVER_ERROR_응답을_반환한다() throws Exception {
             String input = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor() {
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
                     throw new RuntimeException();

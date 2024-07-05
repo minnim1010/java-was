@@ -1,14 +1,18 @@
 package codesquad.http;
 
 import static codesquad.http.header.HeaderField.CONTENT_TYPE;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import codesquad.error.ResourceNotFoundException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
+import codesquad.http.property.HttpStatus;
 import codesquad.utils.Fixture;
 import java.net.URISyntaxException;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -21,21 +25,23 @@ import org.junit.jupiter.api.Test;
 @DisplayName("HTTP API 실행 및 리소스 반환 테스트")
 class HttpRequestProcessorTest {
 
-    private HttpRequestProcessor processor;
-
-    @BeforeEach
-    void setUp() {
-        processor = new HttpRequestProcessor();
-    }
+    private HttpRequestProcessor httpRequestProcessor;
 
     @Nested
-    class GET_요청을_처리한다 {
+    class 정적_파일_요청을_처리한다 {
+        @BeforeEach
+        void setUp() {
+            Map<String, RequestHandler> testRequestHandlerMap = Map.of();
+            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(testRequestHandlerMap);
+            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
+        }
+
         @Test
         void 존재하는_정적_파일_요청을_처리할_수_있다() throws Exception {
             HttpRequest request = Fixture.createHttpGetRequest();
             HttpResponse response = new HttpResponse();
 
-            processor.processRequest(request, response);
+            httpRequestProcessor.processRequest(request, response);
 
             assertEquals("HTTP/1.1", response.getVersion().getDisplayName());
             assertEquals(200, response.getStatus().getCode());
@@ -47,7 +53,7 @@ class HttpRequestProcessorTest {
             HttpRequest request = Fixture.createHttpGetRequest("/");
             HttpResponse response = new HttpResponse();
 
-            processor.processRequest(request, response);
+            httpRequestProcessor.processRequest(request, response);
 
             assertEquals("HTTP/1.1", response.getVersion().getDisplayName());
             assertEquals(200, response.getStatus().getCode());
@@ -59,7 +65,46 @@ class HttpRequestProcessorTest {
             HttpRequest request = Fixture.createHttpGetRequest("/not_found_really.html");
             HttpResponse response = new HttpResponse();
 
-            assertThrows(ResourceNotFoundException.class, () -> processor.processRequest(request, response));
+            assertThrows(ResourceNotFoundException.class, () -> httpRequestProcessor.processRequest(request, response));
+        }
+    }
+
+    @Nested
+    class HTTP_API_요청을_성공적으로_처리한다 {
+
+        @BeforeEach
+        void setUp() {
+            Map<String, RequestHandler> testRequestHandlerMap = Map.of("/test", new TestRequestHandler());
+            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(testRequestHandlerMap);
+            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
+        }
+
+        @Test
+        void GET_요청이_정상적으로_처리된다() throws Exception {
+            HttpRequest httpRequest = Fixture.createHttpGetRequest("/test");
+            HttpResponse httpResponse = new HttpResponse();
+
+            httpRequestProcessor.processRequest(httpRequest, httpResponse);
+
+            assertAll(
+                    () -> assertNotNull(httpResponse),
+                    () -> assertEquals(HttpStatus.OK, httpResponse.getStatus()),
+                    () -> assertEquals("GET request processed", new String(httpResponse.getBody()))
+            );
+        }
+
+        public class TestRequestHandler implements RequestHandler {
+            @Override
+            public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {
+                httpResponse.setStatus(HttpStatus.OK);
+                httpResponse.setBody("GET request processed".getBytes());
+            }
+
+            @Override
+            public void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
+                httpResponse.setStatus(HttpStatus.OK);
+                httpResponse.setBody("POST request processed".getBytes());
+            }
         }
     }
 }

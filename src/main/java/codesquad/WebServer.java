@@ -3,6 +3,7 @@ package codesquad;
 import codesquad.config.GlobalConfig;
 import codesquad.http.HttpProcessor;
 import codesquad.http.HttpRequestProcessor;
+import codesquad.http.RequestHandlerResolver;
 import codesquad.http.parser.HttpParser;
 import codesquad.socket.ClientSocket;
 import codesquad.socket.ServerSocket;
@@ -16,9 +17,18 @@ import org.slf4j.LoggerFactory;
 public class WebServer {
 
     private static final Logger log = LoggerFactory.getLogger(WebServer.class);
-    private static final HttpParser httpParser = new HttpParser();
-    private static final HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor();
-    private static final HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
+
+    private final HttpParser httpParser;
+    private final RequestHandlerResolver requestHandlerResolver;
+    private final HttpRequestProcessor httpRequestProcessor;
+    private final HttpProcessor httpProcessor;
+
+    public WebServer() {
+        this.httpParser = new HttpParser();
+        this.requestHandlerResolver = new RequestHandlerResolver(GlobalConfig.REQUEST_HANDLER);
+        this.httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
+        this.httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
+    }
 
     public void run() {
         ExecutorService threadPool = Executors.newFixedThreadPool(GlobalConfig.REQUEST_THREADS);

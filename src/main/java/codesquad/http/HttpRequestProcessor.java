@@ -18,13 +18,17 @@ import java.io.IOException;
 
 public class HttpRequestProcessor {
 
-    private static final RequestHandlerResolver REQUEST_HANDLER_RESOLVER = new RequestHandlerResolver();
+    private final RequestHandlerResolver requestHandlerResolver;
+
+    public HttpRequestProcessor(RequestHandlerResolver requestHandlerResolver) {
+        this.requestHandlerResolver = requestHandlerResolver;
+    }
 
     public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         HttpMethod method = httpRequest.getMethod();
         String path = httpRequest.getUri().getPath();
 
-        RequestHandler requestHandler = REQUEST_HANDLER_RESOLVER.resolve(path);
+        RequestHandler requestHandler = requestHandlerResolver.resolve(path);
         if (requestHandler == null) {
             responseStaticFile(httpRequest, httpResponse);
             return;

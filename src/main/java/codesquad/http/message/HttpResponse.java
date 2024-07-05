@@ -56,6 +56,10 @@ public class HttpResponse {
         setHeader(CONTENT_LENGTH.getFieldName(), String.valueOf(body.length));
     }
 
+    public byte[] getBody() {
+        return body;
+    }
+
     public HttpVersion getVersion() {
         return version;
     }
