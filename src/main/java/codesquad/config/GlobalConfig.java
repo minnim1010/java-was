@@ -1,7 +1,7 @@
 package codesquad.config;
 
+import codesquad.business.processor.UserProcessor;
 import codesquad.http.RequestHandler;
-import codesquad.http.UserProcessor;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;

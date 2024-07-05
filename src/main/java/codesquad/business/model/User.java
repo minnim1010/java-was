@@ -1,4 +1,4 @@
-package codesquad.model;
+package codesquad.business.model;
 
 public record User(String userId,
                    String password,

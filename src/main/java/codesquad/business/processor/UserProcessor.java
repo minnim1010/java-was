@@ -1,9 +1,10 @@
-package codesquad.http;
+package codesquad.business.processor;
 
+import codesquad.business.model.User;
+import codesquad.http.RequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
-import codesquad.model.User;
 
 public class UserProcessor implements RequestHandler {
 
