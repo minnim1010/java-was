@@ -19,7 +19,6 @@ public class UserProcessor implements RequestHandler {
 
         httpResponse.setStatus(HttpStatus.MOVED_PERMANENTLY);
         httpResponse.setHeader("Location", "/index.html");
-        httpResponse.setVersion(httpRequest.getVersion());
     }
 
     @Override

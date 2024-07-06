@@ -13,6 +13,7 @@ import codesquad.http.property.HttpStatus;
 import codesquad.utils.Fixture;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -29,11 +30,14 @@ class HttpRequestProcessorTest {
 
     @Nested
     class 정적_파일_요청을_처리한다 {
+
         @BeforeEach
         void setUp() {
             Map<String, RequestHandler> testRequestHandlerMap = Map.of();
             RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(testRequestHandlerMap);
-            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
+            StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
+                    Set.of("/index.html"));
+            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
         }
 
         @Test
@@ -76,7 +80,9 @@ class HttpRequestProcessorTest {
         void setUp() {
             Map<String, RequestHandler> testRequestHandlerMap = Map.of("/test", new TestRequestHandler());
             RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(testRequestHandlerMap);
-            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
+            StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
+                    Set.of("/index.html"));
+            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
         }
 
         @Test

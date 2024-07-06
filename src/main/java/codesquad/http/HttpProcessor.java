@@ -54,7 +54,7 @@ public class HttpProcessor {
     }
 
     private void setDateHeader(HttpResponse httpResponse) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", GlobalConfig.LOCALE);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", GlobalConfig.LOCALE);
         dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
         String date = dateFormat.format(new Date());
 

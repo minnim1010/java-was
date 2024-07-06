@@ -14,8 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.TimeZone;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -27,15 +27,13 @@ import org.junit.jupiter.api.Test;
 @DisplayName("HTTP 요청 처리 테스트")
 class HttpProcessorTest {
 
-    private HttpProcessor httpProcessor;
+    HttpParser httpParser = new HttpParser();
     RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
+    StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(Set.of("/index.html"));
+    HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+            staticResourceRequestHandler);
 
-    @BeforeEach
-    void setUp() {
-        HttpParser httpParser = new HttpParser();
-        HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
-        httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
-    }
+    HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
 
     private void validateResponse(byte[] actualBytes, HttpResponse expectedResponse, HttpStatus expectedStatus) {
         Scanner scanner = new Scanner(new ByteArrayInputStream(actualBytes));
@@ -74,6 +72,7 @@ class HttpProcessorTest {
         @Test
         void GET_요청_처리_시_200_OK_응답을_반환한다() throws Exception {
             String input = "GET / HTTP/1.1\r\nHost: localhost\r\nAccept: */*\n\r\n";
+
             byte[] result = httpProcessor.process(input);
 
             HttpResponse expectedResponse = new HttpResponse(HttpStatus.OK);
@@ -104,7 +103,8 @@ class HttpProcessorTest {
         @Test
         void 지원되지_않는_미디어_타입이라면_406_NOT_ACCEPTABLE_응답을_반환한다() throws Exception {
             String input = "POST / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver) {
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+                    staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
                     throw new UnsupportedOperationException();
@@ -121,7 +121,8 @@ class HttpProcessorTest {
         @Test
         void 예기치_않은_예외가_발생하면_500_INTERNAL_SERVER_ERROR_응답을_반환한다() throws Exception {
             String input = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver) {
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+                    staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
                     throw new RuntimeException();
