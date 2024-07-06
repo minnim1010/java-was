@@ -6,7 +6,6 @@ import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -95,15 +94,15 @@ public class HttpResponse {
         String statusLine = version.getDisplayName() + " " +
                 status.getCode() + " " +
                 status.getMessage() + "\r\n";
-        outputStream.write(statusLine.getBytes(StandardCharsets.UTF_8));
+        outputStream.write(statusLine.getBytes("UTF-8"));
 
         for (Entry<String, String> entry : headers.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             String header = key + ": " + value + "\r\n";
-            outputStream.write(header.getBytes(StandardCharsets.UTF_8));
+            outputStream.write(header.getBytes("UTF-8"));
         }
-        outputStream.write("\r\n".getBytes(StandardCharsets.UTF_8));
+        outputStream.write("\r\n".getBytes("UTF-8"));
 
         outputStream.write(body);
 
