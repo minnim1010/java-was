@@ -42,11 +42,7 @@ public class StaticResourceRequestHandler {
         }
 
         return GlobalConfig.DEFAULT_PAGES.stream()
-                .map(defaultPage -> {
-                    String s = path + (path.endsWith("/") ? "" : "/") + defaultPage;
-                    System.out.println(s);
-                    return s;
-                })
+                .map(defaultPage -> path + (path.endsWith("/") ? "" : "/") + defaultPage)
                 .filter(staticResourcePaths::contains)
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found: " + path));

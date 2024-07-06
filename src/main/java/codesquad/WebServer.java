@@ -74,8 +74,6 @@ public class WebServer {
                 File directory = new File(directoryURL.toURI());
                 filePaths = loadFilesFromDirectory(directory, directoryPath);
             }
-
-            System.out.println(filePaths);
             return filePaths;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
