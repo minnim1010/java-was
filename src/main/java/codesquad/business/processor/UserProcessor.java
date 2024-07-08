@@ -1,7 +1,7 @@
 package codesquad.business.processor;
 
 import codesquad.business.model.User;
-import codesquad.http.RequestHandler;
+import codesquad.http.handler.RequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;

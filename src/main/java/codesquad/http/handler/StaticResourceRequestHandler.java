@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.handler;
 
 import static codesquad.http.header.HeaderField.ACCEPT;
 import static codesquad.http.header.HeaderField.CONTENT_TYPE;
