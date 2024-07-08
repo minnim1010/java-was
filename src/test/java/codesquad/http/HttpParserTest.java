@@ -126,7 +126,7 @@ class HttpParserTest {
         }
 
         @Test
-        void 쿼리_파라미터가_있는_요청인_경우() {
+        void URL에_쿼리_파라미터가_있는_요청인_경우() {
             String httpRequestStr = "GET /search?q=good&lang=en HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
 
             HttpRequest result = parser.parse(httpRequestStr);
@@ -134,6 +134,23 @@ class HttpParserTest {
             assertAll(
                     () -> assertNotNull(result),
                     () -> assertEquals("GET", result.getMethod().getDisplayName()),
+                    () -> assertEquals("/search", result.getUri().getPath()),
+                    () -> assertEquals("good", result.getQuery("q")),
+                    () -> assertEquals("en", result.getQuery("lang")),
+                    () -> assertEquals("www.example.com", result.getHeader("Host"))
+            );
+        }
+
+        @Test
+        void 바디에_쿼리_파라미터가_있는_요청인_경우() {
+            String httpRequestStr = "POST /search HTTP/1.1\r\nHost: www.example.com\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 16\r\n\r\nq=good&lang=en";
+
+            HttpRequest result = parser.parse(httpRequestStr);
+
+            assertAll(
+                    "HttpRequest",
+                    () -> assertNotNull(result, "HttpRequest should not be null"),
+                    () -> assertEquals("POST", result.getMethod().getDisplayName()),
                     () -> assertEquals("/search", result.getUri().getPath()),
                     () -> assertEquals("good", result.getQuery("q")),
                     () -> assertEquals("en", result.getQuery("lang")),

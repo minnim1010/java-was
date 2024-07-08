@@ -43,12 +43,18 @@ public class HttpParser {
             }
 
             // body
-            StringBuilder body = new StringBuilder();
+            StringBuilder buffer = new StringBuilder();
             for (lineIndex = lineIndex + 1; lineIndex < lines.length; lineIndex++) {
-                body.append(lines[lineIndex]);
+                buffer.append(lines[lineIndex]);
+            }
+            String body = buffer.toString();
+
+            if ("application/x-www-form-urlencoded".equals(headers.getOrDefault("Content-Type", ""))) {
+                queryMap.putAll(queryParser.parseQuery(body));
+                body = "";
             }
 
-            HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body.toString());
+            HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body);
             log.debug(httpRequest.toString());
 
             return httpRequest;
