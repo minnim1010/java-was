@@ -34,7 +34,6 @@ class HttpProcessorTest {
     StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(Set.of("/index.html"));
     HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
             staticResourceRequestHandler);
-
     HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
 
     private void validateResponse(byte[] actualBytes, HttpResponse expectedResponse, HttpStatus expectedStatus) {
@@ -112,7 +111,7 @@ class HttpProcessorTest {
                     throw new UnsupportedOperationException();
                 }
             };
-            HttpProcessor httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
 
             byte[] result = httpProcessor.process(input);
 
@@ -130,7 +129,7 @@ class HttpProcessorTest {
                     throw new RuntimeException();
                 }
             };
-            HttpProcessor httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
 
             byte[] result = httpProcessor.process(input);
 

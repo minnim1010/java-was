@@ -1,12 +1,12 @@
 package codesquad.business.processor;
 
 import codesquad.business.model.User;
-import codesquad.http.handler.RequestHandler;
+import codesquad.http.handler.AbstractRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 
-public class UserProcessor implements RequestHandler {
+public class UserProcessor extends AbstractRequestHandler {
 
     @Override
     public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {
@@ -19,10 +19,5 @@ public class UserProcessor implements RequestHandler {
 
         httpResponse.setStatus(HttpStatus.MOVED_PERMANENTLY);
         httpResponse.setHeader("Location", "/index.html");
-    }
-
-    @Override
-    public void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
-        // do nothing
     }
 }
