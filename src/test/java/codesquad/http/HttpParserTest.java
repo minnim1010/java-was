@@ -1,12 +1,18 @@
 package codesquad.http;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import codesquad.http.message.HttpRequest;
 import codesquad.http.parser.HttpParser;
+import codesquad.http.property.HttpMethod;
+import codesquad.http.property.HttpVersion;
+import codesquad.socket.Reader;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -22,11 +28,13 @@ class HttpParserTest {
 
     @Nested
     class HTTP_요청을_파싱한다 {
+
         @Test
         void 헤더를_가지지_않는_요청인_경우() {
             String httpRequestStr = "GET /index.html HTTP/1.1\r\n\r\n";
+            Reader reader = new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
 
-            HttpRequest result = parser.parse(httpRequestStr);
+            HttpRequest result = parser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -40,8 +48,9 @@ class HttpParserTest {
         @Test
         void 헤더를_가진_요청인_경우() {
             String httpRequestStr = "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
+            Reader reader = new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
 
-            HttpRequest result = parser.parse(httpRequestStr);
+            HttpRequest result = parser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -63,8 +72,9 @@ class HttpParserTest {
                     Upgrade-Insecure-Requests: 1\r
                     \r
                     """;
+            Reader reader = new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
 
-            HttpRequest result = parser.parse(httpRequestStr);
+            HttpRequest result = parser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -92,8 +102,9 @@ class HttpParserTest {
                     Upgrade-Insecure-Requests: 1\r
                     \r
                     """;
+            Reader reader = new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
 
-            HttpRequest result = parser.parse(httpRequestStr);
+            HttpRequest result = parser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -111,25 +122,33 @@ class HttpParserTest {
 
         @Test
         void 바디가_있는_요청인_경우() {
-            String httpRequestStr = "POST /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\nHello, World!";
+            String httpRequestStr = """
+                    GET /index.html?name=John HTTP/1.1\r
+                    Host: www.example.com\r
+                    Content-Length: 13\r
+                    \r
+                    Hello World!!""";
+            Reader reader = new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
 
-            HttpRequest result = parser.parse(httpRequestStr);
+            HttpRequest httpRequest = parser.parse(reader);
 
             assertAll(
-                    () -> assertNotNull(result),
-                    () -> assertEquals("POST", result.getMethod().getDisplayName()),
-                    () -> assertEquals("/index.html", result.getUri().getPath()),
-                    () -> assertEquals("HTTP/1.1", result.getVersion().getDisplayName()),
-                    () -> assertEquals("www.example.com", result.getHeader("Host")),
-                    () -> assertEquals("Hello, World!", result.getBody())
+                    () -> assertNotNull(httpRequest),
+                    () -> assertEquals(HttpMethod.GET, httpRequest.getMethod()),
+                    () -> assertEquals(new URI("/index.html?name=John"), httpRequest.getUri()),
+                    () -> assertEquals(HttpVersion.HTTP_1_1, httpRequest.getVersion()),
+                    () -> assertEquals("www.example.com", httpRequest.getHeaders().get("Host")),
+                    () -> assertEquals("13", httpRequest.getHeaders().get("Content-Length")),
+                    () -> assertArrayEquals("Hello World!!".getBytes(), httpRequest.getBody())
             );
         }
 
         @Test
         void URL에_쿼리_파라미터가_있는_요청인_경우() {
             String httpRequestStr = "GET /search?q=good&lang=en HTTP/1.1\r\nHost: www.example.com\r\n\r\n";
+            Reader reader = new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
 
-            HttpRequest result = parser.parse(httpRequestStr);
+            HttpRequest result = parser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -143,13 +162,19 @@ class HttpParserTest {
 
         @Test
         void 바디에_쿼리_파라미터가_있는_요청인_경우() {
-            String httpRequestStr = "POST /search HTTP/1.1\r\nHost: www.example.com\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 16\r\n\r\nq=good&lang=en";
+            String httpRequestStr = """
+                    POST /search HTTP/1.1\r
+                    Host: www.example.com\r
+                    Content-Type: application/x-www-form-urlencoded\r
+                    Content-Length: 16\r
+                    \r
+                    q=good&lang=en""";
+            Reader reader = new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
 
-            HttpRequest result = parser.parse(httpRequestStr);
+            HttpRequest result = parser.parse(reader);
 
             assertAll(
-                    "HttpRequest",
-                    () -> assertNotNull(result, "HttpRequest should not be null"),
+                    () -> assertNotNull(result),
                     () -> assertEquals("POST", result.getMethod().getDisplayName()),
                     () -> assertEquals("/search", result.getUri().getPath()),
                     () -> assertEquals("good", result.getQuery("q")),

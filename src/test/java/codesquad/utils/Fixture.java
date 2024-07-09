@@ -27,7 +27,7 @@ public final class Fixture {
                     {
                         put("Accept", "text/html");
                     }
-                }, "");
+                }, new byte[0]);
     }
 
     public static HttpRequest createHttpGetRequest(String uri) throws URISyntaxException {
@@ -38,6 +38,6 @@ public final class Fixture {
                     {
                         put("Accept", "text/html");
                     }
-                }, "");
+                }, new byte[0]);
     }
 }

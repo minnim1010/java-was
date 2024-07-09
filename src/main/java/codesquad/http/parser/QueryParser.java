@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class QueryParser {
 
-    public Map<String, String> parseQuery(String query) {
+    public Map<String, String> parse(String query) {
         Map<String, String> queryPairs = new HashMap<>();
         if (query == null || query.isEmpty()) {
             return queryPairs;

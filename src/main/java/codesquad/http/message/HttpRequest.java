@@ -16,14 +16,14 @@ public class HttpRequest {
     private final Map<String, String> query;
     private final HttpVersion version;
     private final Map<String, String> headers;
-    private final String body;
+    private final byte[] body;
 
     public HttpRequest(HttpMethod method,
                        URI uri,
                        Map<String, String> query,
                        HttpVersion version,
                        Map<String, String> headers,
-                       String body) {
+                       byte[] body) {
         this.method = method;
         this.uri = uri;
         this.query = query;
@@ -36,7 +36,7 @@ public class HttpRequest {
                        URI uri,
                        HttpVersion version,
                        Map<String, String> headers,
-                       String body) {
+                       byte[] body) {
         this(method, uri, new HashMap<>(), version, headers, body);
     }
 
@@ -52,7 +52,7 @@ public class HttpRequest {
         return uri;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 
@@ -77,7 +77,7 @@ public class HttpRequest {
                 .append(version.getDisplayName()).append(NEW_LINE);
         headers.forEach((key, value) -> sb.append(key).append(HEADER_DELIMITER).append(value).append(NEW_LINE));
         sb.append("\n");
-        sb.append(body);
+        sb.append(new String(body));
         return sb.toString();
     }
 }

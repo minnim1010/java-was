@@ -35,7 +35,7 @@ class UserProcessorTest {
                     Map.of("userId", "1", "name", "JohnDoe", "email", "johndoe@example.com", "password", "secret"),
                     HttpVersion.HTTP_1_1,
                     Collections.emptyMap(),
-                    "");
+                    new byte[0]);
             HttpResponse httpResponse = new HttpResponse();
 
             userProcessor.processPost(httpRequest, httpResponse);
@@ -57,7 +57,7 @@ class UserProcessorTest {
                     Map.of("userId", "1", "name", "JohnDoe", "email", "johndoe@example.com", "password", "secret"),
                     HttpVersion.HTTP_1_1,
                     Collections.emptyMap(),
-                    "");
+                    new byte[0]);
             HttpResponse httpResponse = new HttpResponse();
 
             assertThrows(UnSupportedHttpMethodException.class,
