@@ -124,9 +124,7 @@ public class WebServer {
             Reader reader = clientSocket.getReader();
             Writer writer = clientSocket.getWriter();
 
-            String input = reader.read();
-            byte[] output = httpProcessor.process(input);
-            writer.write(output);
+            httpProcessor.process(reader, writer);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

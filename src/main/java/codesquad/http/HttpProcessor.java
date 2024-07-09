@@ -10,6 +10,8 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpStatus;
+import codesquad.socket.Reader;
+import codesquad.socket.Writer;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,11 +32,11 @@ public class HttpProcessor {
         this.httpRequestProcessor = httpRequestProcessor;
     }
 
-    public byte[] process(String input) throws IOException {
+    public void process(Reader reader, Writer writer) throws IOException {
         HttpResponse response = new HttpResponse();
 
         try {
-            HttpRequest request = httpParser.parse(input);
+            HttpRequest request = httpParser.parse(reader);
             httpRequestProcessor.processRequest(request, response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
@@ -50,10 +52,9 @@ public class HttpProcessor {
             }
             log.error(e.getMessage(), e);
         }
-
         setDateHeader(response);
 
-        return response.format();
+        writer.write(response.format());
     }
 
     private void setDateHeader(HttpResponse httpResponse) {
