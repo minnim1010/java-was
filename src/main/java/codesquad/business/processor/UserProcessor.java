@@ -25,7 +25,7 @@ public class UserProcessor extends AbstractRequestHandler {
         User user = new User(userId, password, name, email);
         userRepository.save(user);
 
-        httpResponse.setStatus(HttpStatus.MOVED_PERMANENTLY);
+        httpResponse.setStatus(HttpStatus.FOUND);
         httpResponse.setHeader("Location", "/index.html");
     }
 }

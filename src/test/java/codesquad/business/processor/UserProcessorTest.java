@@ -42,7 +42,7 @@ class UserProcessorTest {
             userProcessor.processPost(httpRequest, httpResponse);
 
             assertAll(
-                    () -> assertEquals(HttpStatus.MOVED_PERMANENTLY, httpResponse.getStatus()),
+                    () -> assertEquals(HttpStatus.FOUND, httpResponse.getStatus()),
                     () -> assertEquals("/index.html", httpResponse.getHeader("Location"))
             );
         }
