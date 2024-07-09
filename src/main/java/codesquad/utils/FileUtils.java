@@ -1,6 +1,6 @@
 package codesquad.utils;
 
-import codesquad.error.ResourceNotFoundException;
+import codesquad.http.error.ResourceNotFoundException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

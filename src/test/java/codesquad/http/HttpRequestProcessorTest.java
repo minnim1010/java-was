@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import codesquad.error.ResourceNotFoundException;
+import codesquad.http.error.ResourceNotFoundException;
 import codesquad.http.handler.RequestHandler;
 import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;

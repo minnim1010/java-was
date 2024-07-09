@@ -5,8 +5,8 @@ import static codesquad.http.header.HeaderField.CONTENT_TYPE;
 import static codesquad.utils.FileUtils.getFileExtension;
 
 import codesquad.config.GlobalConfig;
-import codesquad.error.ResourceNotFoundException;
-import codesquad.error.UnSupportedMediaTypeException;
+import codesquad.http.error.ResourceNotFoundException;
+import codesquad.http.error.UnSupportedMediaTypeException;
 import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;

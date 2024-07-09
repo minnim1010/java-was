@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import codesquad.business.persistence.UserRepository;
-import codesquad.error.UnSupportedHttpMethodException;
+import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpMethod;

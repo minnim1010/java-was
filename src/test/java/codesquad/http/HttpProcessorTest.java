@@ -3,7 +3,7 @@ package codesquad.http;
 import static codesquad.utils.Fixture.createReaderWithInput;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import codesquad.error.UnSupportedHttpMethodException;
+import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;

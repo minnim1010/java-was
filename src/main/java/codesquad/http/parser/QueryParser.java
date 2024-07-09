@@ -1,6 +1,6 @@
 package codesquad.http.parser;
 
-import codesquad.error.QueryParseException;
+import codesquad.http.error.QueryParseException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;

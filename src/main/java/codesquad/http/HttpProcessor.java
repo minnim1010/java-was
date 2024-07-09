@@ -3,9 +3,9 @@ package codesquad.http;
 import static codesquad.http.header.HeaderField.DATE;
 
 import codesquad.config.GlobalConfig;
-import codesquad.error.HttpRequestParseException;
-import codesquad.error.ResourceNotFoundException;
-import codesquad.error.UnSupportedHttpMethodException;
+import codesquad.http.error.HttpRequestParseException;
+import codesquad.http.error.ResourceNotFoundException;
+import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
