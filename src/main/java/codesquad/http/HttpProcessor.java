@@ -5,6 +5,7 @@ import static codesquad.http.header.HeaderField.DATE;
 import codesquad.config.GlobalConfig;
 import codesquad.error.HttpRequestParseException;
 import codesquad.error.ResourceNotFoundException;
+import codesquad.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
@@ -42,6 +43,8 @@ public class HttpProcessor {
                 response = new HttpResponse(HttpStatus.NOT_FOUND);
             } else if (e instanceof UnsupportedOperationException) {
                 response = new HttpResponse(HttpStatus.NOT_ACCEPTABLE);
+            } else if (e instanceof UnSupportedHttpMethodException) {
+                response = new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED);
             } else {
                 response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
             }

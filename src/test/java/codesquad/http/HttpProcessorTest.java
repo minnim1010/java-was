@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import codesquad.config.GlobalConfig;
+import codesquad.error.UnSupportedHttpMethodException;
 import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
@@ -117,6 +118,24 @@ class HttpProcessorTest {
 
             HttpResponse expectedResponse = new HttpResponse(HttpStatus.NOT_ACCEPTABLE);
             validateResponse(result, expectedResponse, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        @Test
+        void 지원되지_않는_HTTP_method라면_405_Method_Not_Allowed_응답을_반환한다() throws Exception {
+            String input = "POST / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+                    staticResourceRequestHandler) {
+                @Override
+                public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
+                    throw new UnSupportedHttpMethodException();
+                }
+            };
+            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+
+            byte[] result = httpProcessor.process(input);
+
+            HttpResponse expectedResponse = new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED);
+            validateResponse(result, expectedResponse, HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         @Test

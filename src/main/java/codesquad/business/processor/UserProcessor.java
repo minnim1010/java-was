@@ -9,7 +9,7 @@ import codesquad.http.property.HttpStatus;
 public class UserProcessor extends AbstractRequestHandler {
 
     @Override
-    public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
         String userId = httpRequest.getQuery("userId");
         String name = httpRequest.getQuery("name");
         String email = httpRequest.getQuery("email");
