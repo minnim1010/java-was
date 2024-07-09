@@ -9,9 +9,7 @@ import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import codesquad.socket.Reader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -69,7 +67,8 @@ public class HttpParser {
         return headers;
     }
 
-    private byte[] parseBody(Reader reader, Map<String, String> headers) throws IOException {
+    private byte[] parseBody(Reader reader,
+                             Map<String, String> headers) throws IOException {
         if (!headers.containsKey("Content-Length")) {
             return new byte[0];
         }
@@ -77,13 +76,14 @@ public class HttpParser {
         return new String(reader.readBytes(contentLength)).getBytes();
     }
 
-    private Map<String, String> parseQuery(URI uri, HttpMethod method, Map<String, String> headers,
-                                           byte[] body) throws UnsupportedEncodingException {
+    private Map<String, String> parseQuery(URI uri,
+                                           HttpMethod method,
+                                           Map<String, String> headers,
+                                           byte[] body) {
         Map<String, String> queryMap = queryParser.parse(uri.getQuery());
 
         if (method == HttpMethod.POST && headers.get("Content-Type").equals("application/x-www-form-urlencoded")) {
-            String decodedQuery = URLDecoder.decode(new String(body), "UTF-8");
-            queryMap.putAll(queryParser.parse(decodedQuery));
+            queryMap.putAll(queryParser.parse(new String(body)));
         }
         return queryMap;
     }

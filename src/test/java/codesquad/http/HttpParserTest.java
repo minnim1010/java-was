@@ -176,6 +176,28 @@ class HttpParserTest {
                     () -> assertEquals("www.example.com", result.getHeader("Host"))
             );
         }
+
+        @Test
+        void 쿼리_파라미터값에_엠퍼센트가_있는_요청인_경우() {
+            Reader reader = createReaderWithInput("""
+                    POST /search HTTP/1.1\r
+                    Host: www.example.com\r
+                    Content-Type: application/x-www-form-urlencoded\r
+                    Content-Length: 24\r
+                    \r
+                    q=good&lang=ㅁㄴㅇ%26ㄹ@#$!!""");
+
+            HttpRequest result = parser.parse(reader);
+
+            assertAll(
+                    () -> assertNotNull(result),
+                    () -> assertEquals("POST", result.getMethod().getDisplayName()),
+                    () -> assertEquals("/search", result.getUri().getPath()),
+                    () -> assertEquals("good", result.getQuery("q")),
+                    () -> assertEquals("ㅁㄴㅇ&ㄹ@#$!!", result.getQuery("lang")),
+                    () -> assertEquals("www.example.com", result.getHeader("Host"))
+            );
+        }
     }
 }
 
