@@ -39,7 +39,7 @@ class ReaderTest {
 
         @Test
         void 한_줄씩_읽어온다() throws IOException {
-            String expectedLine = "Hello, World!\n";
+            String expectedLine = "Hello, World!";
             String input = "Hello, World!\nWorld!! Hello";
             byte[] inputData = input.getBytes();
 
@@ -60,7 +60,7 @@ class ReaderTest {
 
             Reader reader = new Reader(customSocket.getInputStream());
 
-            byte[] result = reader.readLine();
+            char[] result = reader.readLine();
 
             assertEquals(expectedLine, new String(result));
         }
@@ -89,7 +89,7 @@ class ReaderTest {
 
             Reader reader = new Reader(customSocket.getInputStream());
 
-            byte[] result = reader.readBytes(readLen);
+            char[] result = reader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));
@@ -120,7 +120,7 @@ class ReaderTest {
             Reader reader = new Reader(customSocket.getInputStream());
 
             reader.readLine();
-            byte[] result = reader.readBytes(readLen);
+            char[] result = reader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));

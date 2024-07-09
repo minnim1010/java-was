@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import codesquad.business.persistence.UserRepository;
 import codesquad.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
@@ -23,7 +24,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("UserProcessor 테스트")
 class UserProcessorTest {
 
-    private final UserProcessor userProcessor = new UserProcessor();
+    private final UserProcessor userProcessor = new UserProcessor(new UserRepository());
 
     @Nested
     class POST_요청_시 {

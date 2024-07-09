@@ -9,7 +9,9 @@ import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import codesquad.socket.Reader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -22,8 +24,7 @@ public class HttpParser {
 
     public HttpRequest parse(Reader reader) throws HttpRequestParseException {
         try {
-            byte[] bytes = reader.readLine();
-            String requestLine = new String(bytes, "UTF-8").trim();
+            String requestLine = new String(reader.readLine()).trim();
 
             // start line
             String[] startLineTokens = requestLine.split(BLANK);
@@ -56,7 +57,7 @@ public class HttpParser {
     private Map<String, String> parseHeaders(Reader reader) throws IOException {
         Map<String, String> headers = new HashMap<>();
         String line;
-        while (!(line = new String(reader.readLine(), "UTF-8").trim()).isEmpty()) {
+        while (!(line = new String(reader.readLine()).trim()).isEmpty()) {
             String[] headerTokens = line.split(HEADER_DELIMITER, 2);
             if (headerTokens.length != 2) {
                 throw new HttpRequestParseException("Invalid header: " + line);
@@ -73,14 +74,16 @@ public class HttpParser {
             return new byte[0];
         }
         int contentLength = Integer.parseInt(headers.get("Content-Length"));
-        return reader.readBytes(contentLength);
+        return new String(reader.readBytes(contentLength)).getBytes();
     }
 
     private Map<String, String> parseQuery(URI uri, HttpMethod method, Map<String, String> headers,
-                                           byte[] body) {
+                                           byte[] body) throws UnsupportedEncodingException {
         Map<String, String> queryMap = queryParser.parse(uri.getQuery());
+
         if (method == HttpMethod.POST && headers.get("Content-Type").equals("application/x-www-form-urlencoded")) {
-            queryMap.putAll(queryParser.parse(new String(body)));
+            String decodedQuery = URLDecoder.decode(new String(body), "UTF-8");
+            queryMap.putAll(queryParser.parse(decodedQuery));
         }
         return queryMap;
     }

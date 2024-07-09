@@ -161,9 +161,9 @@ class HttpParserTest {
                     POST /search HTTP/1.1\r
                     Host: www.example.com\r
                     Content-Type: application/x-www-form-urlencoded\r
-                    Content-Length: 16\r
+                    Content-Length: 21\r
                     \r
-                    q=good&lang=en""");
+                    q=good&lang=ㅁㄴㅇㄹ@#$!!""");
 
             HttpRequest result = parser.parse(reader);
 
@@ -172,7 +172,7 @@ class HttpParserTest {
                     () -> assertEquals("POST", result.getMethod().getDisplayName()),
                     () -> assertEquals("/search", result.getUri().getPath()),
                     () -> assertEquals("good", result.getQuery("q")),
-                    () -> assertEquals("en", result.getQuery("lang")),
+                    () -> assertEquals("ㅁㄴㅇㄹ@#$!!", result.getQuery("lang")),
                     () -> assertEquals("www.example.com", result.getHeader("Host"))
             );
         }
