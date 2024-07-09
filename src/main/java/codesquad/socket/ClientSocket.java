@@ -1,5 +1,6 @@
 package codesquad.socket;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +32,23 @@ public class ClientSocket implements AutoCloseable {
         } while (length == buffer_size);
 
         return input.toString();
+    }
+
+    public byte[] readLine() throws IOException {
+        InputStream inputStream = this.socket.getInputStream();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nextByte;
+        while ((nextByte = inputStream.read()) != -1) {
+            buffer.write(nextByte);
+            if (nextByte == '\n') {
+                break;
+            }
+        }
+
+        if (buffer.size() == 0) {
+            return new byte[0];
+        }
+        return buffer.toByteArray();
     }
 
     public void write(byte[] output) throws IOException {
