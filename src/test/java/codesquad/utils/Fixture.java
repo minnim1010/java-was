@@ -3,6 +3,8 @@ package codesquad.utils;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
+import codesquad.socket.Reader;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -39,5 +41,9 @@ public final class Fixture {
                         put("Accept", "text/html");
                     }
                 }, new byte[0]);
+    }
+
+    public static Reader createReaderWithInput(String httpRequestStr) {
+        return new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
     }
 }
