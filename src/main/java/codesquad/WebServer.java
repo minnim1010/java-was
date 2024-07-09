@@ -7,7 +7,9 @@ import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.parser.HttpParser;
 import codesquad.socket.ClientSocket;
+import codesquad.socket.Reader;
 import codesquad.socket.ServerSocket;
+import codesquad.socket.Writer;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -119,9 +121,12 @@ public class WebServer {
         try (clientSocket) {
             log.debug("Client connected: port " + clientSocket.getPort());
 
-            String input = clientSocket.read();
+            Reader reader = clientSocket.getReader();
+            Writer writer = clientSocket.getWriter();
+
+            String input = reader.read();
             byte[] output = httpProcessor.process(input);
-            clientSocket.write(output);
+            writer.write(output);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
