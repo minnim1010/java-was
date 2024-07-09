@@ -8,20 +8,23 @@ import java.net.Socket;
 
 public class ClientSocket implements AutoCloseable {
 
-    private final Socket socket;
+    private final Socket nativeSocket;
+    private final InputStream inputStream;
+    private final OutputStream outputStream;
 
-    public ClientSocket(Socket socket) {
-        this.socket = socket;
+    public ClientSocket(Socket nativeSocket) throws IOException {
+        this.nativeSocket = nativeSocket;
+        this.inputStream = nativeSocket.getInputStream();
+        this.outputStream = nativeSocket.getOutputStream();
     }
 
     public int getPort() {
-        return this.socket.getPort();
+        return this.nativeSocket.getPort();
     }
 
     public String read() throws IOException {
         final int buffer_size = 1024;
 
-        InputStream inputStream = this.socket.getInputStream();
         StringBuilder input = new StringBuilder();
         byte[] buffer = new byte[buffer_size];
         int length = 0;
@@ -35,7 +38,6 @@ public class ClientSocket implements AutoCloseable {
     }
 
     public byte[] readLine() throws IOException {
-        InputStream inputStream = this.socket.getInputStream();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nextByte;
         while ((nextByte = inputStream.read()) != -1) {
@@ -51,14 +53,17 @@ public class ClientSocket implements AutoCloseable {
         return buffer.toByteArray();
     }
 
+    public byte[] readBytes(int length) throws IOException {
+        return inputStream.readNBytes(length);
+    }
+
     public void write(byte[] output) throws IOException {
-        OutputStream outputStream = this.socket.getOutputStream();
         outputStream.write(output);
         outputStream.flush();
     }
 
     @Override
     public void close() throws IOException {
-        this.socket.close();
+        this.nativeSocket.close();
     }
 }

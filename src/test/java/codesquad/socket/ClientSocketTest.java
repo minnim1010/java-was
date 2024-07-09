@@ -64,5 +64,66 @@ class ClientSocketTest {
 
             assertEquals(expectedLine, new String(result));
         }
+
+        @Test
+        void 주어진_바이트_길이만큼_읽어온다() throws IOException {
+            String expectedLine = "Hello, World!\n";
+            String input = "Hello, World!\nWorld!! Hello";
+            int readLen = 14;
+            byte[] inputData = input.getBytes();
+
+            pipedOutputStream.write(inputData);
+            pipedOutputStream.flush();
+
+            Socket customSocket = new Socket() {
+                @Override
+                public PipedInputStream getInputStream() {
+                    return pipedInputStream;
+                }
+
+                @Override
+                public PipedOutputStream getOutputStream() {
+                    return new PipedOutputStream();
+                }
+            };
+
+            ClientSocket clientSocket = new ClientSocket(customSocket);
+
+            byte[] result = clientSocket.readBytes(readLen);
+
+            assertEquals(readLen, result.length);
+            assertEquals(expectedLine, new String(result));
+        }
+
+        @Test
+        void 한줄_읽고_주어진_바이트_길이만큼_읽는다() throws IOException {
+            String expectedLine = "World!!";
+            String input = "Hello, World!\nWorld!! Hello";
+            int readLen = 7;
+            byte[] inputData = input.getBytes();
+
+            pipedOutputStream.write(inputData);
+            pipedOutputStream.flush();
+
+            Socket customSocket = new Socket() {
+                @Override
+                public PipedInputStream getInputStream() {
+                    return pipedInputStream;
+                }
+
+                @Override
+                public PipedOutputStream getOutputStream() {
+                    return new PipedOutputStream();
+                }
+            };
+
+            ClientSocket clientSocket = new ClientSocket(customSocket);
+
+            byte[] ignore = clientSocket.readLine();
+            byte[] result = clientSocket.readBytes(readLen);
+
+            assertEquals(readLen, result.length);
+            assertEquals(expectedLine, new String(result));
+        }
     }
 }
