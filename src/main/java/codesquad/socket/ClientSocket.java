@@ -1,46 +1,34 @@
 package codesquad.socket;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 public class ClientSocket implements AutoCloseable {
 
-    private final Socket socket;
+    private final Socket nativeSocket;
+    private final Reader reader;
+    private final Writer writer;
 
-    public ClientSocket(Socket socket) {
-        this.socket = socket;
+    public ClientSocket(Socket nativeSocket) throws IOException {
+        this.nativeSocket = nativeSocket;
+        this.reader = new Reader(nativeSocket.getInputStream());
+        this.writer = new Writer(nativeSocket.getOutputStream());
     }
 
     public int getPort() {
-        return this.socket.getPort();
+        return this.nativeSocket.getPort();
     }
 
-    public String read() throws IOException {
-        final int buffer_size = 1024;
-
-        InputStream inputStream = this.socket.getInputStream();
-        StringBuilder input = new StringBuilder();
-        byte[] buffer = new byte[buffer_size];
-        int length = 0;
-
-        do {
-            length = inputStream.read(buffer);
-            input.append(new String(buffer, 0, length));
-        } while (length == buffer_size);
-
-        return input.toString();
+    public Reader getReader() {
+        return reader;
     }
 
-    public void write(byte[] output) throws IOException {
-        OutputStream outputStream = this.socket.getOutputStream();
-        outputStream.write(output);
-        outputStream.flush();
+    public Writer getWriter() {
+        return writer;
     }
 
     @Override
     public void close() throws IOException {
-        this.socket.close();
+        this.nativeSocket.close();
     }
 }

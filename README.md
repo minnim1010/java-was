@@ -40,6 +40,17 @@
 - 원활한 HTTP 처리를 위해 Content-Length(바디가 있는 경우), Date 헤더를 설정한다.
 
 <br>
+
+**[4단계]**
+
+**기본 요구 사항**
+
+- 로그인을 GET에서 POST로 수정 후 정상 동작하도록 구현한다.
+  - GET으로 회원가입을 시도할 경우 실패해야 한다.
+  - 가입을 완료하면 `/index.html` 페이지로 이동한다.
+  - 바디에 존재하는 데이터는 Content-Length만큼 받아 처리해야 한다.
+
+<br>
 <br>
 
 ### 고민 사항
@@ -47,3 +58,4 @@
 - 헤더 파싱 시, 헤더 이름이 중복되는 경우는 후속 필드 행값을 쉼표로 구분하여 합쳤습니다.
   - rf: https://www.rfc-editor.org/rfc/rfc9110#name-field-order
 - 프로그램 안정성을 위해 JVM Runtime.getRuntime().addShutdownHook()을 사용하여 종료 시, 소켓 및 스레드 풀 자원을 정리하도록 했습니다.
+- 

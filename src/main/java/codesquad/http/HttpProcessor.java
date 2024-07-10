@@ -5,10 +5,13 @@ import static codesquad.http.header.HeaderField.DATE;
 import codesquad.config.GlobalConfig;
 import codesquad.error.HttpRequestParseException;
 import codesquad.error.ResourceNotFoundException;
+import codesquad.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpStatus;
+import codesquad.socket.Reader;
+import codesquad.socket.Writer;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,11 +32,11 @@ public class HttpProcessor {
         this.httpRequestProcessor = httpRequestProcessor;
     }
 
-    public byte[] process(String input) throws IOException {
+    public void process(Reader reader, Writer writer) throws IOException {
         HttpResponse response = new HttpResponse();
 
         try {
-            HttpRequest request = httpParser.parse(input);
+            HttpRequest request = httpParser.parse(reader);
             httpRequestProcessor.processRequest(request, response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
@@ -42,19 +45,20 @@ public class HttpProcessor {
                 response = new HttpResponse(HttpStatus.NOT_FOUND);
             } else if (e instanceof UnsupportedOperationException) {
                 response = new HttpResponse(HttpStatus.NOT_ACCEPTABLE);
+            } else if (e instanceof UnSupportedHttpMethodException) {
+                response = new HttpResponse(HttpStatus.METHOD_NOT_ALLOWED);
             } else {
                 response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
             }
             log.error(e.getMessage(), e);
         }
-
         setDateHeader(response);
 
-        return response.format();
+        writer.write(response.format());
     }
 
     private void setDateHeader(HttpResponse httpResponse) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", GlobalConfig.LOCALE);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", GlobalConfig.LOCALE);
         dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
         String date = dateFormat.format(new Date());
 

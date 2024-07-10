@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.handler;
 
 import java.util.Map;
 

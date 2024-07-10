@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.http.handler;
 
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;

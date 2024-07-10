@@ -1,20 +1,21 @@
 package codesquad.http;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static codesquad.utils.Fixture.createReaderWithInput;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import codesquad.config.GlobalConfig;
+import codesquad.error.UnSupportedHttpMethodException;
+import codesquad.http.handler.RequestHandlerResolver;
+import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
-import codesquad.http.property.HttpStatus;
-import java.io.ByteArrayInputStream;
-import java.text.SimpleDateFormat;
+import codesquad.socket.Reader;
+import codesquad.socket.Writer;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Scanner;
-import java.util.TimeZone;
+import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -27,57 +28,36 @@ import org.junit.jupiter.api.Test;
 @DisplayName("HTTP 요청 처리 테스트")
 class HttpProcessorTest {
 
-    private HttpProcessor httpProcessor;
+    HttpParser httpParser = new HttpParser();
     RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
+    StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(Set.of("/index.html"));
+    HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+            staticResourceRequestHandler);
+    HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
+
+    private ByteArrayOutputStream outputStream;
 
     @BeforeEach
     void setUp() {
-        HttpParser httpParser = new HttpParser();
-        HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver);
-        httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
+        outputStream = new ByteArrayOutputStream();
     }
 
-    private void validateResponse(byte[] actualBytes, HttpResponse expectedResponse, HttpStatus expectedStatus) {
-        Scanner scanner = new Scanner(new ByteArrayInputStream(actualBytes));
-        String statusLine = scanner.nextLine();
-        assertTrue(statusLine.contains(expectedStatus.getMessage()));
-
-        boolean dateHeaderFound = false;
-        while (scanner.hasNextLine()) {
-            String headerLine = scanner.nextLine();
-            if (headerLine.startsWith("Date: ")) {
-                dateHeaderFound = true;
-                String dateValue = headerLine.substring(6).trim();
-                validateDateHeader(dateValue);
-            }
-            if (headerLine.isEmpty()) {
-                break;
-            }
-        }
-
-        assertTrue(dateHeaderFound, "Date header not found in response");
-    }
-
-    private void validateDateHeader(String dateValue) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", GlobalConfig.LOCALE);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
-        try {
-            Date parsedDate = dateFormat.parse(dateValue);
-            assertNotNull(parsedDate, "Date header is not in the correct format");
-        } catch (Exception e) {
-            fail("Date header is not in the correct format: " + e.getMessage());
-        }
+    @AfterEach
+    void tearDown() throws IOException {
+        outputStream.close();
     }
 
     @Nested
     class HTTP_요청_처리를_성공적으로_수행하는_경우 {
+
         @Test
         void GET_요청_처리_시_200_OK_응답을_반환한다() throws Exception {
-            String input = "GET / HTTP/1.1\r\nHost: localhost\r\nAccept: */*\n\r\n";
-            byte[] result = httpProcessor.process(input);
+            Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\nAccept: */*\n\r\n");
+            Writer writer = new Writer(outputStream);
 
-            HttpResponse expectedResponse = new HttpResponse(HttpStatus.OK);
-            validateResponse(result, expectedResponse, HttpStatus.OK);
+            httpProcessor.process(reader, writer);
+
+            assertTrue(outputStream.toString().startsWith("HTTP/1.1 200 OK"));
         }
     }
 
@@ -85,54 +65,76 @@ class HttpProcessorTest {
     class HTTP_요청_처리를_실패하는_경우 {
         @Test
         void 유효하지_않은_요청_포맷이라면_400_BAD_REQUEST_응답을_반환한다() throws Exception {
-            String input = "INVALID REQUEST";
-            byte[] result = httpProcessor.process(input);
+            Reader reader = createReaderWithInput("INVALID REQUEST");
+            Writer writer = new Writer(outputStream);
 
-            HttpResponse expectedResponse = new HttpResponse(HttpStatus.BAD_REQUEST);
-            validateResponse(result, expectedResponse, HttpStatus.BAD_REQUEST);
+            httpProcessor.process(reader, writer);
+
+            assertTrue(outputStream.toString().startsWith("HTTP/1.1 400 Bad Request"));
         }
 
         @Test
         void 리소스를_찾을_수_없는_경우_404_NOT_FOUND_응답을_반환한다() throws Exception {
-            String input = "GET /nonexistent HTTP/1.1\r\nHost: localhost\r\n\r\n";
-            byte[] result = httpProcessor.process(input);
+            Reader reader = createReaderWithInput("GET /notfound HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            Writer writer = new Writer(outputStream);
 
-            HttpResponse expectedResponse = new HttpResponse(HttpStatus.NOT_FOUND);
-            validateResponse(result, expectedResponse, HttpStatus.NOT_FOUND);
+            httpProcessor.process(reader, writer);
+
+            assertTrue(outputStream.toString().startsWith("HTTP/1.1 404 Not Found"));
         }
 
         @Test
         void 지원되지_않는_미디어_타입이라면_406_NOT_ACCEPTABLE_응답을_반환한다() throws Exception {
-            String input = "POST / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver) {
+            Reader reader = createReaderWithInput("GET /notfound HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            Writer writer = new Writer(outputStream);
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+                    staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
                     throw new UnsupportedOperationException();
                 }
             };
-            HttpProcessor httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
 
-            byte[] result = httpProcessor.process(input);
+            httpProcessor.process(reader, writer);
 
-            HttpResponse expectedResponse = new HttpResponse(HttpStatus.NOT_ACCEPTABLE);
-            validateResponse(result, expectedResponse, HttpStatus.NOT_ACCEPTABLE);
+            assertTrue(outputStream.toString().startsWith("HTTP/1.1 406 Not Acceptable"));
+        }
+
+        @Test
+        void 지원되지_않는_HTTP_method라면_405_Method_Not_Allowed_응답을_반환한다() throws Exception {
+            Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            Writer writer = new Writer(outputStream);
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+                    staticResourceRequestHandler) {
+                @Override
+                public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
+                    throw new UnSupportedHttpMethodException();
+                }
+            };
+            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+
+            httpProcessor.process(reader, writer);
+
+            assertTrue(outputStream.toString().startsWith("HTTP/1.1 405 Method Not Allowed"));
         }
 
         @Test
         void 예기치_않은_예외가_발생하면_500_INTERNAL_SERVER_ERROR_응답을_반환한다() throws Exception {
-            String input = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver) {
+            Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            Writer writer = new Writer(outputStream);
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+                    staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
                     throw new RuntimeException();
                 }
             };
-            HttpProcessor httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
 
-            byte[] result = httpProcessor.process(input);
+            httpProcessor.process(reader, writer);
 
-            HttpResponse expectedResponse = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
-            validateResponse(result, expectedResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            assertTrue(outputStream.toString().startsWith("HTTP/1.1 500 Internal Server Error"));
         }
     }
 }

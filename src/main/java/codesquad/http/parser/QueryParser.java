@@ -1,12 +1,13 @@
 package codesquad.http.parser;
 
 import codesquad.error.QueryParseException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
 public class QueryParser {
 
-    public Map<String, String> parseQuery(String query) {
+    public Map<String, String> parse(String query) {
         Map<String, String> queryPairs = new HashMap<>();
         if (query == null || query.isEmpty()) {
             return queryPairs;
@@ -15,9 +16,10 @@ public class QueryParser {
         try {
             String[] pairs = query.split("&");
             for (String pair : pairs) {
-                int idx = pair.indexOf("=");
-                String key = pair.substring(0, idx);
-                String value = pair.substring(idx + 1);
+                String decodedPair = URLDecoder.decode(pair, "UTF-8");
+                int idx = decodedPair.indexOf("=");
+                String key = decodedPair.substring(0, idx);
+                String value = decodedPair.substring(idx + 1);
                 queryPairs.put(key, value);
             }
             return queryPairs;
