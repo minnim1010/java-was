@@ -6,9 +6,11 @@ public enum HeaderField {
 
     // -------------------------------------------------------------- Request Header Fields
     ACCEPT("Accept"),
+    COOKIE("Cookie"),
 
     // -------------------------------------------------------------- Response Header Fields
     DATE("Date"),
+    SET_COOKIE("Set-Cookie"),
 
     // -------------------------------------------------------------- Entity Header Fields
     CONTENT_TYPE("Content-Type"),

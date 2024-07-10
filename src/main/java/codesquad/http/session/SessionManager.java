@@ -11,12 +11,33 @@ public class SessionManager {
 
     private final Map<String, Session> sessionPool = new ConcurrentHashMap<>();
 
-    public SessionManager(int sessionPoolMaxSize,
-                          long sessionTimeout,
-                          SessionIdGenerator sessionIdGenerator) {
+    private static SessionManager instance;
+
+    private SessionManager(int sessionPoolMaxSize,
+                           long sessionTimeout,
+                           SessionIdGenerator sessionIdGenerator) {
         this.sessionPoolMaxSize = sessionPoolMaxSize;
         this.sessionTimeout = sessionTimeout;
         this.sessionIdGenerator = sessionIdGenerator;
+    }
+
+    public static SessionManager createInstance(int sessionPoolMaxSize,
+                                                long sessionTimeout,
+                                                SessionIdGenerator sessionIdGenerator) {
+        if (instance != null) {
+            throw new IllegalStateException("SessionManager is already initialized");
+        }
+
+        instance = new SessionManager(sessionPoolMaxSize, sessionTimeout, sessionIdGenerator);
+
+        return instance;
+    }
+
+    public static SessionManager getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("SessionManager is not initialized");
+        }
+        return instance;
     }
 
     public Session createSession() {

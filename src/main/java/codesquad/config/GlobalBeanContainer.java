@@ -29,7 +29,6 @@ public class GlobalBeanContainer {
     }
 
     // ----------------------------------------------------- Getter
-
     public UserRepository userRepository() {
         return userRepository;
     }
@@ -42,8 +41,8 @@ public class GlobalBeanContainer {
         return loginRequestHandler;
     }
 
-    // ----------------------------------------------------- Setter
 
+    // ----------------------------------------------------- Setter
     protected UserRepository setUserRepository() {
         return new UserRepository();
     }

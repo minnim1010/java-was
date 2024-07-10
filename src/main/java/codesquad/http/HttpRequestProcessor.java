@@ -19,7 +19,8 @@ public class HttpRequestProcessor {
         this.staticResourceRequestHandler = staticResourceRequestHandler;
     }
 
-    public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
+    public void processRequest(HttpRequest httpRequest,
+                               HttpResponse httpResponse) throws IOException {
         HttpMethod method = httpRequest.getMethod();
         String path = httpRequest.getUri().getPath();
 

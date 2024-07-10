@@ -7,6 +7,7 @@ import codesquad.socket.Reader;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 
 public final class Fixture {
@@ -24,6 +25,7 @@ public final class Fixture {
     public static HttpRequest createHttpGetRequest() throws URISyntaxException {
         return new HttpRequest(HttpMethod.GET,
                 new URI("/"),
+                Collections.emptyMap(),
                 HttpVersion.HTTP_1_1,
                 new HashMap<>() {
                     {
@@ -35,6 +37,7 @@ public final class Fixture {
     public static HttpRequest createHttpGetRequest(String uri) throws URISyntaxException {
         return new HttpRequest(HttpMethod.GET,
                 new URI(uri),
+                Collections.emptyMap(),
                 HttpVersion.HTTP_1_1,
                 new HashMap<>() {
                     {

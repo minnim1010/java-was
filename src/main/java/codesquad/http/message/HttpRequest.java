@@ -6,18 +6,19 @@ import static codesquad.utils.StringUtils.NEW_LINE;
 
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
+import codesquad.http.session.Session;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
 
-    private final HttpMethod method;
-    private final URI uri;
-    private final Map<String, String> query;
-    private final HttpVersion version;
-    private final Map<String, String> headers;
-    private final byte[] body;
+    protected final HttpMethod method;
+    protected final URI uri;
+    protected final Map<String, String> query;
+    protected final HttpVersion version;
+    protected final Map<String, String> headers;
+    protected final byte[] body;
+    protected Session session;
 
     public HttpRequest(HttpMethod method,
                        URI uri,
@@ -31,14 +32,6 @@ public class HttpRequest {
         this.version = version;
         this.headers = headers;
         this.body = body;
-    }
-
-    public HttpRequest(HttpMethod method,
-                       URI uri,
-                       HttpVersion version,
-                       Map<String, String> headers,
-                       byte[] body) {
-        this(method, uri, new HashMap<>(), version, headers, body);
     }
 
     public HttpVersion getVersion() {
@@ -67,6 +60,18 @@ public class HttpRequest {
 
     public String getQuery(String key) {
         return query.get(key);
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        if (this.session != null) {
+            throw new IllegalArgumentException("Session already exists");
+        }
+
+        this.session = session;
     }
 
     @Override

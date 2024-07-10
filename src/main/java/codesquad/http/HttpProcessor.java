@@ -8,7 +8,6 @@ import codesquad.http.error.ResourceNotFoundException;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpStatus;
 import codesquad.socket.Reader;
 import codesquad.socket.Writer;
@@ -24,20 +23,21 @@ public class HttpProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(HttpProcessor.class);
 
-    private final HttpParser httpParser;
+    private final HttpRequestPreprocessor httpRequestPreprocessor;
     private final HttpRequestProcessor httpRequestProcessor;
 
-    public HttpProcessor(HttpParser httpParser,
+    public HttpProcessor(HttpRequestPreprocessor httpRequestPreprocessor,
                          HttpRequestProcessor httpRequestProcessor) {
-        this.httpParser = httpParser;
+        this.httpRequestPreprocessor = httpRequestPreprocessor;
         this.httpRequestProcessor = httpRequestProcessor;
     }
 
-    public void process(Reader reader, Writer writer) throws IOException {
+    public void process(Reader reader,
+                        Writer writer) throws IOException {
         HttpResponse response = new HttpResponse();
 
         try {
-            HttpRequest request = httpParser.parse(reader);
+            HttpRequest request = httpRequestPreprocessor.process(reader);
             httpRequestProcessor.processRequest(request, response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
@@ -53,6 +53,7 @@ public class HttpProcessor {
             }
             log.error(e.getMessage(), e);
         }
+
         setDateHeader(response);
 
         writer.write(response.format());

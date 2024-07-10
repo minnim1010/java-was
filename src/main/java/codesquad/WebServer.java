@@ -3,10 +3,13 @@ package codesquad;
 import codesquad.config.GlobalConstants;
 import codesquad.context.WebContext;
 import codesquad.http.HttpProcessor;
+import codesquad.http.HttpRequestPreprocessor;
 import codesquad.http.HttpRequestProcessor;
 import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.parser.HttpParser;
+import codesquad.http.session.SessionIdGenerator;
+import codesquad.http.session.SessionManager;
 import codesquad.socket.ClientSocket;
 import codesquad.socket.Reader;
 import codesquad.socket.ServerSocket;
@@ -32,13 +35,20 @@ public class WebServer {
 
     private HttpProcessor createHttpProcessor(WebContext webContext) {
         HttpParser httpParser = new HttpParser();
+        long sessionTimeout = GlobalConstants.getInstance().getSessionTimeout();
+        int sessionPoolMaxSize = GlobalConstants.getInstance().getSessionPoolMaxSize();
+        SessionIdGenerator sessionIdGenerator = new SessionIdGenerator();
+        SessionManager sessionManager = SessionManager.createInstance(sessionPoolMaxSize, sessionTimeout,
+                sessionIdGenerator);
+
+        HttpRequestPreprocessor httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
         RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(webContext.getRequestHandlerMap());
         StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
                 webContext.getStaticResourcePaths(), webContext.getDefaultPages());
         HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
                 staticResourceRequestHandler);
 
-        return new HttpProcessor(httpParser, httpRequestProcessor);
+        return new HttpProcessor(httpRequestPreprocessor, httpRequestProcessor);
     }
 
     public void run() {

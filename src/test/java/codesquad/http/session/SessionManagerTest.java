@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import codesquad.config.GlobalConstants;
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -17,19 +17,8 @@ import org.junit.jupiter.api.Test;
 @DisplayName("여러 세션을 관리하는 테스트")
 class SessionManagerTest {
 
-    private final GlobalConstants config = new GlobalConstants() {
-
-        @Override
-        protected long setSessionTimeout() {
-            return 1000L;
-        }
-
-        @Override
-        protected int setSessionPoolMaxSize() {
-            return 2;
-        }
-    };
-
+    private final long sessionTimeout = 1000L;
+    private final int sessionPoolMaxSize = 2;
     private final SessionIdGenerator sessionIdGenerator = new SessionIdGenerator() {
         private int id = 0;
 
@@ -41,14 +30,18 @@ class SessionManagerTest {
 
     private SessionManager sessionManager;
 
+    @BeforeEach
+    void setUp() throws Exception {
+        Field instanceField = SessionManager.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, null);
+
+        sessionManager = SessionManager.createInstance(sessionPoolMaxSize, sessionTimeout, sessionIdGenerator);
+    }
+
     @Nested
     @DisplayName("세션 생성 테스트")
     class 세션을_생성한다 {
-
-        @BeforeEach
-        void setUp() {
-            sessionManager = new SessionManager(config, sessionIdGenerator);
-        }
 
         @Test
         void 새로운_세션을_생성한다() {
@@ -86,11 +79,6 @@ class SessionManagerTest {
     @Nested
     @DisplayName("세션 조회 및 제거 테스트")
     class GetAndRemoveSessionTest {
-
-        @BeforeEach
-        void setUp() {
-            sessionManager = new SessionManager(config, sessionIdGenerator);
-        }
 
         @Test
         void 세션을_조회한다() {
