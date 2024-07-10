@@ -1,6 +1,5 @@
 package codesquad.http.message;
 
-import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
 import static codesquad.utils.StringUtils.BLANK;
 import static codesquad.utils.StringUtils.NEW_LINE;
 
@@ -81,7 +80,7 @@ public class HttpRequest {
         sb.append(method).append(BLANK)
                 .append(uri).append(BLANK)
                 .append(version.getDisplayName()).append(NEW_LINE);
-        headers.forEach((key, value) -> sb.append(key).append(HEADER_DELIMITER).append(value).append(NEW_LINE));
+        headers.forEach((key, value) -> sb.append(key).append(": ").append(value).append(NEW_LINE));
         sb.append("\n");
         sb.append(new String(body));
         return sb.toString();
