@@ -26,15 +26,6 @@ public enum HeaderField {
         this.fieldName = fieldName;
     }
 
-    public static HeaderField fromFieldName(String fieldName) {
-        for (HeaderField headerField : values()) {
-            if (headerField.fieldName.equalsIgnoreCase(fieldName)) {
-                return headerField;
-            }
-        }
-        return UNKNOWN;
-    }
-
     public String getFieldName() {
         return fieldName;
     }

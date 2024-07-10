@@ -25,36 +25,27 @@ public enum ContentType {
     UNKNOWN("", "application/octet-stream");
 
     private final String fileExtension;
-    private final String contentType;
+    private final String responseType;
 
-    ContentType(String fileExtension, String contentType) {
+    ContentType(String fileExtension, String responseType) {
         this.fileExtension = fileExtension;
-        this.contentType = contentType;
+        this.responseType = responseType;
     }
 
     public static String getContentTypeByExtension(String fileExtension) {
         for (ContentType config : values()) {
             if (config.fileExtension.equalsIgnoreCase(fileExtension)) {
-                return config.contentType;
+                return config.responseType;
             }
         }
-        return UNKNOWN.contentType;
-    }
-
-    public static ContentType fromFileExtension(String fileExtension) {
-        for (ContentType config : values()) {
-            if (config.fileExtension.equalsIgnoreCase(fileExtension)) {
-                return config;
-            }
-        }
-        return UNKNOWN;
+        return UNKNOWN.responseType;
     }
 
     public String getFileExtension() {
         return fileExtension;
     }
 
-    public String getContentType() {
-        return contentType;
+    public String getResponseType() {
+        return responseType;
     }
 }
