@@ -4,19 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import codesquad.business.model.User;
 import codesquad.business.persistence.UserRepository;
+import codesquad.environment.TestEnvironment;
 import codesquad.http.cookie.Cookie;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;
-import codesquad.http.session.SessionIdGenerator;
-import codesquad.http.session.SessionManager;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -27,20 +25,14 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("로그인 테스트")
-class LoginRequestHandlerTest {
-
-    private static SessionManager sessionManager;
+class LoginRequestHandlerTest extends TestEnvironment {
 
     private UserRepository userRepository;
     private LoginRequestHandler loginRequestHandler;
 
-    @BeforeAll
-    static void setUpAll() {
-        sessionManager = SessionManager.createInstance(10, 1000, new SessionIdGenerator());
-    }
-
     @BeforeEach
     void setUp() {
+        sessionManager.clear();
         userRepository = new UserRepository();
         loginRequestHandler = new LoginRequestHandler(userRepository);
     }

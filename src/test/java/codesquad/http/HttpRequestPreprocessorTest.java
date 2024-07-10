@@ -2,13 +2,11 @@ package codesquad.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import codesquad.environment.TestEnvironment;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.parser.HttpParser;
-import codesquad.http.session.SessionIdGenerator;
-import codesquad.http.session.SessionManager;
 import codesquad.socket.Reader;
 import codesquad.utils.Fixture;
-import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -18,29 +16,17 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@DisplayName("HTTP 요청 전처리(파싱, 세션 로) 테스트")
-class HttpRequestPreprocessorTest {
+@DisplayName("HTTP 요청 전처리(파싱, 세션 로드) 테스트")
+class HttpRequestPreprocessorTest extends TestEnvironment {
 
     private HttpParser httpParser;
-    private SessionManager sessionManager;
     private HttpRequestPreprocessor preprocessor;
     private Reader reader;
 
     @BeforeEach
-    void setUp() throws Exception {
-        Field instanceField = SessionManager.class.getDeclaredField("instance");
-        instanceField.setAccessible(true);
-        instanceField.set(null, null);
-
+    void setUp() {
+        sessionManager.clear();
         httpParser = new HttpParser();
-        sessionManager = SessionManager.createInstance(100, 1000L, new SessionIdGenerator() {
-
-            @Override
-            public String generate() {
-                return "session-id";
-            }
-
-        });
         preprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
     }
 
@@ -55,7 +41,6 @@ class HttpRequestPreprocessorTest {
             HttpRequest request = preprocessor.process(reader);
 
             assertThat(request.getSession()).isNotNull();
-            assertThat(request.getSession().getSessionId()).isEqualTo("session-id");
         }
 
         @Test

@@ -24,11 +24,9 @@ public class SessionManager {
     public static SessionManager createInstance(int sessionPoolMaxSize,
                                                 long sessionTimeout,
                                                 SessionIdGenerator sessionIdGenerator) {
-        if (instance != null) {
-            throw new IllegalStateException("SessionManager is already initialized");
+        if (instance == null) {
+            instance = new SessionManager(sessionPoolMaxSize, sessionTimeout, sessionIdGenerator);
         }
-
-        instance = new SessionManager(sessionPoolMaxSize, sessionTimeout, sessionIdGenerator);
 
         return instance;
     }
@@ -72,5 +70,9 @@ public class SessionManager {
 
     public void removeSession(String sessionId) {
         sessionPool.remove(sessionId);
+    }
+
+    public void clear() {
+        sessionPool.clear();
     }
 }

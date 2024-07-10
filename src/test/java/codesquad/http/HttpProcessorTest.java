@@ -3,14 +3,13 @@ package codesquad.http;
 import static codesquad.utils.Fixture.createReaderWithInput;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import codesquad.environment.TestEnvironment;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.parser.HttpParser;
-import codesquad.http.session.SessionIdGenerator;
-import codesquad.http.session.SessionManager;
 import codesquad.socket.Reader;
 import codesquad.socket.Writer;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +28,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("HTTP 요청 처리 테스트")
-class HttpProcessorTest {
+class HttpProcessorTest extends TestEnvironment {
 
     private static RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
     private static StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
@@ -37,8 +36,6 @@ class HttpProcessorTest {
             Set.of("/index.html"));
     private static HttpRequestProcessor httpRequestProcessor;
     private static HttpParser httpParser;
-    private static SessionIdGenerator sessionIdGenerator;
-    private static SessionManager sessionManager;
     private static HttpRequestPreprocessor httpRequestPreprocessor;
     private static HttpProcessor httpProcessor;
 
@@ -46,8 +43,6 @@ class HttpProcessorTest {
     static void beforeAll() {
         httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
         httpParser = new HttpParser();
-        sessionIdGenerator = new SessionIdGenerator();
-        sessionManager = SessionManager.createInstance(10, 1000, sessionIdGenerator);
         httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
         httpProcessor = new HttpProcessor(httpRequestPreprocessor, httpRequestProcessor);
     }
@@ -55,6 +50,7 @@ class HttpProcessorTest {
 
     @BeforeEach
     void setUp() {
+        sessionManager.clear();
         outputStream = new ByteArrayOutputStream();
     }
 
