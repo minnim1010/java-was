@@ -1,10 +1,9 @@
-package codesquad.business.processor;
+package codesquad.business.handler;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import codesquad.business.handler.UserRequestHandler;
 import codesquad.config.GlobalBeanContainer;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
@@ -21,12 +20,13 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("회원가입 테스트")
-class UserProcessorTest {
+class UserRequestHandlerTest {
 
     private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
-    private final UserRequestHandler userProcessor = globalBeanContainer.userRequestHandler();
+    private final UserRequestHandler userRequestHandler = globalBeanContainer.userRequestHandler();
 
     @Nested
     class POST_요청_시 {
@@ -41,7 +41,7 @@ class UserProcessorTest {
                     new byte[0]);
             HttpResponse httpResponse = new HttpResponse();
 
-            userProcessor.processPost(httpRequest, httpResponse);
+            userRequestHandler.processPost(httpRequest, httpResponse);
 
             assertAll(
                     () -> assertEquals(HttpStatus.FOUND, httpResponse.getStatus()),
@@ -64,7 +64,8 @@ class UserProcessorTest {
             HttpResponse httpResponse = new HttpResponse();
 
             assertThrows(UnSupportedHttpMethodException.class,
-                    () -> userProcessor.processGet(httpRequest, httpResponse));
+                    () -> userRequestHandler.processGet(httpRequest, httpResponse));
         }
     }
+
 }

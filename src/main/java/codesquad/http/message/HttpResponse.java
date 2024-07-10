@@ -2,6 +2,7 @@ package codesquad.http.message;
 
 import static codesquad.http.header.HeaderField.CONTENT_LENGTH;
 
+import codesquad.http.cookie.Cookie;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;
 import java.io.ByteArrayOutputStream;
@@ -81,6 +82,29 @@ public class HttpResponse {
         this.status = status;
     }
 
+    public void setCookie(Cookie cookie) {
+        StringBuilder cookieBuilder = new StringBuilder();
+        cookieBuilder.append(cookie.getName()).append("=").append(cookie.getValue());
+
+        if (cookie.getMaxAge() > 0) {
+            cookieBuilder.append("; Max-Age=").append(cookie.getMaxAge());
+        }
+        if (cookie.getDomain() != null) {
+            cookieBuilder.append("; Domain=").append(cookie.getDomain());
+        }
+        if (cookie.getPath() != null) {
+            cookieBuilder.append("; Path=").append(cookie.getPath());
+        }
+        if (cookie.isSecure()) {
+            cookieBuilder.append("; Secure");
+        }
+        if (cookie.isHttpOnly()) {
+            cookieBuilder.append("; HttpOnly");
+        }
+
+        setHeader("Set-Cookie", cookieBuilder.toString());
+    }
+
     /**
      * Formats the HTTP response into a byte array suitable for network transmission. It should be called only once per
      * response object to prevent duplicate headers or body content.
@@ -107,5 +131,17 @@ public class HttpResponse {
         outputStream.write(body);
 
         return outputStream.toByteArray();
+    }
+
+    public Cookie getCookie(String name) {
+        String cookie = headers.get("Set-Cookie");
+        if (cookie == null) {
+            return null;
+        }
+        Cookie parse = Cookie.parse(cookie);
+        if (parse.getName().equals(name)) {
+            return parse;
+        }
+        return null;
     }
 }

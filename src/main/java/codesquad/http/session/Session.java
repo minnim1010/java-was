@@ -1,5 +1,6 @@
 package codesquad.http.session;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,6 +40,13 @@ public class Session {
     public void invalidate() {
         validSession();
         isValid = false;
+    }
+
+    public long remainSeconds() {
+        validSession();
+        Instant now = Instant.now();
+        Instant expirationTime = createdAt.plusMillis(sessionTimeout);
+        return Duration.between(now, expirationTime).getSeconds();
     }
 
     public boolean isValid() {

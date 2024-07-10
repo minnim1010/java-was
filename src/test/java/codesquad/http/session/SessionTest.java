@@ -89,4 +89,28 @@ class SessionTest {
             assertThat(session.isValid()).isFalse();
         }
     }
+
+    @Nested
+    class 세션의_남은_유효_시간을_계산한다 {
+
+        @Test
+        void 세션이_만료되기_전에_남은_시간을_확인한다() throws InterruptedException {
+            Session session = new Session(sessionTimeout, "sessionId");
+            Thread.sleep(900); // 0.9초 대기
+
+            long remainSeconds = session.remainSeconds();
+
+            assertThat(remainSeconds).isNotNegative();
+        }
+
+        @Test
+        void 세션이_만료된_후에는_예외가_발생한다() throws InterruptedException {
+            Session session = new Session(sessionTimeout, "sessionId");
+            Thread.sleep(1500); // 1.5초 대기
+
+            assertThatThrownBy(session::remainSeconds)
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Session is expired");
+        }
+    }
 }
