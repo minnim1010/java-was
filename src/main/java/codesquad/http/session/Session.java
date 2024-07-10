@@ -1,22 +1,21 @@
 package codesquad.http.session;
 
-import codesquad.config.GlobalConstants;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Session {
 
-    private final GlobalConstants globalConstants;
+    private final long sessionTimeout;
 
     private final String sessionId;
     private final Instant createdAt;
     private final Map<String, String> attributes;
     private boolean isValid = true;
 
-    public Session(GlobalConstants globalConstants,
+    public Session(long sessionTimeout,
                    String sessionId) {
-        this.globalConstants = globalConstants;
+        this.sessionTimeout = sessionTimeout;
         this.sessionId = sessionId;
         this.createdAt = Instant.now();
         this.attributes = new ConcurrentHashMap<>();
@@ -50,7 +49,7 @@ public class Session {
         if (!isValid) {
             throw new IllegalStateException("Session is invalidated");
         }
-        if (Instant.now().isAfter(createdAt.plusMillis(globalConstants.getSessionTimeout()))) {
+        if (Instant.now().isAfter(createdAt.plusMillis(sessionTimeout))) {
             isValid = false;
             throw new IllegalStateException("Session is expired");
         }
