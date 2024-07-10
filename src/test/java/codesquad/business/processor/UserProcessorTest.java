@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import codesquad.business.handler.UserRequestHandler;
 import codesquad.config.GlobalBeanContainer;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
@@ -21,11 +22,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@DisplayName("UserProcessor 테스트")
+@DisplayName("회원가입 테스트")
 class UserProcessorTest {
 
     private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
-    private final UserProcessor userProcessor = globalBeanContainer.userProcessor();
+    private final UserRequestHandler userProcessor = globalBeanContainer.userRequestHandler();
 
     @Nested
     class POST_요청_시 {
