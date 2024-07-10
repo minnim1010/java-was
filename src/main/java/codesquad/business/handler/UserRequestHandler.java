@@ -1,4 +1,4 @@
-package codesquad.business.processor;
+package codesquad.business.handler;
 
 import codesquad.business.model.User;
 import codesquad.business.persistence.UserRepository;
@@ -7,11 +7,11 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 
-public class UserProcessor extends AbstractRequestHandler {
+public class UserRequestHandler extends AbstractRequestHandler {
 
     private final UserRepository userRepository;
 
-    public UserProcessor(UserRepository userRepository) {
+    public UserRequestHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
