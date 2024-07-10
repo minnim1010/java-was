@@ -1,98 +1,58 @@
 package codesquad.config;
 
+import codesquad.business.handler.LoginRequestHandler;
+import codesquad.business.handler.UserRequestHandler;
 import codesquad.business.persistence.UserRepository;
-import codesquad.business.processor.LoginProcessor;
-import codesquad.business.processor.UserProcessor;
-import codesquad.http.handler.RequestHandler;
-import codesquad.http.session.SessionIdGenerator;
-import codesquad.http.session.SessionManager;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class GlobalBeanContainer {
 
     private static GlobalBeanContainer instance;
-    private final SessionManager sessionManager;
 
-    // ----------------------------------------------------- Session
-    private final SessionIdGenerator sessionIdGenerator;
     private final UserRepository userRepository;
-
-    // ----------------------------------------------------- Business
-    private final UserProcessor userProcessor;
-    private final LoginProcessor loginProcessor;
-
-    private GlobalBeanContainer(GlobalConstants globalConstants) {
-        this.sessionIdGenerator = setSessionIdGenerator();
-        this.sessionManager = setSessionManager(globalConstants, sessionIdGenerator);
-
-        this.userRepository = setUserRepository();
-        this.userProcessor = setUserProcessor(userRepository);
-        this.loginProcessor = setLoginProcessor(userRepository);
-    }
+    private final UserRequestHandler userRequestHandler;
+    private final LoginRequestHandler loginRequestHandler;
 
     // ----------------------------------------------------- Constructor
 
+    private GlobalBeanContainer() {
+        this.userRepository = setUserRepository();
+        this.userRequestHandler = setUserProcessor(userRepository);
+        this.loginRequestHandler = setLoginProcessor(userRepository);
+    }
+
     public static GlobalBeanContainer getInstance() {
+
         if (instance == null) {
-            instance = new GlobalBeanContainer(GlobalConstants.getInstance());
+            instance = new GlobalBeanContainer();
         }
         return instance;
     }
 
     // ----------------------------------------------------- Getter
 
-    public SessionManager sessionManager() {
-        return sessionManager;
-    }
-
-    public SessionIdGenerator sessionIdGenerator() {
-        return sessionIdGenerator;
-    }
-
     public UserRepository userRepository() {
         return userRepository;
     }
 
-    public UserProcessor userProcessor() {
-        return userProcessor;
+    public UserRequestHandler userRequestHandler() {
+        return userRequestHandler;
     }
 
-    public LoginProcessor loginProcessor() {
-        return loginProcessor;
+    public LoginRequestHandler loginRequestHandler() {
+        return loginRequestHandler;
     }
 
     // ----------------------------------------------------- Setter
-
-    protected SessionManager setSessionManager(GlobalConstants sessionConfig,
-                                               SessionIdGenerator sessionIdGenerator) {
-        return new SessionManager(sessionConfig, sessionIdGenerator);
-    }
-
-    protected SessionIdGenerator setSessionIdGenerator() {
-        return new SessionIdGenerator();
-    }
 
     protected UserRepository setUserRepository() {
         return new UserRepository();
     }
 
-    protected UserProcessor setUserProcessor(UserRepository userRepository) {
-        return new UserProcessor(userRepository);
+    protected UserRequestHandler setUserProcessor(UserRepository userRepository) {
+        return new UserRequestHandler(userRepository);
     }
 
-    protected LoginProcessor setLoginProcessor(UserRepository userRepository) {
-        return new LoginProcessor(userRepository);
-    }
-
-    protected Map<String, RequestHandler> setRequestHandlerMap(List<String> path,
-                                                               List<RequestHandler> requestHandlers) {
-        Map<String, RequestHandler> requestHandlerMap = new HashMap<>();
-        for (int i = 0; i < path.size(); ++i) {
-            requestHandlerMap.put(path.get(i), requestHandlers.get(i));
-        }
-
-        return requestHandlerMap;
+    protected LoginRequestHandler setLoginProcessor(UserRepository userRepository) {
+        return new LoginRequestHandler(userRepository);
     }
 }
