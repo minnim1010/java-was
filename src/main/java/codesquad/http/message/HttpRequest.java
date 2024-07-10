@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
+
     private final HttpMethod method;
     private final URI uri;
     private final Map<String, String> query;

@@ -30,7 +30,8 @@ class HttpProcessorTest {
 
     HttpParser httpParser = new HttpParser();
     RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
-    StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(Set.of("/index.html"));
+    StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(Set.of("/"),
+            Set.of("/index.html"));
     HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
             staticResourceRequestHandler);
     HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);

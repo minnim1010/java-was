@@ -23,7 +23,7 @@ public final class Fixture {
      */
     public static HttpRequest createHttpGetRequest() throws URISyntaxException {
         return new HttpRequest(HttpMethod.GET,
-                new URI("/index.html"),
+                new URI("/"),
                 HttpVersion.HTTP_1_1,
                 new HashMap<>() {
                     {

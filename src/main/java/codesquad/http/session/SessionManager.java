@@ -1,18 +1,18 @@
 package codesquad.http.session;
 
-import codesquad.http.session.config.SessionConfig;
+import codesquad.config.GlobalConstants;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionManager {
 
-    private final SessionConfig sessionConfig;
+    private final GlobalConstants globalConstants;
     private final SessionIdGenerator sessionIdGenerator;
     private final Map<String, Session> sessionPool = new ConcurrentHashMap<>();
 
-    public SessionManager(SessionConfig sessionConfig,
+    public SessionManager(GlobalConstants globalConstants,
                           SessionIdGenerator sessionIdGenerator) {
-        this.sessionConfig = sessionConfig;
+        this.globalConstants = globalConstants;
         this.sessionIdGenerator = sessionIdGenerator;
     }
 
@@ -20,20 +20,20 @@ public class SessionManager {
         clearInvalidSessionIfFull();
         validateSessionPoolSize();
 
-        Session session = new Session(sessionConfig, sessionIdGenerator.generate());
+        Session session = new Session(globalConstants, sessionIdGenerator.generate());
         sessionPool.put(session.getSessionId(), session);
 
         return session;
     }
 
     private void clearInvalidSessionIfFull() {
-        if (sessionPool.size() >= sessionConfig.getSessionPoolMaxSize()) {
+        if (sessionPool.size() >= globalConstants.getSessionPoolMaxSize()) {
             removeInvalidSessions();
         }
     }
 
     private void validateSessionPoolSize() {
-        if (sessionPool.size() >= sessionConfig.getSessionPoolMaxSize()) {
+        if (sessionPool.size() >= globalConstants.getSessionPoolMaxSize()) {
             throw new IllegalStateException("Session Pool is full");
         }
     }

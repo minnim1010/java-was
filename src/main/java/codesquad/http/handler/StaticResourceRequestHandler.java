@@ -4,7 +4,6 @@ import static codesquad.http.header.HeaderField.ACCEPT;
 import static codesquad.http.header.HeaderField.CONTENT_TYPE;
 import static codesquad.utils.FileUtils.getFileExtension;
 
-import codesquad.config.GlobalConfig;
 import codesquad.http.error.ResourceNotFoundException;
 import codesquad.http.error.UnSupportedMediaTypeException;
 import codesquad.http.header.ContentType;
@@ -19,9 +18,12 @@ import java.util.Set;
 public class StaticResourceRequestHandler {
 
     private final Set<String> staticResourcePaths;
+    private final Set<String> defaultPages;
 
-    public StaticResourceRequestHandler(Set<String> staticResourcePaths) {
+    public StaticResourceRequestHandler(Set<String> staticResourcePaths,
+                                        Set<String> defaultPages) {
         this.staticResourcePaths = staticResourcePaths;
+        this.defaultPages = defaultPages;
     }
 
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
@@ -41,7 +43,7 @@ public class StaticResourceRequestHandler {
             return path;
         }
 
-        return GlobalConfig.DEFAULT_PAGES.stream()
+        return defaultPages.stream()
                 .map(defaultPage -> path + (path.endsWith("/") ? "" : "/") + defaultPage)
                 .filter(staticResourcePaths::contains)
                 .findFirst()
@@ -57,7 +59,7 @@ public class StaticResourceRequestHandler {
     private String determineContentType(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
         if (fileExtension.isEmpty()) {
-            return ContentType.UNKNOWN.getContentType();
+            return ContentType.UNKNOWN.getResponseType();
         }
 
         String contentType = ContentType.getContentTypeByExtension(fileExtension);

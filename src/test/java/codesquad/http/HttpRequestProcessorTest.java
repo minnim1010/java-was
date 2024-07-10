@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import codesquad.http.error.ResourceNotFoundException;
-import codesquad.http.handler.RequestHandler;
+import codesquad.http.handler.AbstractRequestHandler;
 import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
@@ -15,6 +15,7 @@ import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 import codesquad.utils.Fixture;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,10 +37,10 @@ class HttpRequestProcessorTest {
 
         @BeforeEach
         void setUp() {
-            Map<String, RequestHandler> testRequestHandlerMap = Map.of();
-            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(testRequestHandlerMap);
+            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
             StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
-                    Set.of("/index.html"));
+                    Set.of("/index.html"),
+                    Set.of("index.html"));
             httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
         }
 
@@ -81,9 +82,10 @@ class HttpRequestProcessorTest {
 
         @BeforeEach
         void setUp() {
-            Map<String, RequestHandler> testRequestHandlerMap = Map.of("/test", new TestRequestHandler());
-            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(testRequestHandlerMap);
+            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(
+                    Map.of("/test", new TestRequestHandler()));
             StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
+                    Set.of("/"),
                     Set.of("/index.html"));
             httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
         }
@@ -102,7 +104,8 @@ class HttpRequestProcessorTest {
             );
         }
 
-        public class TestRequestHandler implements RequestHandler {
+        public class TestRequestHandler extends AbstractRequestHandler {
+
             @Override
             public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {
                 httpResponse.setStatus(HttpStatus.OK);

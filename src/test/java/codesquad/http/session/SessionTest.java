@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import codesquad.http.session.config.SessionConfig;
+import codesquad.config.GlobalConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("세션 테스트")
 class SessionTest {
 
-    private final SessionConfig mockSessionConfig = new SessionConfig() {
+    private final GlobalConstants mockConfig = new GlobalConstants() {
         @Override
         protected long setSessionTimeout() {
             return 1000L;
@@ -31,7 +31,7 @@ class SessionTest {
 
         @Test
         void 유효한_세션을_생성할_수_있다() {
-            session = new Session(mockSessionConfig, "sessionId");
+            session = new Session(mockConfig, "sessionId");
 
             assertThat(session.isValid()).isTrue();
         }
@@ -42,7 +42,7 @@ class SessionTest {
 
         @BeforeEach
         void setUp() {
-            session = new Session(mockSessionConfig, "sessionId");
+            session = new Session(mockConfig, "sessionId");
         }
 
         @Test
@@ -63,7 +63,7 @@ class SessionTest {
 
         @BeforeEach
         void setUp() {
-            session = new Session(mockSessionConfig, "sessionId");
+            session = new Session(mockConfig, "sessionId");
         }
 
         @Test
@@ -84,13 +84,13 @@ class SessionTest {
 
         @BeforeEach
         void setUp() {
-            SessionConfig timeoutMockSessionConfig = new SessionConfig() {
+            GlobalConstants timeoutMockConfig = new GlobalConstants() {
                 @Override
                 protected long setSessionTimeout() {
                     return 1000L;
                 }
             };
-            session = new Session(timeoutMockSessionConfig, "sessionId");
+            session = new Session(timeoutMockConfig, "sessionId");
         }
 
         @Test

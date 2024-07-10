@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import codesquad.business.persistence.UserRepository;
+import codesquad.config.GlobalBeanContainer;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Test;
 @DisplayName("UserProcessor 테스트")
 class UserProcessorTest {
 
-    private final UserProcessor userProcessor = new UserProcessor(new UserRepository());
+    private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
+    private final UserProcessor userProcessor = globalBeanContainer.userProcessor();
 
     @Nested
     class POST_요청_시 {

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import codesquad.http.session.config.SessionConfig;
+import codesquad.config.GlobalConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("여러 세션을 관리하는 테스트")
 class SessionManagerTest {
 
-    private final SessionConfig sessionConfig = new SessionConfig() {
+    private final GlobalConstants config = new GlobalConstants() {
 
         @Override
         protected long setSessionTimeout() {
@@ -47,7 +47,7 @@ class SessionManagerTest {
 
         @BeforeEach
         void setUp() {
-            sessionManager = new SessionManager(sessionConfig, sessionIdGenerator);
+            sessionManager = new SessionManager(config, sessionIdGenerator);
         }
 
         @Test
@@ -89,7 +89,7 @@ class SessionManagerTest {
 
         @BeforeEach
         void setUp() {
-            sessionManager = new SessionManager(sessionConfig, sessionIdGenerator);
+            sessionManager = new SessionManager(config, sessionIdGenerator);
         }
 
         @Test
