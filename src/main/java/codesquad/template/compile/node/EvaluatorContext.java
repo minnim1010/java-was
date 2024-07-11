@@ -5,17 +5,17 @@ import java.util.Map;
 
 public class EvaluatorContext {
 
-    private final Map<String, String> context;
+    private final Map<String, Object> context;
 
     public EvaluatorContext() {
         this.context = new HashMap<>();
     }
 
-    public String getValue(String variable) {
-        return context.getOrDefault(variable, "null");
+    public Object getValue(String key) {
+        return context.getOrDefault(key, "null");
     }
 
-    public void setValue(String variable, String value) {
+    public void setValue(String variable, Object value) {
         context.put(variable, value);
     }
 }

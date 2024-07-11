@@ -10,7 +10,7 @@ public class VariableNode extends ASTNode {
 
     @Override
     public String evaluate(EvaluatorContext context) {
-        return context.getValue(name);
+        return context.getValue(name).toString();
     }
 
     public String getName() {

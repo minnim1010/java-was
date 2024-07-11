@@ -22,11 +22,11 @@ public class TemplateEngine {
         Matcher matcher = replacePattern.matcher(processedHtml);
         while (matcher.find()) {
             String key = matcher.group(1).trim();
-            String replacement = context.getValue(key);
+            Object replacement = context.getValue(key);
             if (replacement == null) {
                 throw new IllegalArgumentException("cannot render: " + key + " not found");
             }
-            matcher.appendReplacement(result, replacement);
+            matcher.appendReplacement(result, replacement.toString());
         }
         matcher.appendTail(result);
 
