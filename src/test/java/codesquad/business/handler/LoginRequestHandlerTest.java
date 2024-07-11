@@ -32,7 +32,6 @@ class LoginRequestHandlerTest extends TestEnvironment {
 
     @BeforeEach
     void setUp() {
-        sessionManager.clear();
         userRepository = new UserRepository();
         loginRequestHandler = new LoginRequestHandler(userRepository);
     }

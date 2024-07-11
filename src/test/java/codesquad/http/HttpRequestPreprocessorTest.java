@@ -25,7 +25,6 @@ class HttpRequestPreprocessorTest extends TestEnvironment {
 
     @BeforeEach
     void setUp() {
-        sessionManager.clear();
         httpParser = new HttpParser();
         preprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
     }

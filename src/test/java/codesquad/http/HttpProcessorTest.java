@@ -50,7 +50,6 @@ class HttpProcessorTest extends TestEnvironment {
 
     @BeforeEach
     void setUp() {
-        sessionManager.clear();
         outputStream = new ByteArrayOutputStream();
     }
 

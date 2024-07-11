@@ -29,7 +29,6 @@ class LogoutRequestHandlerTest extends TestEnvironment {
 
     @BeforeEach
     void setUp() {
-        sessionManager.clear();
         logoutRequestHandler = new LogoutRequestHandler();
     }
 
@@ -39,7 +38,7 @@ class LogoutRequestHandlerTest extends TestEnvironment {
         @Test
         void 쿠키가_없으면_UNAUTHORIZED_응답을_반환한다() throws Exception {
             // Given
-            Session session = sessionManager.createSession();
+            sessionManager.createSession();
             HttpRequest httpRequest = new HttpRequest(
                     HttpMethod.GET,
                     new URI("/user/logout"),
