@@ -3,7 +3,7 @@ package codesquad.http.handler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 
-public interface RequestHandler {
+public interface DynamicRequestHandler {
 
     void processGet(HttpRequest httpRequest, HttpResponse httpResponse);
 

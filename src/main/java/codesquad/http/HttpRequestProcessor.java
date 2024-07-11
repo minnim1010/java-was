@@ -1,7 +1,7 @@
 package codesquad.http;
 
-import codesquad.http.handler.RequestHandler;
-import codesquad.http.handler.RequestHandlerResolver;
+import codesquad.http.handler.DynamicRequestHandler;
+import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
@@ -10,12 +10,12 @@ import java.io.IOException;
 
 public class HttpRequestProcessor {
 
-    private final RequestHandlerResolver requestHandlerResolver;
+    private final DynamicRequestHandlerResolver dynamicRequestHandlerResolver;
     private final StaticResourceRequestHandler staticResourceRequestHandler;
 
-    public HttpRequestProcessor(RequestHandlerResolver requestHandlerResolver,
+    public HttpRequestProcessor(DynamicRequestHandlerResolver dynamicRequestHandlerResolver,
                                 StaticResourceRequestHandler staticResourceRequestHandler) {
-        this.requestHandlerResolver = requestHandlerResolver;
+        this.dynamicRequestHandlerResolver = dynamicRequestHandlerResolver;
         this.staticResourceRequestHandler = staticResourceRequestHandler;
     }
 
@@ -26,15 +26,15 @@ public class HttpRequestProcessor {
 
         httpResponse.setVersion(httpRequest.getVersion());
 
-        RequestHandler requestHandler = requestHandlerResolver.resolve(path);
-        if (requestHandler == null) {
+        DynamicRequestHandler dynamicRequestHandler = dynamicRequestHandlerResolver.resolve(path);
+        if (dynamicRequestHandler == null) {
             staticResourceRequestHandler.handle(httpRequest, httpResponse);
             return;
         }
 
         switch (method) {
-            case GET -> requestHandler.processGet(httpRequest, httpResponse);
-            case POST -> requestHandler.processPost(httpRequest, httpResponse);
+            case GET -> dynamicRequestHandler.processGet(httpRequest, httpResponse);
+            case POST -> dynamicRequestHandler.processPost(httpRequest, httpResponse);
             default -> throw new UnsupportedOperationException("Unsupported HTTP Method " + method);
         }
     }

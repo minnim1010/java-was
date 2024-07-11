@@ -23,13 +23,13 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("로그아웃 테스트")
-class LogoutRequestHandlerTest extends TestEnvironment {
+class LogoutHandlerTest extends TestEnvironment {
 
-    private LogoutRequestHandler logoutRequestHandler;
+    private LogoutHandler logoutRequestHandler;
 
     @BeforeEach
     void setUp() {
-        logoutRequestHandler = new LogoutRequestHandler();
+        logoutRequestHandler = new LogoutHandler();
     }
 
     @Nested

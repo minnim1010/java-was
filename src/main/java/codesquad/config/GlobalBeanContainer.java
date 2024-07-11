@@ -1,8 +1,8 @@
 package codesquad.config;
 
-import codesquad.business.handler.LoginRequestHandler;
-import codesquad.business.handler.LogoutRequestHandler;
-import codesquad.business.handler.UserRequestHandler;
+import codesquad.business.handler.LoginHandler;
+import codesquad.business.handler.LogoutHandler;
+import codesquad.business.handler.UserHandler;
 import codesquad.business.persistence.UserRepository;
 
 public class GlobalBeanContainer {
@@ -10,16 +10,16 @@ public class GlobalBeanContainer {
     private static GlobalBeanContainer instance;
 
     private final UserRepository userRepository;
-    private final UserRequestHandler userRequestHandler;
-    private final LoginRequestHandler loginRequestHandler;
-    private final LogoutRequestHandler logoutRequestHandler;
+    private final UserHandler userRequestHandler;
+    private final LoginHandler loginHandler;
+    private final LogoutHandler logoutRequestHandler;
 
     // ----------------------------------------------------- Constructor
 
     private GlobalBeanContainer() {
         this.userRepository = setUserRepository();
         this.userRequestHandler = setUserProcessor(userRepository);
-        this.loginRequestHandler = setLoginProcessor(userRepository);
+        this.loginHandler = setLoginProcessor(userRepository);
         this.logoutRequestHandler = setLogoutProcessor();
     }
 
@@ -36,15 +36,15 @@ public class GlobalBeanContainer {
         return userRepository;
     }
 
-    public UserRequestHandler userRequestHandler() {
+    public UserHandler userRequestHandler() {
         return userRequestHandler;
     }
 
-    public LoginRequestHandler loginRequestHandler() {
-        return loginRequestHandler;
+    public LoginHandler loginRequestHandler() {
+        return loginHandler;
     }
 
-    public LogoutRequestHandler logoutRequestHandler() {
+    public LogoutHandler logoutRequestHandler() {
         return logoutRequestHandler;
     }
 
@@ -53,15 +53,15 @@ public class GlobalBeanContainer {
         return new UserRepository();
     }
 
-    protected UserRequestHandler setUserProcessor(UserRepository userRepository) {
-        return new UserRequestHandler(userRepository);
+    protected UserHandler setUserProcessor(UserRepository userRepository) {
+        return new UserHandler(userRepository);
     }
 
-    protected LoginRequestHandler setLoginProcessor(UserRepository userRepository) {
-        return new LoginRequestHandler(userRepository);
+    protected LoginHandler setLoginProcessor(UserRepository userRepository) {
+        return new LoginHandler(userRepository);
     }
 
-    protected LogoutRequestHandler setLogoutProcessor() {
-        return new LogoutRequestHandler();
+    protected LogoutHandler setLogoutProcessor() {
+        return new LogoutHandler();
     }
 }

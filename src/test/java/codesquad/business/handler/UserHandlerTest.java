@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("회원가입 테스트")
-class UserRequestHandlerTest {
+class UserHandlerTest {
 
     private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
-    private final UserRequestHandler userRequestHandler = globalBeanContainer.userRequestHandler();
+    private final UserHandler userRequestHandler = globalBeanContainer.userRequestHandler();
 
     @Nested
     class POST_요청_시 {

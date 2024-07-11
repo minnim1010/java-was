@@ -4,7 +4,7 @@ import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 
-public abstract class AbstractRequestHandler implements RequestHandler {
+public abstract class AbstractDynamicRequestHandler implements DynamicRequestHandler {
 
     @Override
     public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {

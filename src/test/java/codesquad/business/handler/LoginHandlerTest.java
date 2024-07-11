@@ -25,15 +25,15 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("로그인 테스트")
-class LoginRequestHandlerTest extends TestEnvironment {
+class LoginHandlerTest extends TestEnvironment {
 
     private UserRepository userRepository;
-    private LoginRequestHandler loginRequestHandler;
+    private LoginHandler loginHandler;
 
     @BeforeEach
     void setUp() {
         userRepository = new UserRepository();
-        loginRequestHandler = new LoginRequestHandler(userRepository);
+        loginHandler = new LoginHandler(userRepository);
     }
 
     @Nested
@@ -56,7 +56,7 @@ class LoginRequestHandlerTest extends TestEnvironment {
             HttpResponse httpResponse = new HttpResponse();
 
             // When
-            loginRequestHandler.processPost(httpRequest, httpResponse);
+            loginHandler.processPost(httpRequest, httpResponse);
 
             // Then
             assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
@@ -80,7 +80,7 @@ class LoginRequestHandlerTest extends TestEnvironment {
             HttpResponse httpResponse = new HttpResponse();
 
             // When
-            loginRequestHandler.processPost(httpRequest, httpResponse);
+            loginHandler.processPost(httpRequest, httpResponse);
 
             // Then
             assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);

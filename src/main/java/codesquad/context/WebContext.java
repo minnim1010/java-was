@@ -1,7 +1,7 @@
 package codesquad.context;
 
 import codesquad.config.GlobalBeanContainer;
-import codesquad.http.handler.RequestHandler;
+import codesquad.http.handler.DynamicRequestHandler;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -22,7 +22,7 @@ public class WebContext {
 
     private static final Logger log = LoggerFactory.getLogger(WebContext.class);
 
-    private final Map<String, RequestHandler> requestHandlerMap;
+    private final Map<String, DynamicRequestHandler> requestHandlerMap;
     private final Set<String> staticResourcePaths;
     private final Set<String> defaultPages;
 
@@ -37,11 +37,11 @@ public class WebContext {
         this.defaultPages = setDefaultPages();
     }
 
-    protected Map<String, RequestHandler> setRequestHandlerMap(List<String> path,
-                                                               List<RequestHandler> requestHandlers) {
-        Map<String, RequestHandler> mapper = new HashMap<>();
+    protected Map<String, DynamicRequestHandler> setRequestHandlerMap(List<String> path,
+                                                                      List<DynamicRequestHandler> dynamicRequestHandlers) {
+        Map<String, DynamicRequestHandler> mapper = new HashMap<>();
         for (int i = 0; i < path.size(); ++i) {
-            mapper.put(path.get(i), requestHandlers.get(i));
+            mapper.put(path.get(i), dynamicRequestHandlers.get(i));
         }
 
         return mapper;
@@ -106,7 +106,7 @@ public class WebContext {
         return Set.of("index.html");
     }
 
-    public Map<String, RequestHandler> getRequestHandlerMap() {
+    public Map<String, DynamicRequestHandler> getRequestHandlerMap() {
         return requestHandlerMap;
     }
 

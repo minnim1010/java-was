@@ -5,7 +5,7 @@ import codesquad.context.WebContext;
 import codesquad.http.HttpProcessor;
 import codesquad.http.HttpRequestPreprocessor;
 import codesquad.http.HttpRequestProcessor;
-import codesquad.http.handler.RequestHandlerResolver;
+import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.parser.HttpParser;
 import codesquad.http.session.SessionIdGenerator;
@@ -42,10 +42,11 @@ public class WebServer {
                 sessionIdGenerator);
 
         HttpRequestPreprocessor httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
-        RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(webContext.getRequestHandlerMap());
+        DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
+                webContext.getRequestHandlerMap());
         StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
                 webContext.getStaticResourcePaths(), webContext.getDefaultPages());
-        HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+        HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                 staticResourceRequestHandler);
 
         return new HttpProcessor(httpRequestPreprocessor, httpRequestProcessor);
