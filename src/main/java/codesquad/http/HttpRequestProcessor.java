@@ -2,10 +2,10 @@ package codesquad.http;
 
 import codesquad.http.handler.DynamicRequestHandler;
 import codesquad.http.handler.DynamicRequestHandlerResolver;
+import codesquad.http.handler.RequestHandler;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.property.HttpMethod;
 import java.io.IOException;
 
 public class HttpRequestProcessor {
@@ -21,21 +21,18 @@ public class HttpRequestProcessor {
 
     public void processRequest(HttpRequest httpRequest,
                                HttpResponse httpResponse) throws IOException {
-        HttpMethod method = httpRequest.getMethod();
-        String path = httpRequest.getUri().getPath();
-
         httpResponse.setVersion(httpRequest.getVersion());
 
+        RequestHandler requestHandler = resolveRequestHandler(httpRequest.getUri().getPath());
+        requestHandler.handle(httpRequest, httpResponse);
+    }
+
+    private RequestHandler resolveRequestHandler(String path) {
         DynamicRequestHandler dynamicRequestHandler = dynamicRequestHandlerResolver.resolve(path);
-        if (dynamicRequestHandler == null) {
-            staticResourceRequestHandler.handle(httpRequest, httpResponse);
-            return;
+        if (dynamicRequestHandler != null) {
+            return dynamicRequestHandler;
         }
 
-        switch (method) {
-            case GET -> dynamicRequestHandler.processGet(httpRequest, httpResponse);
-            case POST -> dynamicRequestHandler.processPost(httpRequest, httpResponse);
-            default -> throw new UnsupportedOperationException("Unsupported HTTP Method " + method);
-        }
+        return staticResourceRequestHandler;
     }
 }

@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Set;
 
-public class StaticResourceRequestHandler {
+public class StaticResourceRequestHandler implements RequestHandler {
 
     private final Set<String> staticResourcePaths;
     private final Set<String> defaultPages;
@@ -26,6 +26,7 @@ public class StaticResourceRequestHandler {
         this.defaultPages = defaultPages;
     }
 
+    @Override
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         String staticResourcePath = findStaticResourcePath(httpRequest.getUri().getPath());
         byte[] fileContent = readResource(staticResourcePath);
