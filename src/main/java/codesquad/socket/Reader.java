@@ -14,7 +14,12 @@ public class Reader {
     }
 
     public char[] readLine() throws IOException {
-        return bufferedReader.readLine().toCharArray();
+        String input = bufferedReader.readLine();
+        if (input == null) {
+            return new char[0];
+        }
+
+        return input.toCharArray();
     }
 
     public char[] readBytes(int length) throws IOException {

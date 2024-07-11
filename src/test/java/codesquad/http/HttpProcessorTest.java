@@ -3,7 +3,8 @@ package codesquad.http;
 import static codesquad.utils.Fixture.createReaderWithInput;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import codesquad.error.UnSupportedHttpMethodException;
+import codesquad.environment.TestEnvironment;
+import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.handler.RequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -26,19 +28,29 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("HTTP 요청 처리 테스트")
-class HttpProcessorTest {
+class HttpProcessorTest extends TestEnvironment {
 
-    HttpParser httpParser = new HttpParser();
-    RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
-    StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(Set.of("/index.html"));
-    HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
-            staticResourceRequestHandler);
-    HttpProcessor httpProcessor = new HttpProcessor(httpParser, httpRequestProcessor);
+    private static RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
+    private static StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
+            Set.of("/"),
+            Set.of("/index.html"));
+    private static HttpRequestProcessor httpRequestProcessor;
+    private static HttpParser httpParser;
+    private static HttpRequestPreprocessor httpRequestPreprocessor;
+    private static HttpProcessor httpProcessor;
 
+    @BeforeAll
+    static void beforeAll() {
+        httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
+        httpParser = new HttpParser();
+        httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
+        httpProcessor = new HttpProcessor(httpRequestPreprocessor, httpRequestProcessor);
+    }
     private ByteArrayOutputStream outputStream;
 
     @BeforeEach
     void setUp() {
+        sessionManager.clear();
         outputStream = new ByteArrayOutputStream();
     }
 
@@ -94,9 +106,9 @@ class HttpProcessorTest {
                     throw new UnsupportedOperationException();
                 }
             };
-            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+            HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
 
-            httpProcessor.process(reader, writer);
+            testHttpProcessor.process(reader, writer);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 406 Not Acceptable"));
         }
@@ -112,9 +124,9 @@ class HttpProcessorTest {
                     throw new UnSupportedHttpMethodException();
                 }
             };
-            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+            HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
 
-            httpProcessor.process(reader, writer);
+            testHttpProcessor.process(reader, writer);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 405 Method Not Allowed"));
         }
@@ -130,9 +142,9 @@ class HttpProcessorTest {
                     throw new RuntimeException();
                 }
             };
-            httpProcessor = new HttpProcessor(new HttpParser(), faultyRequestProcessor);
+            HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
 
-            httpProcessor.process(reader, writer);
+            testHttpProcessor.process(reader, writer);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 500 Internal Server Error"));
         }

@@ -2,19 +2,19 @@ package codesquad.http;
 
 import static codesquad.http.header.HeaderField.DATE;
 
-import codesquad.config.GlobalConfig;
-import codesquad.error.HttpRequestParseException;
-import codesquad.error.ResourceNotFoundException;
-import codesquad.error.UnSupportedHttpMethodException;
+import codesquad.config.GlobalConstants;
+import codesquad.http.error.HttpRequestParseException;
+import codesquad.http.error.ResourceNotFoundException;
+import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpStatus;
 import codesquad.socket.Reader;
 import codesquad.socket.Writer;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,20 +23,21 @@ public class HttpProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(HttpProcessor.class);
 
-    private final HttpParser httpParser;
+    private final HttpRequestPreprocessor httpRequestPreprocessor;
     private final HttpRequestProcessor httpRequestProcessor;
 
-    public HttpProcessor(HttpParser httpParser,
+    public HttpProcessor(HttpRequestPreprocessor httpRequestPreprocessor,
                          HttpRequestProcessor httpRequestProcessor) {
-        this.httpParser = httpParser;
+        this.httpRequestPreprocessor = httpRequestPreprocessor;
         this.httpRequestProcessor = httpRequestProcessor;
     }
 
-    public void process(Reader reader, Writer writer) throws IOException {
+    public void process(Reader reader,
+                        Writer writer) throws IOException {
         HttpResponse response = new HttpResponse();
 
         try {
-            HttpRequest request = httpParser.parse(reader);
+            HttpRequest request = httpRequestPreprocessor.process(reader);
             httpRequestProcessor.processRequest(request, response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
@@ -52,14 +53,18 @@ public class HttpProcessor {
             }
             log.error(e.getMessage(), e);
         }
+
         setDateHeader(response);
 
         writer.write(response.format());
     }
 
     private void setDateHeader(HttpResponse httpResponse) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", GlobalConfig.LOCALE);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(GlobalConfig.TIMEZONE));
+        Locale locale = GlobalConstants.getInstance().getLocale();
+        String timezone = GlobalConstants.getInstance().getTimezone();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", locale);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
         String date = dateFormat.format(new Date());
 
         httpResponse.setHeader(DATE.getFieldName(), date);

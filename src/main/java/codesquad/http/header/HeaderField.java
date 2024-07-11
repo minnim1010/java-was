@@ -6,9 +6,11 @@ public enum HeaderField {
 
     // -------------------------------------------------------------- Request Header Fields
     ACCEPT("Accept"),
+    COOKIE("Cookie"),
 
     // -------------------------------------------------------------- Response Header Fields
     DATE("Date"),
+    SET_COOKIE("Set-Cookie"),
 
     // -------------------------------------------------------------- Entity Header Fields
     CONTENT_TYPE("Content-Type"),
@@ -24,15 +26,6 @@ public enum HeaderField {
 
     HeaderField(String fieldName) {
         this.fieldName = fieldName;
-    }
-
-    public static HeaderField fromFieldName(String fieldName) {
-        for (HeaderField headerField : values()) {
-            if (headerField.fieldName.equalsIgnoreCase(fieldName)) {
-                return headerField;
-            }
-        }
-        return UNKNOWN;
     }
 
     public String getFieldName() {

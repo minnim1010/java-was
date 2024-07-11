@@ -1,22 +1,23 @@
 package codesquad.http.message;
 
-import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
 import static codesquad.utils.StringUtils.BLANK;
 import static codesquad.utils.StringUtils.NEW_LINE;
 
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
+import codesquad.http.session.Session;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
-    private final HttpMethod method;
-    private final URI uri;
-    private final Map<String, String> query;
-    private final HttpVersion version;
-    private final Map<String, String> headers;
-    private final byte[] body;
+
+    protected final HttpMethod method;
+    protected final URI uri;
+    protected final Map<String, String> query;
+    protected final HttpVersion version;
+    protected final Map<String, String> headers;
+    protected final byte[] body;
+    protected Session session;
 
     public HttpRequest(HttpMethod method,
                        URI uri,
@@ -30,14 +31,6 @@ public class HttpRequest {
         this.version = version;
         this.headers = headers;
         this.body = body;
-    }
-
-    public HttpRequest(HttpMethod method,
-                       URI uri,
-                       HttpVersion version,
-                       Map<String, String> headers,
-                       byte[] body) {
-        this(method, uri, new HashMap<>(), version, headers, body);
     }
 
     public HttpVersion getVersion() {
@@ -68,6 +61,18 @@ public class HttpRequest {
         return query.get(key);
     }
 
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        if (this.session != null) {
+            throw new IllegalArgumentException("Session already exists");
+        }
+
+        this.session = session;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -75,7 +80,7 @@ public class HttpRequest {
         sb.append(method).append(BLANK)
                 .append(uri).append(BLANK)
                 .append(version.getDisplayName()).append(NEW_LINE);
-        headers.forEach((key, value) -> sb.append(key).append(HEADER_DELIMITER).append(value).append(NEW_LINE));
+        headers.forEach((key, value) -> sb.append(key).append(": ").append(value).append(NEW_LINE));
         sb.append("\n");
         sb.append(new String(body));
         return sb.toString();

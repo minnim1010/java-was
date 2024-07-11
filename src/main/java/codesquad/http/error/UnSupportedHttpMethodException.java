@@ -1,4 +1,4 @@
-package codesquad.error;
+package codesquad.http.error;
 
 public class UnSupportedHttpMethodException extends RuntimeException {
 

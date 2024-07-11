@@ -1,6 +1,6 @@
 package codesquad.http.handler;
 
-import codesquad.error.UnSupportedHttpMethodException;
+import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 

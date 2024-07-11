@@ -1,9 +1,8 @@
 package codesquad.http.parser;
 
-import static codesquad.http.HttpConstraints.HEADER_DELIMITER;
 import static codesquad.utils.StringUtils.BLANK;
 
-import codesquad.error.HttpRequestParseException;
+import codesquad.http.error.HttpRequestParseException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
@@ -56,7 +55,7 @@ public class HttpParser {
         Map<String, String> headers = new HashMap<>();
         String line;
         while (!(line = new String(reader.readLine()).trim()).isEmpty()) {
-            String[] headerTokens = line.split(HEADER_DELIMITER, 2);
+            String[] headerTokens = line.split(": ", 2);
             if (headerTokens.length != 2) {
                 throw new HttpRequestParseException("Invalid header: " + line);
             }
