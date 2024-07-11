@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@DisplayName("여러 세션을 관리하는 테스트")
+@DisplayName("세션 관리 테스트")
 class SessionManagerTest {
 
     private final long sessionTimeout = 1000L;

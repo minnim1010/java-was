@@ -15,5 +15,4 @@ public abstract class TestEnvironment {
                     return "session-id";
                 }
             });
-
 }

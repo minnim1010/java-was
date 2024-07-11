@@ -89,6 +89,9 @@ public class HttpResponse {
         if (cookie.getMaxAge() > 0) {
             cookieBuilder.append("; Max-Age=").append(cookie.getMaxAge());
         }
+        if (cookie.getExpires() != null) {
+            cookieBuilder.append("; Expires=").append(cookie.formatExpires());
+        }
         if (cookie.getDomain() != null) {
             cookieBuilder.append("; Domain=").append(cookie.getDomain());
         }
