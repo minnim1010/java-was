@@ -7,6 +7,7 @@ import codesquad.http.HttpRequestPreprocessor;
 import codesquad.http.HttpRequestProcessor;
 import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
+import codesquad.http.handler.TemplateStaticResourceRequestHandler;
 import codesquad.http.parser.HttpParser;
 import codesquad.http.session.SessionIdGenerator;
 import codesquad.http.session.SessionManager;
@@ -14,6 +15,7 @@ import codesquad.socket.ClientSocket;
 import codesquad.socket.Reader;
 import codesquad.socket.ServerSocket;
 import codesquad.socket.Writer;
+import codesquad.template.TemplateEngine;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +37,7 @@ public class WebServer {
 
     private HttpProcessor createHttpProcessor(WebContext webContext) {
         HttpParser httpParser = new HttpParser();
+
         long sessionTimeout = GlobalConstants.getInstance().getSessionTimeout();
         int sessionPoolMaxSize = GlobalConstants.getInstance().getSessionPoolMaxSize();
         SessionIdGenerator sessionIdGenerator = new SessionIdGenerator();
@@ -44,8 +47,8 @@ public class WebServer {
         HttpRequestPreprocessor httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
         DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
                 webContext.getRequestHandlerMap());
-        StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
-                webContext.getStaticResourcePaths(), webContext.getDefaultPages());
+        StaticResourceRequestHandler staticResourceRequestHandler = new TemplateStaticResourceRequestHandler(
+                webContext.getStaticResourcePaths(), webContext.getDefaultPages(), new TemplateEngine());
         HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                 staticResourceRequestHandler);
 

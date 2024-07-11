@@ -27,18 +27,15 @@ public class StaticResourceRequestHandler {
     }
 
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String path = httpRequest.getUri().getPath();
-        String staticResourcePath = findStaticResourcePath(path);
-        URL fileUrl = getClass().getClassLoader().getResource("static" + staticResourcePath);
-        byte[] fileContent = loadFile(fileUrl);
-
+        String staticResourcePath = findStaticResourcePath(httpRequest.getUri().getPath());
+        byte[] fileContent = readResource(staticResourcePath);
         httpResponse.setBody(fileContent);
         httpResponse.setHeader(CONTENT_TYPE.getFieldName(), determineContentType(httpRequest, staticResourcePath));
 
         httpResponse.setStatus(HttpStatus.OK);
     }
 
-    private String findStaticResourcePath(String path) {
+    protected String findStaticResourcePath(String path) {
         if (staticResourcePaths.contains(path)) {
             return path;
         }
@@ -50,13 +47,18 @@ public class StaticResourceRequestHandler {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found: " + path));
     }
 
+    protected byte[] readResource(String staticResourcePath) throws IOException {
+        URL fileUrl = getClass().getClassLoader().getResource("static" + staticResourcePath);
+        return loadFile(fileUrl);
+    }
+
     private byte[] loadFile(URL fileUrl) throws IOException {
         try (InputStream inputStream = fileUrl.openStream()) {
             return inputStream.readAllBytes();
         }
     }
 
-    private String determineContentType(HttpRequest httpRequest, String staticFilePath) {
+    protected String determineContentType(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
         if (fileExtension.isEmpty()) {
             return ContentType.UNKNOWN.getResponseType();
