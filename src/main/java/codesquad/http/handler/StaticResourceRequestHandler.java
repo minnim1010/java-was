@@ -10,6 +10,9 @@ import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
+import codesquad.http.session.Session;
+import codesquad.template.TemplateEngine;
+import codesquad.template.compile.node.EvaluatorContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -30,7 +33,21 @@ public class StaticResourceRequestHandler implements RequestHandler {
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         String staticResourcePath = findStaticResourcePath(httpRequest.getUri().getPath());
         byte[] fileContent = readResource(staticResourcePath);
-        httpResponse.setBody(fileContent);
+
+        if (staticResourcePath.endsWith("html")) {
+            EvaluatorContext evaluatorContext = new EvaluatorContext();
+            Session session = httpRequest.getSession();
+
+            if (session != null && session.getAttribute("userId") != null) {
+                evaluatorContext.setValue("user", session.getAttribute("userId"));
+            }
+
+            String templatedFileContent = TemplateEngine.getInstance().render(staticResourcePath, evaluatorContext);
+            httpResponse.setBody(templatedFileContent.getBytes());
+        } else {
+            httpResponse.setBody(fileContent);
+        }
+
         httpResponse.setHeader(CONTENT_TYPE.getFieldName(), determineContentType(httpRequest, staticResourcePath));
 
         httpResponse.setStatus(HttpStatus.OK);
