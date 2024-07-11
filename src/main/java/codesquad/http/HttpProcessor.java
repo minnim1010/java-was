@@ -1,8 +1,5 @@
 package codesquad.http;
 
-import static codesquad.http.header.HeaderField.DATE;
-
-import codesquad.config.GlobalConstants;
 import codesquad.http.error.HttpRequestParseException;
 import codesquad.http.error.ResourceNotFoundException;
 import codesquad.http.error.UnSupportedHttpMethodException;
@@ -12,10 +9,6 @@ import codesquad.http.property.HttpStatus;
 import codesquad.socket.Reader;
 import codesquad.socket.Writer;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,19 +47,6 @@ public class HttpProcessor {
             log.error(e.getMessage(), e);
         }
 
-        setDateHeader(response);
-
         writer.write(response.format());
-    }
-
-    private void setDateHeader(HttpResponse httpResponse) {
-        Locale locale = GlobalConstants.getInstance().getLocale();
-        String timezone = GlobalConstants.getInstance().getTimezone();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", locale);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
-        String date = dateFormat.format(new Date());
-
-        httpResponse.setHeader(DATE.getFieldName(), date);
     }
 }
