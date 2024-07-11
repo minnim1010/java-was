@@ -38,6 +38,31 @@ public class Node {
         return this.attributes.get(key);
     }
 
+    public List<Node> findNodesWithAttribute(String attribute) {
+        List<Node> result = new ArrayList<>();
+        if (this.attributes.containsKey(attribute)) {
+            result.add(this);
+        }
+        for (Node child : children) {
+            result.addAll(child.findNodesWithAttribute(attribute));
+        }
+        return result;
+    }
+
+    public String getInnerHtml() {
+        StringBuilder html = new StringBuilder();
+        for (Node child : children) {
+            html.append(child.toHtml());
+        }
+        return html.toString();
+    }
+
+    public void setInnerHtml(String html) {
+        this.children.clear();
+        Node parsedNode = HtmlParser.parse(html);
+        this.children.addAll(parsedNode.children);
+    }
+
     public String toHtml() {
         StringBuilder html = new StringBuilder();
         toHtml(html);

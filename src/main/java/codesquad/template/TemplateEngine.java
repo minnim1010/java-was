@@ -11,21 +11,17 @@ import java.util.regex.Pattern;
 public class TemplateEngine {
 
     private static TemplateEngine instance;
-    private static final Pattern replacePattern = Pattern.compile("\\{\\s*(\\w+)\\s*\\}");
+    private static final Pattern replacePattern = Pattern.compile("\\{\\s*([\\w\\.]+)\\s*\\}");
 
-    private final HtmlParser htmlParser;
     private final NodeProcessor nodeProcessor;
 
-    private TemplateEngine(HtmlParser htmlParser,
-                           NodeProcessor nodeProcessor) {
-        this.htmlParser = htmlParser;
+    private TemplateEngine(NodeProcessor nodeProcessor) {
         this.nodeProcessor = nodeProcessor;
     }
 
-    public static TemplateEngine createInstance(HtmlParser htmlParser,
-                                                NodeProcessor nodeProcessor) {
+    public static TemplateEngine createInstance(NodeProcessor nodeProcessor) {
         if (instance == null) {
-            instance = new TemplateEngine(htmlParser, nodeProcessor);
+            instance = new TemplateEngine(nodeProcessor);
         }
         return instance;
     }
@@ -41,28 +37,33 @@ public class TemplateEngine {
         try {
             String template = readResource(templatePath);
             String compiledTemplate = compileTemplate(context, template);
-
-            StringBuilder result = new StringBuilder();
-            Matcher matcher = replacePattern.matcher(compiledTemplate);
-            while (matcher.find()) {
-                String key = matcher.group(1).trim();
-                Object replacement = context.getValue(key);
-                if (replacement == null) {
-                    throw new IllegalArgumentException("cannot render: " + key + " not found");
-                }
-                matcher.appendReplacement(result, replacement.toString());
-            }
-            matcher.appendTail(result);
-
-            return result.toString();
+            return processTemplate(compiledTemplate, context);
         } catch (Exception e) {
             throw new CannotRenderTemplateException("cannot render: " + templatePath + " not found", e);
         }
     }
 
+    public String processTemplate(String compiledTemplate, EvaluatorContext context) {
+        StringBuilder result = new StringBuilder();
+        Matcher matcher = replacePattern.matcher(compiledTemplate);
+
+        while (matcher.find()) {
+            String key = matcher.group(1).trim();
+            Object replacement = context.getValue(key);
+            if (replacement == null) {
+                throw new IllegalArgumentException("cannot render: " + key + " not found");
+            }
+            matcher.appendReplacement(result, replacement.toString());
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
+    }
+
     private String compileTemplate(EvaluatorContext context, String template) {
-        Node root = htmlParser.parse(template);
+        Node root = HtmlParser.parse(template);
         nodeProcessor.processConditions(root, context);
+        nodeProcessor.processForEach(root, context);
 
         return root.toHtml();
     }

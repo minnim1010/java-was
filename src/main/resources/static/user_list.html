@@ -22,22 +22,12 @@
     </header>
     <div class="wrapper">
         <h1 class="title">사용자 목록</h1>
-        <ul class="user-list">
-            <li class="user-list__item">
-                <p class="user-list__item__id">사용자 ID: 1</p>
-                <p class="user-list__item__name">이름: 홍길동</p>
-                <p class="user-list__item__email">이메일: hong@example.com</p>
-            </li>
-            <li class="user-list__item">
-                <p class="user-list__item__id">사용자 ID: 2</p>
-                <p class="user-list__item__name">이름: 김철수</p>
-                <p class="user-list__item__email">이메일: kim@example.com</p>
-            </li>
-            <li class="user-list__item">
-                <p class="user-list__item__id">사용자 ID: 3</p>
-                <p class="user-list__item__name">이름: 이영희</p>
-                <p class="user-list__item__email">이메일: lee@example.com</p>
-            </li>
+        <ul class="user-list" my-forEach="user in userList">
+            <div class="user-list__item">
+                <p class="user-list__item__id">사용자 ID: { user.userId }</p>
+                <p class="user-list__item__name">이름: { user.name }</p>
+                <p class="user-list__item__email">이메일: { user.email }</p>
+            </div>
         </ul>
     </div>
 </div>

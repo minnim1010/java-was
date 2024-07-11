@@ -7,7 +7,10 @@ import java.util.regex.Pattern;
 
 public class HtmlParser {
 
-    public Node parse(String html) {
+    private HtmlParser() {
+    }
+
+    public static Node parse(String html) {
         int pos = 0;
         Node root = new Node("root");
         List<Node> stack = new ArrayList<>();
@@ -47,7 +50,7 @@ public class HtmlParser {
         return root;
     }
 
-    private Node createNode(String tagContent) {
+    private static Node createNode(String tagContent) {
         String[] parts = tagContent.split("\\s+", 2);
         String tagName = parts[0];
         Node node = new Node(tagName);

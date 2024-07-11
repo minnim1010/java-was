@@ -1,6 +1,7 @@
 package codesquad.business.persistence;
 
 import codesquad.business.model.User;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +16,10 @@ public class UserRepository {
 
     public Optional<User> findById(String userId) {
         return Optional.ofNullable(repository.get(userId));
+    }
+
+    public List<User> findAll() {
+        return List.copyOf(repository.values());
     }
 
     public void delete(String userId) {

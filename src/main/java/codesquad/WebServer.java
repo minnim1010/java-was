@@ -14,7 +14,6 @@ import codesquad.socket.ClientSocket;
 import codesquad.socket.Reader;
 import codesquad.socket.ServerSocket;
 import codesquad.socket.Writer;
-import codesquad.template.HtmlParser;
 import codesquad.template.NodeProcessor;
 import codesquad.template.TemplateEngine;
 import java.io.IOException;
@@ -49,9 +48,8 @@ public class WebServer {
         DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
                 webContext.getRequestHandlerMap());
 
-        HtmlParser htmlParser = new HtmlParser();
         NodeProcessor nodeProcessor = new NodeProcessor();
-        TemplateEngine.createInstance(htmlParser, nodeProcessor);
+        TemplateEngine.createInstance(nodeProcessor);
         StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
                 webContext.getStaticResourcePaths(), webContext.getDefaultPages());
         HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,

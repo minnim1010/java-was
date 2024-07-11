@@ -3,6 +3,7 @@ package codesquad.config;
 import codesquad.business.handler.LoginHandler;
 import codesquad.business.handler.LogoutHandler;
 import codesquad.business.handler.UserCreateHandler;
+import codesquad.business.handler.UserListHandler;
 import codesquad.business.persistence.UserRepository;
 
 public class GlobalBeanContainer {
@@ -13,6 +14,7 @@ public class GlobalBeanContainer {
     private final UserCreateHandler userRequestHandler;
     private final LoginHandler loginHandler;
     private final LogoutHandler logoutRequestHandler;
+    private final UserListHandler userListRequestHandler;
 
     // ----------------------------------------------------- Constructor
 
@@ -21,6 +23,7 @@ public class GlobalBeanContainer {
         this.userRequestHandler = setUserProcessor(userRepository);
         this.loginHandler = setLoginProcessor(userRepository);
         this.logoutRequestHandler = setLogoutProcessor();
+        this.userListRequestHandler = setUserListHandler(userRepository);
     }
 
     public static GlobalBeanContainer getInstance() {
@@ -48,6 +51,10 @@ public class GlobalBeanContainer {
         return logoutRequestHandler;
     }
 
+    public UserListHandler userListRequestHandler() {
+        return userListRequestHandler;
+    }
+
     // ----------------------------------------------------- Setter
     protected UserRepository setUserRepository() {
         return new UserRepository();
@@ -63,5 +70,9 @@ public class GlobalBeanContainer {
 
     protected LogoutHandler setLogoutProcessor() {
         return new LogoutHandler();
+    }
+
+    protected UserListHandler setUserListHandler(UserRepository userRepository) {
+        return new UserListHandler(userRepository);
     }
 }
