@@ -2,7 +2,7 @@ package codesquad.config;
 
 import codesquad.business.handler.LoginHandler;
 import codesquad.business.handler.LogoutHandler;
-import codesquad.business.handler.UserHandler;
+import codesquad.business.handler.UserCreateHandler;
 import codesquad.business.persistence.UserRepository;
 
 public class GlobalBeanContainer {
@@ -10,7 +10,7 @@ public class GlobalBeanContainer {
     private static GlobalBeanContainer instance;
 
     private final UserRepository userRepository;
-    private final UserHandler userRequestHandler;
+    private final UserCreateHandler userRequestHandler;
     private final LoginHandler loginHandler;
     private final LogoutHandler logoutRequestHandler;
 
@@ -36,7 +36,7 @@ public class GlobalBeanContainer {
         return userRepository;
     }
 
-    public UserHandler userRequestHandler() {
+    public UserCreateHandler userRequestHandler() {
         return userRequestHandler;
     }
 
@@ -53,8 +53,8 @@ public class GlobalBeanContainer {
         return new UserRepository();
     }
 
-    protected UserHandler setUserProcessor(UserRepository userRepository) {
-        return new UserHandler(userRepository);
+    protected UserCreateHandler setUserProcessor(UserRepository userRepository) {
+        return new UserCreateHandler(userRepository);
     }
 
     protected LoginHandler setLoginProcessor(UserRepository userRepository) {

@@ -7,11 +7,11 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 
-public class UserHandler extends AbstractDynamicRequestHandler {
+public class UserCreateHandler extends AbstractDynamicRequestHandler {
 
     private final UserRepository userRepository;
 
-    public UserHandler(UserRepository userRepository) {
+    public UserCreateHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
