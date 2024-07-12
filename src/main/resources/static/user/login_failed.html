@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="/reset.css" rel="stylesheet"/>
+    <link href="/global.css" rel="stylesheet"/>
+    <link href="/main.css" rel="stylesheet"/>
+    <title>Error</title>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/"><img src="/img/signiture.svg"/></a>
+        <ul class="header__menu">
+            <li class="header__menu__item" my-if="user != null">
+                <a class="btn btn_ghost btn_size_s">{ user }님</a>
+            </li>
+            <li class="header__menu__item" my-if="user != null">
+                <form action="/user/list" method="get" style="display:inline;">
+                    <button class="btn btn_contained btn_size_s" id="user-list-btn" type="submit">
+                        사용자 목록
+                    </button>
+                </form>
+            </li>
+            <li class="header__menu__item" my-if="user == null">
+                <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+            </li>
+            <li class="header__menu__item" my-if="user == null">
+                <a class="btn btn_contained btn_size_s" href="/registration">
+                    회원 가입
+                </a>
+            </li>
+            <li class="header__menu__item" my-if="user != null">
+                <form action="/user/logout" method="get" style="display:inline;">
+                    <button class="btn btn_contained btn_size_s" id="logout-btn" type="submit">
+                        로그아웃
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </header>
+    <div class="page">
+        <h2 class="page-title">로그인</h2>
+        <form action="/user/login" class="form" method="post">
+            <div class="textfield textfield_size_s">
+                <p class="title_textfield">아이디</p>
+                <input
+                        autocomplete="username"
+                        class="input_textfield"
+                        name="userId"
+                        placeholder="아이디를 입력해주세요"
+                />
+            </div>
+            <div class="textfield textfield_size_s">
+                <p class="title_textfield">비밀번호</p>
+                <input
+                        autocomplete="current-password"
+                        class="input_textfield"
+                        name="password"
+                        placeholder="비밀번호를 입력해주세요"
+                        type="password"
+                />
+            </div>
+            <p class="error__message">
+                아이디나 비밀번호가 맞지 않습니다. 다시 시도해주세요.
+            </p>
+            <button
+                    class="btn btn_contained btn_size_m"
+                    id="login-btn"
+                    style="margin-top: 24px"
+                    type="submit"
+            >
+                로그인
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

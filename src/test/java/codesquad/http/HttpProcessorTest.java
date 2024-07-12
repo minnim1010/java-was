@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import codesquad.environment.TestEnvironment;
 import codesquad.http.error.UnSupportedHttpMethodException;
-import codesquad.http.handler.RequestHandlerResolver;
+import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.parser.HttpParser;
 import codesquad.socket.Reader;
 import codesquad.socket.Writer;
 import java.io.ByteArrayOutputStream;
@@ -30,27 +29,25 @@ import org.junit.jupiter.api.Test;
 @DisplayName("HTTP 요청 처리 테스트")
 class HttpProcessorTest extends TestEnvironment {
 
-    private static RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
+    private static DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
+            Collections.emptyMap());
     private static StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
             Set.of("/"),
             Set.of("/index.html"));
     private static HttpRequestProcessor httpRequestProcessor;
-    private static HttpParser httpParser;
     private static HttpRequestPreprocessor httpRequestPreprocessor;
     private static HttpProcessor httpProcessor;
 
     @BeforeAll
     static void beforeAll() {
-        httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
-        httpParser = new HttpParser();
-        httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
+        httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver, staticResourceRequestHandler);
+        httpRequestPreprocessor = new HttpRequestPreprocessor(sessionManager);
         httpProcessor = new HttpProcessor(httpRequestPreprocessor, httpRequestProcessor);
     }
     private ByteArrayOutputStream outputStream;
 
     @BeforeEach
     void setUp() {
-        sessionManager.clear();
         outputStream = new ByteArrayOutputStream();
     }
 
@@ -99,7 +96,7 @@ class HttpProcessorTest extends TestEnvironment {
         void 지원되지_않는_미디어_타입이라면_406_NOT_ACCEPTABLE_응답을_반환한다() throws Exception {
             Reader reader = createReaderWithInput("GET /notfound HTTP/1.1\r\nHost: localhost\r\n\r\n");
             Writer writer = new Writer(outputStream);
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                     staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
@@ -117,7 +114,7 @@ class HttpProcessorTest extends TestEnvironment {
         void 지원되지_않는_HTTP_method라면_405_Method_Not_Allowed_응답을_반환한다() throws Exception {
             Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
             Writer writer = new Writer(outputStream);
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                     staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
@@ -135,7 +132,7 @@ class HttpProcessorTest extends TestEnvironment {
         void 예기치_않은_예외가_발생하면_500_INTERNAL_SERVER_ERROR_응답을_반환한다() throws Exception {
             Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
             Writer writer = new Writer(outputStream);
-            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(requestHandlerResolver,
+            HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                     staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {

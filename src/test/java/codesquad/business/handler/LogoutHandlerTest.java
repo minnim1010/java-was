@@ -23,14 +23,13 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("로그아웃 테스트")
-class LogoutRequestHandlerTest extends TestEnvironment {
+class LogoutHandlerTest extends TestEnvironment {
 
-    private LogoutRequestHandler logoutRequestHandler;
+    private LogoutHandler logoutRequestHandler;
 
     @BeforeEach
     void setUp() {
-        sessionManager.clear();
-        logoutRequestHandler = new LogoutRequestHandler();
+        logoutRequestHandler = new LogoutHandler();
     }
 
     @Nested
@@ -39,7 +38,7 @@ class LogoutRequestHandlerTest extends TestEnvironment {
         @Test
         void 쿠키가_없으면_UNAUTHORIZED_응답을_반환한다() throws Exception {
             // Given
-            Session session = sessionManager.createSession();
+            sessionManager.createSession();
             HttpRequest httpRequest = new HttpRequest(
                     HttpMethod.GET,
                     new URI("/user/logout"),
@@ -54,7 +53,8 @@ class LogoutRequestHandlerTest extends TestEnvironment {
             logoutRequestHandler.processGet(httpRequest, httpResponse);
 
             // Then
-            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
+            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login");
         }
 
         @Test
@@ -74,12 +74,14 @@ class LogoutRequestHandlerTest extends TestEnvironment {
             logoutRequestHandler.processGet(httpRequest, httpResponse);
 
             // Then
-            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
+            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login");
         }
 
         @Test
-        void 세션이_있으면_로그아웃_처리하고_REDIRECT_응답을_반환한다() throws Exception {
+        void 세션에_유저_정보가_존재한다면_로그아웃_처리하고_REDIRECT_응답을_반환한다() throws Exception {
             Session session = sessionManager.createSession();
+            session.setAttribute("userId", "testUser");
             String sessionId = session.getSessionId();
             HttpRequest httpRequest = new HttpRequest(
                     HttpMethod.GET,

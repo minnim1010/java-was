@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="/reset.css" rel="stylesheet"/>
+    <link href="/global.css" rel="stylesheet"/>
+    <link href="/main.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/"><img alt="Logo" src="/img/signiture.svg"/></a>
+        <ul class="header__menu">
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+            </li>
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/registration">회원 가입</a>
+            </li>
+        </ul>
+    </header>
+    <div class="wrapper">
+        <h1 class="title">사용자 목록</h1>
+        <ul class="user-list" my-forEach="user in userList">
+            <div class="user-list__item">
+                <p class="user-list__item__id">사용자 ID: { user.userId }</p>
+                <p class="user-list__item__name">이름: { user.name }</p>
+                <p class="user-list__item__email">이메일: { user.email }</p>
+            </div>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

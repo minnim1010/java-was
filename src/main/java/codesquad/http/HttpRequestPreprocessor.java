@@ -12,17 +12,14 @@ import java.util.List;
 
 public class HttpRequestPreprocessor {
 
-    private final HttpParser httpParser;
     private final SessionManager sessionManager;
 
-    public HttpRequestPreprocessor(HttpParser httpParser,
-                                   SessionManager sessionManager) {
-        this.httpParser = httpParser;
+    public HttpRequestPreprocessor(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
 
     public HttpRequest process(Reader reader) {
-        HttpRequest request = httpParser.parse(reader);
+        HttpRequest request = HttpParser.parse(reader);
         setSession(request);
 
         return request;

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.lang.reflect.Field;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -37,6 +38,13 @@ class SessionManagerTest {
         instanceField.set(null, null);
 
         sessionManager = SessionManager.createInstance(sessionPoolMaxSize, sessionTimeout, sessionIdGenerator);
+    }
+
+    @AfterAll
+    static void afterAll() throws Exception {
+        Field instanceField = SessionManager.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, null);
     }
 
     @Nested

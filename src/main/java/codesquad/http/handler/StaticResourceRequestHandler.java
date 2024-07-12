@@ -10,12 +10,15 @@ import codesquad.http.header.ContentType;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
+import codesquad.http.session.Session;
+import codesquad.template.TemplateEngine;
+import codesquad.template.compile.node.EvaluatorContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Set;
 
-public class StaticResourceRequestHandler {
+public class StaticResourceRequestHandler implements RequestHandler {
 
     private final Set<String> staticResourcePaths;
     private final Set<String> defaultPages;
@@ -26,19 +29,31 @@ public class StaticResourceRequestHandler {
         this.defaultPages = defaultPages;
     }
 
+    @Override
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String path = httpRequest.getUri().getPath();
-        String staticResourcePath = findStaticResourcePath(path);
-        URL fileUrl = getClass().getClassLoader().getResource("static" + staticResourcePath);
-        byte[] fileContent = loadFile(fileUrl);
+        String staticResourcePath = findStaticResourcePath(httpRequest.getUri().getPath());
+        byte[] fileContent = readResource(staticResourcePath);
 
-        httpResponse.setBody(fileContent);
+        if (staticResourcePath.endsWith("html")) {
+            EvaluatorContext evaluatorContext = new EvaluatorContext();
+            Session session = httpRequest.getSession();
+
+            if (session != null && session.getAttribute("userId") != null) {
+                evaluatorContext.setValue("user", session.getAttribute("userId"));
+            }
+
+            String templatedFileContent = TemplateEngine.getInstance().render(staticResourcePath, evaluatorContext);
+            httpResponse.setBody(templatedFileContent.getBytes());
+        } else {
+            httpResponse.setBody(fileContent);
+        }
+
         httpResponse.setHeader(CONTENT_TYPE.getFieldName(), determineContentType(httpRequest, staticResourcePath));
 
         httpResponse.setStatus(HttpStatus.OK);
     }
 
-    private String findStaticResourcePath(String path) {
+    protected String findStaticResourcePath(String path) {
         if (staticResourcePaths.contains(path)) {
             return path;
         }
@@ -50,13 +65,18 @@ public class StaticResourceRequestHandler {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found: " + path));
     }
 
+    protected byte[] readResource(String staticResourcePath) throws IOException {
+        URL fileUrl = getClass().getClassLoader().getResource("static" + staticResourcePath);
+        return loadFile(fileUrl);
+    }
+
     private byte[] loadFile(URL fileUrl) throws IOException {
         try (InputStream inputStream = fileUrl.openStream()) {
             return inputStream.readAllBytes();
         }
     }
 
-    private String determineContentType(HttpRequest httpRequest, String staticFilePath) {
+    protected String determineContentType(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
         if (fileExtension.isEmpty()) {
             return ContentType.UNKNOWN.getResponseType();

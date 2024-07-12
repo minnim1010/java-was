@@ -6,9 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import codesquad.environment.TestEnvironment;
 import codesquad.http.error.ResourceNotFoundException;
-import codesquad.http.handler.AbstractRequestHandler;
-import codesquad.http.handler.RequestHandlerResolver;
+import codesquad.http.handler.AbstractDynamicRequestHandler;
+import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("HTTP API 실행 및 리소스 반환 테스트")
-class HttpRequestProcessorTest {
+class HttpRequestProcessorTest extends TestEnvironment {
 
     private HttpRequestProcessor httpRequestProcessor;
 
@@ -37,11 +38,13 @@ class HttpRequestProcessorTest {
 
         @BeforeEach
         void setUp() {
-            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(Collections.emptyMap());
+            DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
+                    Collections.emptyMap());
             StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
                     Set.of("/index.html"),
                     Set.of("index.html"));
-            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
+            httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
+                    staticResourceRequestHandler);
         }
 
         @Test
@@ -82,12 +85,13 @@ class HttpRequestProcessorTest {
 
         @BeforeEach
         void setUp() {
-            RequestHandlerResolver requestHandlerResolver = new RequestHandlerResolver(
-                    Map.of("/test", new TestRequestHandler()));
+            DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
+                    Map.of("/test", new TestDynamicRequestHandler()));
             StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
                     Set.of("/"),
                     Set.of("/index.html"));
-            httpRequestProcessor = new HttpRequestProcessor(requestHandlerResolver, staticResourceRequestHandler);
+            httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
+                    staticResourceRequestHandler);
         }
 
         @Test
@@ -104,7 +108,7 @@ class HttpRequestProcessorTest {
             );
         }
 
-        public class TestRequestHandler extends AbstractRequestHandler {
+        public static class TestDynamicRequestHandler extends AbstractDynamicRequestHandler {
 
             @Override
             public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {

@@ -24,8 +24,6 @@ import org.junit.jupiter.api.Test;
 @DisplayName("HTTP 요청 파싱 테스트")
 class HttpParserTest {
 
-    private HttpParser parser = new HttpParser();
-
     @Nested
     class HTTP_요청을_파싱한다 {
 
@@ -33,7 +31,7 @@ class HttpParserTest {
         void 헤더를_가지지_않는_요청인_경우() {
             Reader reader = createReaderWithInput("GET /index.html HTTP/1.1\r\n\r\n");
 
-            HttpRequest result = parser.parse(reader);
+            HttpRequest result = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -48,7 +46,7 @@ class HttpParserTest {
         void 헤더를_가진_요청인_경우() {
             Reader reader = createReaderWithInput("GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n");
 
-            HttpRequest result = parser.parse(reader);
+            HttpRequest result = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -71,7 +69,7 @@ class HttpParserTest {
                     \r
                     """);
 
-            HttpRequest result = parser.parse(reader);
+            HttpRequest result = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -100,7 +98,7 @@ class HttpParserTest {
                     \r
                     """);
 
-            HttpRequest result = parser.parse(reader);
+            HttpRequest result = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -125,7 +123,7 @@ class HttpParserTest {
                     \r
                     Hello World!!""");
 
-            HttpRequest httpRequest = parser.parse(reader);
+            HttpRequest httpRequest = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(httpRequest),
@@ -143,7 +141,7 @@ class HttpParserTest {
             Reader reader = createReaderWithInput(
                     "GET /search?q=good&lang=en HTTP/1.1\r\nHost: www.example.com\r\n\r\n");
 
-            HttpRequest result = parser.parse(reader);
+            HttpRequest result = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -165,7 +163,7 @@ class HttpParserTest {
                     \r
                     q=good&lang=ㅁㄴㅇㄹ@#$!!""");
 
-            HttpRequest result = parser.parse(reader);
+            HttpRequest result = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -187,7 +185,7 @@ class HttpParserTest {
                     \r
                     q=good&lang=ㅁㄴㅇ%26ㄹ@#$!!""");
 
-            HttpRequest result = parser.parse(reader);
+            HttpRequest result = HttpParser.parse(reader);
 
             assertAll(
                     () -> assertNotNull(result),
