@@ -13,7 +13,6 @@ import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
-import codesquad.template.HtmlParser;
 import codesquad.template.NodeProcessor;
 import codesquad.template.TemplateEngine;
 import codesquad.utils.Fixture;
@@ -34,7 +33,7 @@ import org.junit.jupiter.api.Test;
 class HttpRequestProcessorTest {
 
     private HttpRequestProcessor httpRequestProcessor;
-    private final TemplateEngine templateEngine = TemplateEngine.createInstance(new HtmlParser(), new NodeProcessor());
+    private final TemplateEngine templateEngine = TemplateEngine.createInstance(new NodeProcessor());
 
     @Nested
     class 정적_파일_요청을_처리한다 {
@@ -111,7 +110,7 @@ class HttpRequestProcessorTest {
             );
         }
 
-        public class TestDynamicRequestHandler extends AbstractDynamicRequestHandler {
+        public static class TestDynamicRequestHandler extends AbstractDynamicRequestHandler {
 
             @Override
             public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {

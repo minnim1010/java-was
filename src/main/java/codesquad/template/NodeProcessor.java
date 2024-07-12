@@ -1,13 +1,12 @@
 package codesquad.template;
 
+import codesquad.template.compile.SimpleBinaryExpressionParser;
 import codesquad.template.compile.node.ASTNode;
 import codesquad.template.compile.node.EvaluatorContext;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NodeProcessor {
-
-    private final SimpleParser simpleParser = new SimpleParser();
 
     public void processConditions(Node node, EvaluatorContext context) {
         if (node == null) {
@@ -27,7 +26,7 @@ public class NodeProcessor {
     }
 
     private boolean evaluateCondition(String condition, EvaluatorContext context) {
-        ASTNode ast = simpleParser.parse(condition);
+        ASTNode ast = SimpleBinaryExpressionParser.parse(condition);
         String evaluate = ast.evaluate(context);
 
         return Boolean.parseBoolean(evaluate);

@@ -17,9 +17,11 @@ import org.slf4j.LoggerFactory;
 public class HttpParser {
 
     private static final Logger log = LoggerFactory.getLogger(HttpParser.class);
-    private static final QueryParser queryParser = new QueryParser();
 
-    public HttpRequest parse(Reader reader) throws HttpRequestParseException {
+    private HttpParser() {
+    }
+
+    public static HttpRequest parse(Reader reader) throws HttpRequestParseException {
         try {
             String requestLine = new String(reader.readLine()).trim();
 
@@ -51,7 +53,7 @@ public class HttpParser {
         }
     }
 
-    private Map<String, String> parseHeaders(Reader reader) throws IOException {
+    private static Map<String, String> parseHeaders(Reader reader) throws IOException {
         Map<String, String> headers = new HashMap<>();
         String line;
         while (!(line = new String(reader.readLine()).trim()).isEmpty()) {
@@ -66,8 +68,8 @@ public class HttpParser {
         return headers;
     }
 
-    private byte[] parseBody(Reader reader,
-                             Map<String, String> headers) throws IOException {
+    private static byte[] parseBody(Reader reader,
+                                    Map<String, String> headers) throws IOException {
         if (!headers.containsKey("Content-Length")) {
             return new byte[0];
         }
@@ -75,14 +77,14 @@ public class HttpParser {
         return new String(reader.readBytes(contentLength)).getBytes();
     }
 
-    private Map<String, String> parseQuery(URI uri,
-                                           HttpMethod method,
-                                           Map<String, String> headers,
-                                           byte[] body) {
-        Map<String, String> queryMap = queryParser.parse(uri.getQuery());
+    private static Map<String, String> parseQuery(URI uri,
+                                                  HttpMethod method,
+                                                  Map<String, String> headers,
+                                                  byte[] body) {
+        Map<String, String> queryMap = QueryParser.parse(uri.getQuery());
 
         if (method == HttpMethod.POST && headers.get("Content-Type").equals("application/x-www-form-urlencoded")) {
-            queryMap.putAll(queryParser.parse(new String(body)));
+            queryMap.putAll(QueryParser.parse(new String(body)));
         }
         return queryMap;
     }

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import codesquad.environment.TestEnvironment;
 import codesquad.http.message.HttpRequest;
-import codesquad.http.parser.HttpParser;
 import codesquad.socket.Reader;
 import codesquad.utils.Fixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,14 +18,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("HTTP 요청 전처리(파싱, 세션 로드) 테스트")
 class HttpRequestPreprocessorTest extends TestEnvironment {
 
-    private HttpParser httpParser;
     private HttpRequestPreprocessor preprocessor;
     private Reader reader;
 
     @BeforeEach
     void setUp() {
-        httpParser = new HttpParser();
-        preprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
+        preprocessor = new HttpRequestPreprocessor(sessionManager);
     }
 
     @Nested

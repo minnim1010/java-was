@@ -9,7 +9,6 @@ import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.parser.HttpParser;
 import codesquad.socket.Reader;
 import codesquad.socket.Writer;
 import java.io.ByteArrayOutputStream;
@@ -36,15 +35,13 @@ class HttpProcessorTest extends TestEnvironment {
             Set.of("/"),
             Set.of("/index.html"));
     private static HttpRequestProcessor httpRequestProcessor;
-    private static HttpParser httpParser;
     private static HttpRequestPreprocessor httpRequestPreprocessor;
     private static HttpProcessor httpProcessor;
 
     @BeforeAll
     static void beforeAll() {
         httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver, staticResourceRequestHandler);
-        httpParser = new HttpParser();
-        httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
+        httpRequestPreprocessor = new HttpRequestPreprocessor(sessionManager);
         httpProcessor = new HttpProcessor(httpRequestPreprocessor, httpRequestProcessor);
     }
     private ByteArrayOutputStream outputStream;

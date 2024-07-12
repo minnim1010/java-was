@@ -7,7 +7,6 @@ import codesquad.http.HttpRequestPreprocessor;
 import codesquad.http.HttpRequestProcessor;
 import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
-import codesquad.http.parser.HttpParser;
 import codesquad.http.session.SessionIdGenerator;
 import codesquad.http.session.SessionManager;
 import codesquad.socket.ClientSocket;
@@ -36,15 +35,13 @@ public class WebServer {
     }
 
     private HttpProcessor createHttpProcessor(WebContext webContext) {
-        HttpParser httpParser = new HttpParser();
-
         long sessionTimeout = GlobalConstants.getInstance().getSessionTimeout();
         int sessionPoolMaxSize = GlobalConstants.getInstance().getSessionPoolMaxSize();
         SessionIdGenerator sessionIdGenerator = new SessionIdGenerator();
         SessionManager sessionManager = SessionManager.createInstance(sessionPoolMaxSize, sessionTimeout,
                 sessionIdGenerator);
 
-        HttpRequestPreprocessor httpRequestPreprocessor = new HttpRequestPreprocessor(httpParser, sessionManager);
+        HttpRequestPreprocessor httpRequestPreprocessor = new HttpRequestPreprocessor(sessionManager);
         DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
                 webContext.getRequestHandlerMap());
 

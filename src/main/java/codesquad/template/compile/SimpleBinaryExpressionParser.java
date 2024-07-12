@@ -1,4 +1,4 @@
-package codesquad.template;
+package codesquad.template.compile;
 
 import codesquad.template.compile.node.ASTNode;
 import codesquad.template.compile.node.BinaryOperationNode;
@@ -10,9 +10,9 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SimpleParser {
+public class SimpleBinaryExpressionParser {
 
-    public ASTNode parse(String expression) {
+    public static ASTNode parse(String expression) {
         String[] tokens = tokenize(expression);
         Stack<ASTNode> nodes = new Stack<>();
         Stack<String> operators = new Stack<>();
@@ -44,7 +44,7 @@ public class SimpleParser {
         return nodes.pop();
     }
 
-    private String[] tokenize(String expression) {
+    private static String[] tokenize(String expression) {
         Matcher matcher = Pattern.compile("\\w+|==|!=|\\(|\\)").matcher(expression);
         List<String> tokens = new ArrayList<>();
         while (matcher.find()) {
@@ -53,18 +53,18 @@ public class SimpleParser {
         return tokens.toArray(new String[0]);
     }
 
-    private boolean isLiteral(String token) {
+    private static boolean isLiteral(String token) {
         return token.equals("null") || token.equals("true") || token.equals("false");
     }
 
-    private int precedence(String operator) {
+    private static int precedence(String operator) {
         return switch (operator) {
             case "==", "!=" -> 1;
             default -> 0;
         };
     }
 
-    private ASTNode createNode(String operator, ASTNode right, ASTNode left) {
+    private static ASTNode createNode(String operator, ASTNode right, ASTNode left) {
         return new BinaryOperationNode(left, right, operator);
     }
 }

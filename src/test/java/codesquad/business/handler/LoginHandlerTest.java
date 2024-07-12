@@ -84,7 +84,7 @@ class LoginHandlerTest extends TestEnvironment {
 
             // Then
             assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
-            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login_failed.html");
+            assertThat(httpResponse.getHeader("Location")).isEqualTo("/user/login_failed.html");
         }
     }
 }
