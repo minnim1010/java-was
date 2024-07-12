@@ -178,3 +178,23 @@
 .btn:hover {
   background-color: #0056b3;
 }
+
+.user-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.user-list__item {
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.user-list__item__id,
+.user-list__item__name,
+.user-list__item__email {
+  margin: 5px 0;
+}
