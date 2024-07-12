@@ -3,18 +3,10 @@ package codesquad;
 import codesquad.config.GlobalConstants;
 import codesquad.context.WebContext;
 import codesquad.http.HttpProcessor;
-import codesquad.http.HttpRequestPreprocessor;
-import codesquad.http.HttpRequestProcessor;
-import codesquad.http.handler.DynamicRequestHandlerResolver;
-import codesquad.http.handler.StaticResourceRequestHandler;
-import codesquad.http.session.SessionIdGenerator;
-import codesquad.http.session.SessionManager;
 import codesquad.socket.ClientSocket;
 import codesquad.socket.Reader;
 import codesquad.socket.ServerSocket;
 import codesquad.socket.Writer;
-import codesquad.template.NodeProcessor;
-import codesquad.template.TemplateEngine;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,30 +21,9 @@ public class WebServer {
     private final WebContext webContext;
     private final HttpProcessor httpProcessor;
 
-    public WebServer(WebContext webContext) {
+    public WebServer(WebContext webContext, HttpProcessor httpProcessor) {
         this.webContext = webContext;
-        this.httpProcessor = createHttpProcessor(webContext);
-    }
-
-    private HttpProcessor createHttpProcessor(WebContext webContext) {
-        long sessionTimeout = GlobalConstants.getInstance().getSessionTimeout();
-        int sessionPoolMaxSize = GlobalConstants.getInstance().getSessionPoolMaxSize();
-        SessionIdGenerator sessionIdGenerator = new SessionIdGenerator();
-        SessionManager sessionManager = SessionManager.createInstance(sessionPoolMaxSize, sessionTimeout,
-                sessionIdGenerator);
-
-        HttpRequestPreprocessor httpRequestPreprocessor = new HttpRequestPreprocessor(sessionManager);
-        DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
-                webContext.getRequestHandlerMap());
-
-        NodeProcessor nodeProcessor = new NodeProcessor();
-        TemplateEngine.createInstance(nodeProcessor);
-        StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
-                webContext.getStaticResourcePaths(), webContext.getDefaultPages());
-        HttpRequestProcessor httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
-                staticResourceRequestHandler);
-
-        return new HttpProcessor(httpRequestPreprocessor, httpRequestProcessor);
+        this.httpProcessor = httpProcessor;
     }
 
     public void run() {

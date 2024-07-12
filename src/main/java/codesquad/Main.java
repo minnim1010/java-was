@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(String[] args) {
         WebContext webContext = new WebContext();
-        WebServer webServer = new WebServer(webContext);
+        WebServer webServer = WebServerFactory.createWebServer(webContext);
         webServer.run();
     }
 }
