@@ -37,10 +37,10 @@ class LoginHandlerTest extends TestEnvironment {
     }
 
     @Nested
-    class ProcessPost_테스트 {
+    class 로그인한다 {
 
         @Test
-        void 유효한_사용자일_때_로그인_성공() throws URISyntaxException {
+        void 회원가입한_사용자라면_로그인할_수_있다() throws URISyntaxException {
             // Given
             User user = new User("user1", "password", "John Doe", "john@example.com");
             userRepository.save(user);
@@ -67,7 +67,31 @@ class LoginHandlerTest extends TestEnvironment {
         }
 
         @Test
-        void 유효하지_않은_사용자일_때_로그인_실패() throws URISyntaxException {
+        void 비밀번호가_틀렸다면_로그인할_수_없다() throws URISyntaxException {
+            // Given
+            User user = new User("user1", "password", "John Doe", "john@example.com");
+            userRepository.save(user);
+
+            HttpRequest httpRequest = new HttpRequest(
+                    HttpMethod.POST,
+                    new URI("/user/login"),
+                    Map.of("userId", "user1", "password", "invalid password"),
+                    HttpVersion.HTTP_1_1,
+                    Collections.emptyMap(),
+                    "userId=user1&password=password".getBytes()
+            );
+            HttpResponse httpResponse = new HttpResponse();
+
+            // When
+            loginHandler.processPost(httpRequest, httpResponse);
+
+            // Then
+            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
+            assertThat(httpResponse.getHeader("Location")).isEqualTo("/user/login_failed.html");
+        }
+
+        @Test
+        void 회원가입하지_않은_사용자라면_로그인할_수_없다() throws URISyntaxException {
             // Given
             HttpRequest httpRequest = new HttpRequest(
                     HttpMethod.POST,
