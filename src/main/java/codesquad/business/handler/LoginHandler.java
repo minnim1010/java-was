@@ -28,7 +28,7 @@ public class LoginHandler extends AbstractDynamicRequestHandler {
 
         if (user == null || !user.matchPassword(password)) {
             httpResponse.setStatus(HttpStatus.FOUND);
-            httpResponse.setHeader("Location", "/login_failed.html");
+            httpResponse.setHeader("Location", "/user/login_failed.html");
             return;
         }
 
