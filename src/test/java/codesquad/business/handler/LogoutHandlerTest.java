@@ -53,7 +53,8 @@ class LogoutHandlerTest extends TestEnvironment {
             logoutRequestHandler.processGet(httpRequest, httpResponse);
 
             // Then
-            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
+            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login");
         }
 
         @Test
@@ -73,12 +74,14 @@ class LogoutHandlerTest extends TestEnvironment {
             logoutRequestHandler.processGet(httpRequest, httpResponse);
 
             // Then
-            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED);
+            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
+            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login");
         }
 
         @Test
-        void 세션이_있으면_로그아웃_처리하고_REDIRECT_응답을_반환한다() throws Exception {
+        void 세션에_유저_정보가_존재한다면_로그아웃_처리하고_REDIRECT_응답을_반환한다() throws Exception {
             Session session = sessionManager.createSession();
+            session.setAttribute("userId", "testUser");
             String sessionId = session.getSessionId();
             HttpRequest httpRequest = new HttpRequest(
                     HttpMethod.GET,

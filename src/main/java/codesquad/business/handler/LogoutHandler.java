@@ -12,8 +12,9 @@ public class LogoutHandler extends AbstractDynamicRequestHandler {
     @Override
     public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {
         Session session = httpRequest.getSession();
-        if (session == null) {
-            httpResponse.setStatus(HttpStatus.UNAUTHORIZED);
+        if (session == null || session.getAttribute("userId") == null) {
+            httpResponse.setStatus(HttpStatus.FOUND);
+            httpResponse.setHeader("Location", "/login");
             return;
         }
 
