@@ -91,6 +91,13 @@
 
 ---
 
+<img width="1216" alt="Screenshot 2024-07-12 at 12 47 56 AM" src="https://github.com/user-attachments/assets/4eed14aa-ad44-462c-b339-c92a56f23910">
+
+<br>
+<br>
+
+---
+
 ### 고민 사항
 
 - 헤더 파싱 시, 헤더 이름이 중복되는 경우는 후속 필드 행값을 쉼표로 구분하여 합쳤습니다.
