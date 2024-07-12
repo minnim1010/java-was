@@ -23,9 +23,15 @@ public class UserCreateHandler extends AbstractDynamicRequestHandler {
         String password = httpRequest.getQuery("password");
 
         User user = new User(userId, password, name, email);
-        userRepository.save(user);
+        userRepository.findById(userId)
+                .ifPresentOrElse(u -> {
+                    httpResponse.setStatus(HttpStatus.FOUND);
+                    httpResponse.setHeader("Location", "/user/regist_failed.html");
+                }, () -> {
+                    userRepository.save(user);
 
-        httpResponse.setStatus(HttpStatus.FOUND);
-        httpResponse.setHeader("Location", "/index.html");
+                    httpResponse.setStatus(HttpStatus.FOUND);
+                    httpResponse.setHeader("Location", "/index.html");
+                });
     }
 }

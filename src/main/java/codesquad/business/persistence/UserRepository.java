@@ -25,4 +25,8 @@ public class UserRepository {
     public void delete(String userId) {
         repository.remove(userId);
     }
+
+    public void deleteAll() {
+        repository.clear();
+    }
 }

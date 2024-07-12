@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import codesquad.business.model.User;
 import codesquad.config.GlobalBeanContainer;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
@@ -14,6 +15,7 @@ import codesquad.http.property.HttpVersion;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -27,6 +29,11 @@ class UserCreateHandlerTest {
 
     private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
     private final UserCreateHandler userRequestHandler = globalBeanContainer.userRequestHandler();
+
+    @BeforeEach
+    void setUp() {
+        globalBeanContainer.userRepository().deleteAll();
+    }
 
     @Nested
     class POST_요청_시 {
@@ -46,6 +53,26 @@ class UserCreateHandlerTest {
             assertAll(
                     () -> assertEquals(HttpStatus.FOUND, httpResponse.getStatus()),
                     () -> assertEquals("/index.html", httpResponse.getHeader("Location"))
+            );
+        }
+
+        @Test
+        void 사용자_아이디가_이미_있는_경우_회원가입_재시도_페이지로_리다이렉트한다() throws Exception {
+            globalBeanContainer.userRepository().save(new User("1", "password", "name", "email"));
+
+            HttpRequest httpRequest = new HttpRequest(HttpMethod.POST,
+                    new URI("/create"),
+                    Map.of("userId", "1", "name", "JohnDoe", "email", "johndoe@example.com", "password", "secret"),
+                    HttpVersion.HTTP_1_1,
+                    Collections.emptyMap(),
+                    new byte[0]);
+            HttpResponse httpResponse = new HttpResponse();
+
+            userRequestHandler.processPost(httpRequest, httpResponse);
+
+            assertAll(
+                    () -> assertEquals(HttpStatus.FOUND, httpResponse.getStatus()),
+                    () -> assertEquals("/user/regist_failed.html", httpResponse.getHeader("Location"))
             );
         }
     }
