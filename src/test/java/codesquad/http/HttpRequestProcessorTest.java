@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import codesquad.environment.TestEnvironment;
 import codesquad.http.error.ResourceNotFoundException;
 import codesquad.http.handler.AbstractDynamicRequestHandler;
 import codesquad.http.handler.DynamicRequestHandlerResolver;
@@ -13,8 +14,6 @@ import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
-import codesquad.template.NodeProcessor;
-import codesquad.template.TemplateEngine;
 import codesquad.utils.Fixture;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -30,10 +29,9 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("HTTP API 실행 및 리소스 반환 테스트")
-class HttpRequestProcessorTest {
+class HttpRequestProcessorTest extends TestEnvironment {
 
     private HttpRequestProcessor httpRequestProcessor;
-    private final TemplateEngine templateEngine = TemplateEngine.createInstance(new NodeProcessor());
 
     @Nested
     class 정적_파일_요청을_처리한다 {

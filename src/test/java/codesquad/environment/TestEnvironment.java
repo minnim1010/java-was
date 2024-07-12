@@ -2,6 +2,8 @@ package codesquad.environment;
 
 import codesquad.http.session.SessionIdGenerator;
 import codesquad.http.session.SessionManager;
+import codesquad.template.NodeProcessor;
+import codesquad.template.TemplateEngine;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class TestEnvironment {
@@ -16,6 +18,8 @@ public abstract class TestEnvironment {
                     return "session-id";
                 }
             });
+
+    protected static TemplateEngine templateEngine = TemplateEngine.createInstance(new NodeProcessor());
 
     @BeforeEach
     protected void clear() {
