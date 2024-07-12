@@ -91,7 +91,10 @@
 
 ---
 
-<img width="1216" alt="Screenshot 2024-07-12 at 12 47 56 AM" src="https://github.com/user-attachments/assets/4eed14aa-ad44-462c-b339-c92a56f23910">
+### 구조
+
+![제목 없음-2024-07-04-1642](https://github.com/user-attachments/assets/4c6475ab-2d0e-4224-9c0e-a44633b67b7d)
+
 
 <br>
 <br>
