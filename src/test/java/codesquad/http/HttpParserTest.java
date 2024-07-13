@@ -196,6 +196,42 @@ class HttpParserTest {
                     () -> assertEquals("www.example.com", result.getHeader("Host"))
             );
         }
+
+        @Test
+        void 헤더_값이_공백으로_시작하지_않는_경우() {
+            Reader reader = createReaderWithInput("""
+                    POST /search HTTP/1.1\r
+                    Host:www.example.com\r
+                    \r
+                    """);
+
+            HttpRequest result = HttpParser.parse(reader);
+
+            assertAll(
+                    () -> assertNotNull(result),
+                    () -> assertEquals("POST", result.getMethod().getDisplayName()),
+                    () -> assertEquals("/search", result.getUri().getPath()),
+                    () -> assertEquals("www.example.com", result.getHeader("Host"))
+            );
+        }
+
+        @Test
+        void 헤더_값에_세미콜론이_있는_경우() {
+            Reader reader = createReaderWithInput("""
+                    POST /search HTTP/1.1\r
+                    Host: www.example.com:8080\r
+                    \r
+                    """);
+
+            HttpRequest result = HttpParser.parse(reader);
+
+            assertAll(
+                    () -> assertNotNull(result),
+                    () -> assertEquals("POST", result.getMethod().getDisplayName()),
+                    () -> assertEquals("/search", result.getUri().getPath()),
+                    () -> assertEquals("www.example.com:8080", result.getHeader("Host"))
+            );
+        }
     }
 }
 
