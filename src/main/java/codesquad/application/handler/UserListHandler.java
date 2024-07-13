@@ -9,8 +9,8 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.session.Session;
+import codesquad.template.TemplateContext;
 import codesquad.template.TemplateEngine;
-import codesquad.template.compile.node.EvaluatorContext;
 import java.util.List;
 
 public class UserListHandler extends AbstractDynamicRequestHandler {
@@ -31,12 +31,12 @@ public class UserListHandler extends AbstractDynamicRequestHandler {
         }
 
         List<User> users = userRepository.findAll();
-        EvaluatorContext evaluatorContext = new EvaluatorContext();
+        TemplateContext templateContext = new TemplateContext();
 
-        evaluatorContext.setValue("user", session.getAttribute("userId"));
-        evaluatorContext.setValue("userList", users);
+        templateContext.setValue("user", session.getAttribute("userId"));
+        templateContext.setValue("userList", users);
 
-        String templatedFileContent = TemplateEngine.getInstance().render("/user_list.html", evaluatorContext);
+        String templatedFileContent = TemplateEngine.getInstance().render("/user_list.html", templateContext);
 
         httpResponse.setBody(templatedFileContent.getBytes());
         httpResponse.setHeader(CONTENT_TYPE.getFieldName(), "text/html");

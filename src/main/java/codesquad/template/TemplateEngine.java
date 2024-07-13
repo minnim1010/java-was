@@ -1,7 +1,6 @@
 package codesquad.template;
 
 import codesquad.http.error.CannotRenderTemplateException;
-import codesquad.template.compile.node.EvaluatorContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,7 +32,7 @@ public class TemplateEngine {
         return instance;
     }
 
-    public String render(String templatePath, EvaluatorContext context) {
+    public String render(String templatePath, TemplateContext context) {
         try {
             String template = readResource(templatePath);
             String compiledTemplate = compileTemplate(context, template);
@@ -43,7 +42,7 @@ public class TemplateEngine {
         }
     }
 
-    public String processTemplate(String compiledTemplate, EvaluatorContext context) {
+    public String processTemplate(String compiledTemplate, TemplateContext context) {
         StringBuilder result = new StringBuilder();
         Matcher matcher = replacePattern.matcher(compiledTemplate);
 
@@ -60,7 +59,7 @@ public class TemplateEngine {
         return result.toString();
     }
 
-    private String compileTemplate(EvaluatorContext context, String template) {
+    private String compileTemplate(TemplateContext context, String template) {
         Node root = HtmlParser.parse(template);
         nodeProcessor.processConditions(root, context);
         nodeProcessor.processForEach(root, context);

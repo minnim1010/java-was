@@ -1,5 +1,7 @@
 package codesquad.template.compile.node;
 
+import codesquad.template.TemplateContext;
+
 public class VariableNode extends ASTNode {
 
     private final String name;
@@ -9,7 +11,7 @@ public class VariableNode extends ASTNode {
     }
 
     @Override
-    public String evaluate(EvaluatorContext context) {
+    public String evaluate(TemplateContext context) {
         return context.getValue(name).toString();
     }
 

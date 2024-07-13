@@ -1,14 +1,14 @@
-package codesquad.template.compile.node;
+package codesquad.template;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EvaluatorContext {
+public class TemplateContext {
 
     private final Map<String, Object> context;
 
-    public EvaluatorContext() {
+    public TemplateContext() {
         this.context = new HashMap<>();
     }
 

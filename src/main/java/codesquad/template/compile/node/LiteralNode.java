@@ -1,5 +1,7 @@
 package codesquad.template.compile.node;
 
+import codesquad.template.TemplateContext;
+
 public class LiteralNode extends ASTNode {
 
     private final String value;
@@ -9,7 +11,7 @@ public class LiteralNode extends ASTNode {
     }
 
     @Override
-    public String evaluate(EvaluatorContext context) {
+    public String evaluate(TemplateContext context) {
         return value;
     }
 
