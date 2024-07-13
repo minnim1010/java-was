@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
 
 public class SimpleBinaryExpressionParser {
 
+    private SimpleBinaryExpressionParser() {
+    }
+
     public static ASTNode parse(String expression) {
         String[] tokens = tokenize(expression);
         Stack<ASTNode> nodes = new Stack<>();
