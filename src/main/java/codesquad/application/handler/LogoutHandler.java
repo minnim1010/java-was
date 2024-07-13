@@ -1,4 +1,4 @@
-package codesquad.business.handler;
+package codesquad.application.handler;
 
 import codesquad.http.cookie.Cookie;
 import codesquad.http.handler.AbstractDynamicRequestHandler;

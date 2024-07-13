@@ -1,4 +1,4 @@
-package codesquad.business.handler;
+package codesquad.application.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

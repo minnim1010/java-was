@@ -1,9 +1,9 @@
-package codesquad.business.handler;
+package codesquad.application.handler;
 
 import static codesquad.http.header.HeaderField.CONTENT_TYPE;
 
-import codesquad.business.model.User;
-import codesquad.business.persistence.UserRepository;
+import codesquad.application.model.User;
+import codesquad.application.persistence.UserRepository;
 import codesquad.http.handler.AbstractDynamicRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;

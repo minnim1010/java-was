@@ -1,4 +1,4 @@
-package codesquad.business.model;
+package codesquad.application.model;
 
 import java.util.Objects;
 

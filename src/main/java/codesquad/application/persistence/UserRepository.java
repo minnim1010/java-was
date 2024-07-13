@@ -1,6 +1,6 @@
-package codesquad.business.persistence;
+package codesquad.application.persistence;
 
-import codesquad.business.model.User;
+import codesquad.application.model.User;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

@@ -1,10 +1,10 @@
-package codesquad.business.handler;
+package codesquad.application.handler;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import codesquad.business.model.User;
+import codesquad.application.model.User;
 import codesquad.config.GlobalBeanContainer;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;

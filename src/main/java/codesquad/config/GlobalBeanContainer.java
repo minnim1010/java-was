@@ -1,10 +1,10 @@
 package codesquad.config;
 
-import codesquad.business.handler.LoginHandler;
-import codesquad.business.handler.LogoutHandler;
-import codesquad.business.handler.UserCreateHandler;
-import codesquad.business.handler.UserListHandler;
-import codesquad.business.persistence.UserRepository;
+import codesquad.application.handler.LoginHandler;
+import codesquad.application.handler.LogoutHandler;
+import codesquad.application.handler.UserCreateHandler;
+import codesquad.application.handler.UserListHandler;
+import codesquad.application.persistence.UserRepository;
 
 public class GlobalBeanContainer {
 

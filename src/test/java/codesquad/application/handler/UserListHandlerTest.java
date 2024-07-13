@@ -1,11 +1,11 @@
-package codesquad.business.handler;
+package codesquad.application.handler;
 
 import static codesquad.http.header.HeaderField.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import codesquad.business.model.User;
-import codesquad.business.persistence.UserRepository;
+import codesquad.application.model.User;
+import codesquad.application.persistence.UserRepository;
 import codesquad.config.GlobalBeanContainer;
 import codesquad.environment.TestEnvironment;
 import codesquad.http.message.HttpRequest;
