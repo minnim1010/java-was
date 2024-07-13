@@ -12,11 +12,30 @@
     <header class="header">
         <a href="/"><img alt="Logo" src="/img/signiture.svg"/></a>
         <ul class="header__menu">
-            <li class="header__menu__item">
+            <li class="header__menu__item" my-if="user != null">
+                <a class="btn btn_ghost btn_size_s">{ user }님</a>
+            </li>
+            <li class="header__menu__item" my-if="user != null">
+                <form action="/user/list" method="get" style="display:inline;">
+                    <button class="btn btn_contained btn_size_s" id="user-list-btn" type="submit">
+                        사용자 목록
+                    </button>
+                </form>
+            </li>
+            <li class="header__menu__item" my-if="user == null">
                 <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
             </li>
-            <li class="header__menu__item">
-                <a class="btn btn_contained btn_size_s" href="/registration">회원 가입</a>
+            <li class="header__menu__item" my-if="user == null">
+                <a class="btn btn_contained btn_size_s" href="/registration">
+                    회원 가입
+                </a>
+            </li>
+            <li class="header__menu__item" my-if="user != null">
+                <form action="/user/logout" method="get" style="display:inline;">
+                    <button class="btn btn_contained btn_size_s" id="logout-btn" type="submit">
+                        로그아웃
+                    </button>
+                </form>
             </li>
         </ul>
     </header>
