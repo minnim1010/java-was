@@ -25,14 +25,13 @@ public class UserListHandler extends AbstractDynamicRequestHandler {
     public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {
         Session session = httpRequest.getSession();
         if (session == null || session.getAttribute("userId") == null) {
-            httpResponse.setStatus(HttpStatus.FOUND);
-            httpResponse.setHeader("Location", "/login");
+            httpResponse.sendRedirect("/login");
             return;
         }
 
         List<User> users = userRepository.findAll();
-        TemplateContext templateContext = new TemplateContext();
 
+        TemplateContext templateContext = new TemplateContext();
         templateContext.setValue("user", session.getAttribute("userId"));
         templateContext.setValue("userList", users);
 

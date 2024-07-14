@@ -147,4 +147,9 @@ public class HttpResponse {
         }
         return null;
     }
+
+    public void sendRedirect(String location) {
+        setStatus(HttpStatus.FOUND);
+        setHeader("Location", location);
+    }
 }

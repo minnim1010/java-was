@@ -6,7 +6,6 @@ import codesquad.http.cookie.Cookie;
 import codesquad.http.handler.AbstractDynamicRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.property.HttpStatus;
 import codesquad.http.session.Session;
 import codesquad.http.session.SessionManager;
 
@@ -27,8 +26,7 @@ public class LoginHandler extends AbstractDynamicRequestHandler {
                 .orElse(null);
 
         if (user == null || !user.matchPassword(password)) {
-            httpResponse.setStatus(HttpStatus.FOUND);
-            httpResponse.setHeader("Location", "/user/login_failed.html");
+            httpResponse.sendRedirect("/user/login_failed.html");
             return;
         }
 
@@ -47,7 +45,6 @@ public class LoginHandler extends AbstractDynamicRequestHandler {
                 true);
         httpResponse.setCookie(cookie);
 
-        httpResponse.setStatus(HttpStatus.FOUND);
-        httpResponse.setHeader("Location", "/index.html");
+        httpResponse.sendRedirect("/index.html");
     }
 }

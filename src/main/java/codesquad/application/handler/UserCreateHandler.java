@@ -5,7 +5,6 @@ import codesquad.application.persistence.UserRepository;
 import codesquad.http.handler.AbstractDynamicRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.http.property.HttpStatus;
 
 public class UserCreateHandler extends AbstractDynamicRequestHandler {
 
@@ -24,14 +23,10 @@ public class UserCreateHandler extends AbstractDynamicRequestHandler {
 
         User user = new User(userId, password, name, email);
         userRepository.findById(userId)
-                .ifPresentOrElse(u -> {
-                    httpResponse.setStatus(HttpStatus.FOUND);
-                    httpResponse.setHeader("Location", "/user/regist_failed.html");
-                }, () -> {
-                    userRepository.save(user);
-
-                    httpResponse.setStatus(HttpStatus.FOUND);
-                    httpResponse.setHeader("Location", "/index.html");
-                });
+                .ifPresentOrElse(u -> httpResponse.sendRedirect("/user/regist_failed.html"),
+                        () -> {
+                            userRepository.save(user);
+                            httpResponse.sendRedirect("/index.html");
+                        });
     }
 }
