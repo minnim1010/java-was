@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 public class SimpleBinaryExpressionParser {
 
+    private static final Pattern SYNTAX_PATTERN = Pattern.compile("\\w+|==|!=|\\(|\\)");
+
     private SimpleBinaryExpressionParser() {
     }
 
@@ -49,7 +51,7 @@ public class SimpleBinaryExpressionParser {
     }
 
     private static String[] tokenize(String expression) {
-        Matcher matcher = Pattern.compile("\\w+|==|!=|\\(|\\)").matcher(expression);
+        Matcher matcher = SYNTAX_PATTERN.matcher(expression);
         List<String> tokens = new ArrayList<>();
         while (matcher.find()) {
             tokens.add(matcher.group());

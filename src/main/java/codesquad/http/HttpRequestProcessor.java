@@ -12,10 +12,18 @@ import codesquad.http.message.HttpResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 public class HttpRequestProcessor {
+
+    private static final SimpleDateFormat dateFormat;
+
+    static {
+        GlobalConstants globalConstants = GlobalConstants.getInstance();
+
+        dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", globalConstants.getLocale());
+        dateFormat.setTimeZone(TimeZone.getTimeZone(globalConstants.getTimezone()));
+    }
 
     private final DynamicRequestHandlerResolver dynamicRequestHandlerResolver;
     private final StaticResourceRequestHandler staticResourceRequestHandler;
@@ -46,13 +54,7 @@ public class HttpRequestProcessor {
     }
 
     private void setDateHeader(HttpResponse httpResponse) {
-        Locale locale = GlobalConstants.getInstance().getLocale();
-        String timezone = GlobalConstants.getInstance().getTimezone();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", locale);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
         String date = dateFormat.format(new Date());
-
         httpResponse.setHeader(DATE.getFieldName(), date);
     }
 }

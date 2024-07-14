@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 
 public class HtmlParser {
 
+    private static final Pattern SPACE_PATTERN = Pattern.compile("\\s+");
+    private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("(\\w+-?\\w*)\\s*=\\s*\"([^\"]*)\"");
+
     private HtmlParser() {
     }
 
@@ -51,14 +54,13 @@ public class HtmlParser {
     }
 
     private static Node createNode(String tagContent) {
-        String[] parts = tagContent.split("\\s+", 2);
+        String[] parts = SPACE_PATTERN.split(tagContent, 2);
         String tagName = parts[0];
         Node node = new Node(tagName);
 
         if (parts.length > 1) {
             String attributesPart = parts[1];
-            Pattern pattern = Pattern.compile("(\\w+-?\\w*)\\s*=\\s*\"([^\"]*)\"");
-            Matcher matcher = pattern.matcher(attributesPart);
+            Matcher matcher = ATTRIBUTE_PATTERN.matcher(attributesPart);
 
             while (matcher.find()) {
                 String key = matcher.group(1);
