@@ -1,6 +1,6 @@
 package codesquad;
 
-import codesquad.config.GlobalConstants;
+import codesquad.config.WasConfiguration;
 import codesquad.context.WebContext;
 import codesquad.http.HttpProcessor;
 import codesquad.http.HttpRequestPreprocessor;
@@ -34,8 +34,8 @@ public class WebServerFactory {
     }
 
     private static SessionManager createSessionManager() {
-        long sessionTimeout = GlobalConstants.getInstance().getSessionTimeout();
-        int sessionPoolMaxSize = GlobalConstants.getInstance().getSessionPoolMaxSize();
+        long sessionTimeout = WasConfiguration.getInstance().getSessionTimeout();
+        int sessionPoolMaxSize = WasConfiguration.getInstance().getSessionPoolMaxSize();
         SessionIdGenerator sessionIdGenerator = new SessionIdGenerator();
         return SessionManager.createInstance(sessionPoolMaxSize, sessionTimeout, sessionIdGenerator);
     }

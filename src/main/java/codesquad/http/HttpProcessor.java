@@ -29,15 +29,6 @@ public class HttpProcessor {
         this.httpRequestProcessor = httpRequestProcessor;
     }
 
-    private static void handleError(Exception e, HttpResponse response) {
-        TemplateContext templateContext = new TemplateContext();
-        templateContext.setValue("errorCode", response.getStatus().getCode());
-        templateContext.setValue("errorMessage", e.getMessage());
-        String renderedTemplate = TemplateEngine.getInstance().render("/error.html", templateContext);
-        response.setBody(renderedTemplate.getBytes());
-        response.setHeader(CONTENT_TYPE.getFieldName(), "text/html");
-    }
-
     public void process(Reader reader,
                         Writer writer) throws IOException {
         HttpResponse response = new HttpResponse();
@@ -58,7 +49,12 @@ public class HttpProcessor {
                 response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            handleError(e, response);
+            TemplateContext templateContext = new TemplateContext();
+            templateContext.setValue("errorCode", response.getStatus().getCode());
+            templateContext.setValue("errorMessage", e.getMessage());
+            String renderedTemplate = TemplateEngine.getInstance().render("/error.html", templateContext);
+            response.setBody(renderedTemplate.getBytes());
+            response.setHeader(CONTENT_TYPE.getFieldName(), "text/html");
             log.error(e.getMessage(), e);
         }
 

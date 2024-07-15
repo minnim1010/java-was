@@ -2,7 +2,7 @@ package codesquad.http;
 
 import static codesquad.http.header.HeaderField.DATE;
 
-import codesquad.config.GlobalConstants;
+import codesquad.config.WasConfiguration;
 import codesquad.http.handler.DynamicRequestHandler;
 import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.RequestHandler;
@@ -22,10 +22,10 @@ public class HttpRequestProcessor {
     private static final SimpleDateFormat dateFormat;
 
     static {
-        GlobalConstants globalConstants = GlobalConstants.getInstance();
+        WasConfiguration wasConfiguration = WasConfiguration.getInstance();
 
-        dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", globalConstants.getLocale());
-        dateFormat.setTimeZone(TimeZone.getTimeZone(globalConstants.getTimezone()));
+        dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", wasConfiguration.getLocale());
+        dateFormat.setTimeZone(TimeZone.getTimeZone(wasConfiguration.getTimezone()));
     }
 
     private final DynamicRequestHandlerResolver dynamicRequestHandlerResolver;
