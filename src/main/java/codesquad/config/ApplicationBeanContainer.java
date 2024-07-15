@@ -7,8 +7,10 @@ import codesquad.application.handler.LogoutHandler;
 import codesquad.application.handler.UserCreateHandler;
 import codesquad.application.handler.UserListHandler;
 import codesquad.application.infrastructure.JdbcArticleRepository;
+import codesquad.application.infrastructure.JdbcCommentRepository;
 import codesquad.application.infrastructure.JdbcUserRepository;
 import codesquad.application.persistence.ArticleRepository;
+import codesquad.application.persistence.CommentRepository;
 import codesquad.application.persistence.UserRepository;
 
 public class ApplicationBeanContainer {
@@ -25,6 +27,8 @@ public class ApplicationBeanContainer {
     private final ArticleWriteHandler articleWriteHandler;
     private final ArticleListHandler articleListHandler;
 
+    private final CommentRepository commentRepository;
+
     // ----------------------------------------------------- Constructor
 
     private ApplicationBeanContainer() {
@@ -33,9 +37,12 @@ public class ApplicationBeanContainer {
         this.loginHandler = setLoginProcessor(userRepository);
         this.logoutRequestHandler = setLogoutProcessor();
         this.userListRequestHandler = setUserListHandler(userRepository);
+
+        this.commentRepository = setCommentRepository();
+
         this.articleRepository = setArticleRepository();
         this.articleWriteHandler = setArticleWriteHandler(articleRepository);
-        this.articleListHandler = setArticleListHandler(articleRepository);
+        this.articleListHandler = setArticleListHandler(articleRepository, commentRepository);
     }
 
 
@@ -109,7 +116,12 @@ public class ApplicationBeanContainer {
         return new ArticleWriteHandler(articleRepository);
     }
 
-    protected ArticleListHandler setArticleListHandler(ArticleRepository articleRepository) {
-        return new ArticleListHandler(articleRepository);
+    protected ArticleListHandler setArticleListHandler(ArticleRepository articleRepository,
+                                                       CommentRepository commentRepository) {
+        return new ArticleListHandler(articleRepository, commentRepository);
+    }
+
+    protected CommentRepository setCommentRepository() {
+        return new JdbcCommentRepository();
     }
 }

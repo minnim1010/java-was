@@ -24,7 +24,6 @@ public class Article {
         this.userId = userId;
     }
 
-    // Getters and Setters
     public int getArticleId() {
         return articleId;
     }
