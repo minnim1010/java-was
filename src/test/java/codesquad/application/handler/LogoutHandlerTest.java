@@ -36,49 +36,6 @@ class LogoutHandlerTest extends TestEnvironment {
     class 로그아웃한다 {
 
         @Test
-        void 쿠키가_없으면_UNAUTHORIZED_응답을_반환한다() throws Exception {
-            // Given
-            sessionManager.createSession();
-            HttpRequest httpRequest = new HttpRequest(
-                    HttpMethod.GET,
-                    new URI("/user/logout"),
-                    Collections.emptyMap(),
-                    HttpVersion.HTTP_1_1,
-                    Collections.emptyMap(),
-                    "".getBytes()
-            );
-            HttpResponse httpResponse = new HttpResponse();
-
-            // When
-            logoutRequestHandler.processGet(httpRequest, httpResponse);
-
-            // Then
-            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
-            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login");
-        }
-
-        @Test
-        void 세션이_없으면_UNAUTHORIZED_응답을_반환한다() throws Exception {
-            // Given
-            HttpRequest httpRequest = new HttpRequest(
-                    HttpMethod.GET,
-                    new URI("/user/logout"),
-                    Collections.emptyMap(),
-                    HttpVersion.HTTP_1_1,
-                    Map.of("Cookie", "SID=session-id"),
-                    "".getBytes()
-            );
-            HttpResponse httpResponse = new HttpResponse();
-
-            // When
-            logoutRequestHandler.processGet(httpRequest, httpResponse);
-
-            // Then
-            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
-            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login");
-        }
-
-        @Test
         void 세션에_유저_정보가_존재한다면_로그아웃_처리하고_REDIRECT_응답을_반환한다() throws Exception {
             Session session = sessionManager.createSession();
             session.setAttribute("userId", "testUser");

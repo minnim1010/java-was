@@ -2,6 +2,7 @@ package codesquad.application.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import codesquad.application.infrastructure.InMemoryUserRepository;
 import codesquad.application.model.User;
 import codesquad.application.persistence.UserRepository;
 import codesquad.environment.TestEnvironment;
@@ -32,7 +33,7 @@ class LoginHandlerTest extends TestEnvironment {
 
     @BeforeEach
     void setUp() {
-        userRepository = new UserRepository();
+        userRepository = new InMemoryUserRepository();
         loginHandler = new LoginHandler(userRepository);
     }
 

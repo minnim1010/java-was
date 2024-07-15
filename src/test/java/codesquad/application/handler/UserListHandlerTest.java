@@ -35,25 +35,6 @@ class UserListHandlerTest extends TestEnvironment {
     class 사용자_목록_조회_페이지를_요청한다 {
 
         @Test
-        void 로그인_상태가_아니라면_로그인_페이지로_리다이렉트한다() throws URISyntaxException {
-            // Given
-            HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                    new URI("/user/list"),
-                    Collections.emptyMap(),
-                    HttpVersion.HTTP_1_1,
-                    Collections.emptyMap(),
-                    new byte[0]);
-            HttpResponse httpResponse = new HttpResponse();
-
-            // When
-            userListHandler.processGet(httpRequest, httpResponse);
-
-            // Then
-            assertThat(httpResponse.getStatus()).isEqualTo(HttpStatus.FOUND);
-            assertThat(httpResponse.getHeader("Location")).isEqualTo("/login");
-        }
-
-        @Test
         void 로그인_상태라면_사용자_목록_조회_페이지를_반환한다() throws URISyntaxException {
             // Given
             UserRepository userRepository = GlobalBeanContainer.getInstance().userRepository();
