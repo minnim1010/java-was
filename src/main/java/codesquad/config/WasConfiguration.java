@@ -11,7 +11,7 @@ public class WasConfiguration {
 
     private static final WasConfiguration instance = new WasConfiguration();
     private static final Logger log = LoggerFactory.getLogger(WasConfiguration.class);
-    private static final String CONFIGURATION_FILE = "setting.properties";
+    private static final String CONFIGURATION_FILE = "setting.yml";
 
     private static Properties properties;
     private final int serverPort;
@@ -58,7 +58,7 @@ public class WasConfiguration {
             if (in != null) {
                 properties.load(in);
             } else {
-                throw new IOException("Property file 'setting.properties' not found in the classpath");
+                throw new IOException("Property file 'setting.yml' not found in the classpath");
             }
         } catch (IOException e) {
             log.error("IOException: ", e);
