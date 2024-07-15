@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import codesquad.application.model.User;
 import codesquad.config.GlobalBeanContainer;
+import codesquad.environment.TestEnvironment;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
@@ -25,13 +26,14 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("회원가입 테스트")
-class UserCreateHandlerTest {
+class UserCreateHandlerTest extends TestEnvironment {
 
     private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
     private final UserCreateHandler userRequestHandler = globalBeanContainer.userRequestHandler();
 
     @BeforeEach
     void setUp() {
+        globalBeanContainer.articleRepository().deleteAll();
         globalBeanContainer.userRepository().deleteAll();
     }
 

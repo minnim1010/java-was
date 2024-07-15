@@ -1,5 +1,6 @@
 package codesquad.utils;
 
+import codesquad.config.GlobalConstants;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,10 +11,9 @@ public class DatabaseConnectionUtils {
     }
 
     public static Connection getConnection() throws SQLException {
-        //get connection db
-        String url = "jdbc:h2:/Users/woowatech22/Desktop/java-was/src/main/resources/data/was;AUTO_SERVER=TRUE";
-        String user = "sa";
-        String password = "";
+        String url = GlobalConstants.getInstance().getDatasourceUrl();
+        String user = GlobalConstants.getInstance().getDatasourceUser();
+        String password = GlobalConstants.getInstance().getDatasourcePassword();
 
         return DriverManager.getConnection(url, user, password);
     }

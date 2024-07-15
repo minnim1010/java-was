@@ -1,5 +1,6 @@
 package codesquad.environment;
 
+import codesquad.config.GlobalConstants;
 import codesquad.http.session.SessionIdGenerator;
 import codesquad.http.session.SessionManager;
 import codesquad.template.NodeProcessor;
@@ -20,6 +21,23 @@ public abstract class TestEnvironment {
             });
 
     protected static TemplateEngine templateEngine = TemplateEngine.createInstance(new NodeProcessor());
+
+    protected static GlobalConstants globalConstants = new GlobalConstants() {
+        @Override
+        public String setDatasourceUrl() {
+            return "jdbc:h2:mem:test";
+        }
+
+        @Override
+        public String setDatasourceUser() {
+            return "sa";
+        }
+
+        @Override
+        public String setDatasourcePassword() {
+            return "";
+        }
+    };
 
     @BeforeEach
     protected void clear() {

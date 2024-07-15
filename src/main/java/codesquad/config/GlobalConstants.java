@@ -11,6 +11,9 @@ public class GlobalConstants {
     private final Locale locale;
     private final long sessionTimeout;
     private final int sessionPoolMaxSize;
+    private final String datasourceUrl;
+    private final String datasourceUser;
+    private final String datasourcePassword;
 
     public GlobalConstants() {
         this.serverPort = setServerPort();
@@ -19,6 +22,9 @@ public class GlobalConstants {
         this.locale = setLocale();
         this.sessionTimeout = setSessionTimeout();
         this.sessionPoolMaxSize = setSessionPoolMaxSize();
+        this.datasourceUrl = setDatasourceUrl();
+        this.datasourceUser = setDatasourceUser();
+        this.datasourcePassword = setDatasourcePassword();
     }
 
     public static GlobalConstants getInstance() {
@@ -51,6 +57,18 @@ public class GlobalConstants {
         return sessionPoolMaxSize;
     }
 
+    public String getDatasourceUrl() {
+        return datasourceUrl;
+    }
+
+    public String getDatasourceUser() {
+        return datasourceUser;
+    }
+
+    public String getDatasourcePassword() {
+        return datasourcePassword;
+    }
+
     // ----------------------------------------------------- setter
 
     protected int setServerPort() {
@@ -75,5 +93,17 @@ public class GlobalConstants {
 
     protected int setSessionPoolMaxSize() {
         return 1000;
+    }
+
+    protected String setDatasourceUrl() {
+        return "jdbc:h2:/Users/woowatech22/Desktop/java-was/src/main/resources/data/was;AUTO_SERVER=TRUE";
+    }
+
+    protected String setDatasourceUser() {
+        return "sa";
+    }
+
+    protected String setDatasourcePassword() {
+        return "";
     }
 }
