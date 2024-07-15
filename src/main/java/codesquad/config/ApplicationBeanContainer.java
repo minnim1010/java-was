@@ -11,9 +11,9 @@ import codesquad.application.infrastructure.JdbcUserRepository;
 import codesquad.application.persistence.ArticleRepository;
 import codesquad.application.persistence.UserRepository;
 
-public class GlobalBeanContainer {
+public class ApplicationBeanContainer {
 
-    private static GlobalBeanContainer instance;
+    private static ApplicationBeanContainer instance;
 
     private final UserRepository userRepository;
     private final UserCreateHandler userRequestHandler;
@@ -27,7 +27,7 @@ public class GlobalBeanContainer {
 
     // ----------------------------------------------------- Constructor
 
-    private GlobalBeanContainer() {
+    private ApplicationBeanContainer() {
         this.userRepository = setUserRepository();
         this.userRequestHandler = setUserProcessor(userRepository);
         this.loginHandler = setLoginProcessor(userRepository);
@@ -39,10 +39,10 @@ public class GlobalBeanContainer {
     }
 
 
-    public static GlobalBeanContainer getInstance() {
+    public static ApplicationBeanContainer getInstance() {
 
         if (instance == null) {
-            instance = new GlobalBeanContainer();
+            instance = new ApplicationBeanContainer();
         }
         return instance;
     }

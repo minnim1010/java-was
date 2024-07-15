@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import codesquad.application.model.User;
 import codesquad.application.persistence.UserRepository;
-import codesquad.config.GlobalBeanContainer;
+import codesquad.config.ApplicationBeanContainer;
 import codesquad.environment.TestEnvironment;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 @DisplayName("사용자 목록 조회 및 렌더링 테스트")
 class UserListHandlerTest extends TestEnvironment {
 
-    private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
-    private final UserListHandler userListHandler = globalBeanContainer.userListRequestHandler();
+    private final ApplicationBeanContainer applicationBeanContainer = ApplicationBeanContainer.getInstance();
+    private final UserListHandler userListHandler = applicationBeanContainer.userListRequestHandler();
 
     @Nested
     class 사용자_목록_조회_페이지를_요청한다 {
@@ -37,7 +37,7 @@ class UserListHandlerTest extends TestEnvironment {
         @Test
         void 로그인_상태라면_사용자_목록_조회_페이지를_반환한다() throws URISyntaxException {
             // Given
-            UserRepository userRepository = GlobalBeanContainer.getInstance().userRepository();
+            UserRepository userRepository = ApplicationBeanContainer.getInstance().userRepository();
             userRepository.save(new User("user1", "password1", "User One", "a"));
             userRepository.save(new User("user2", "password1", "User One", "b"));
 

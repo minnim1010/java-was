@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import codesquad.application.model.User;
-import codesquad.config.GlobalBeanContainer;
+import codesquad.config.ApplicationBeanContainer;
 import codesquad.environment.TestEnvironment;
 import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
@@ -28,13 +28,13 @@ import org.junit.jupiter.api.Test;
 @DisplayName("회원가입 테스트")
 class UserCreateHandlerTest extends TestEnvironment {
 
-    private final GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
-    private final UserCreateHandler userRequestHandler = globalBeanContainer.userRequestHandler();
+    private final ApplicationBeanContainer applicationBeanContainer = ApplicationBeanContainer.getInstance();
+    private final UserCreateHandler userRequestHandler = applicationBeanContainer.userRequestHandler();
 
     @BeforeEach
     void setUp() {
-        globalBeanContainer.articleRepository().deleteAll();
-        globalBeanContainer.userRepository().deleteAll();
+        applicationBeanContainer.articleRepository().deleteAll();
+        applicationBeanContainer.userRepository().deleteAll();
     }
 
     @Nested
@@ -60,7 +60,7 @@ class UserCreateHandlerTest extends TestEnvironment {
 
         @Test
         void 사용자_아이디가_이미_있는_경우_회원가입_재시도_페이지로_리다이렉트한다() throws Exception {
-            globalBeanContainer.userRepository().save(new User("1", "password", "name", "email"));
+            applicationBeanContainer.userRepository().save(new User("1", "password", "name", "email"));
 
             HttpRequest httpRequest = new HttpRequest(HttpMethod.POST,
                     new URI("/create"),

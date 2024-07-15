@@ -1,6 +1,6 @@
 package codesquad.context;
 
-import codesquad.config.GlobalBeanContainer;
+import codesquad.config.ApplicationBeanContainer;
 import codesquad.http.handler.DynamicRequestHandler;
 import java.io.File;
 import java.io.IOException;
@@ -27,17 +27,17 @@ public class WebContext {
     private final Set<String> defaultPages;
 
     public WebContext() {
-        GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
+        ApplicationBeanContainer applicationBeanContainer = ApplicationBeanContainer.getInstance();
         this.requestHandlerMap = setRequestHandlerMap(
                 List.of("/", "/index.html", "/user/create", "/user/login", "/user/logout", "/user/list",
                         "/article/write"),
-                List.of(globalBeanContainer.articleListHandler(),
-                        globalBeanContainer.articleListHandler(),
-                        globalBeanContainer.userRequestHandler(),
-                        globalBeanContainer.loginRequestHandler(),
-                        globalBeanContainer.logoutRequestHandler(),
-                        globalBeanContainer.userListRequestHandler(),
-                        globalBeanContainer.articleWriteHandler()));
+                List.of(applicationBeanContainer.articleListHandler(),
+                        applicationBeanContainer.articleListHandler(),
+                        applicationBeanContainer.userRequestHandler(),
+                        applicationBeanContainer.loginRequestHandler(),
+                        applicationBeanContainer.logoutRequestHandler(),
+                        applicationBeanContainer.userListRequestHandler(),
+                        applicationBeanContainer.articleWriteHandler()));
         this.staticResourcePaths = setStaticResourcePaths("static");
         this.defaultPages = setDefaultPages();
     }
