@@ -29,8 +29,11 @@ public class WebContext {
     public WebContext() {
         GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
         this.requestHandlerMap = setRequestHandlerMap(
-                List.of("/user/create", "/user/login", "/user/logout", "/user/list", "/article/write"),
-                List.of(globalBeanContainer.userRequestHandler(),
+                List.of("/", "/index.html", "/user/create", "/user/login", "/user/logout", "/user/list",
+                        "/article/write"),
+                List.of(globalBeanContainer.articleListHandler(),
+                        globalBeanContainer.articleListHandler(),
+                        globalBeanContainer.userRequestHandler(),
                         globalBeanContainer.loginRequestHandler(),
                         globalBeanContainer.logoutRequestHandler(),
                         globalBeanContainer.userListRequestHandler(),

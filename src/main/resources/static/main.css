@@ -198,3 +198,67 @@
 .user-list__item__email {
   margin: 5px 0;
 }
+
+/* General styles for the container and sections */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.article-list-section {
+  margin: 20px 0;
+}
+
+.article-list-section h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Styles for the table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.article-table thead tr {
+  background-color: #f2f2f2;
+}
+
+.article-table th, .article-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.article-table th {
+  font-weight: bold;
+  color: #555;
+}
+
+.article-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Styles for links in the table */
+.article-table a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.article-table a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design for mobile devices */
+@media (max-width: 768px) {
+  .article-table th, .article-table td {
+    padding: 8px;
+  }
+
+  .article-list-section h2 {
+    font-size: 1.2em;
+  }
+}

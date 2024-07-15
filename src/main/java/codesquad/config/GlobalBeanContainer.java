@@ -1,5 +1,6 @@
 package codesquad.config;
 
+import codesquad.application.handler.ArticleListHandler;
 import codesquad.application.handler.ArticleWriteHandler;
 import codesquad.application.handler.LoginHandler;
 import codesquad.application.handler.LogoutHandler;
@@ -22,6 +23,7 @@ public class GlobalBeanContainer {
 
     private final ArticleRepository articleRepository;
     private final ArticleWriteHandler articleWriteHandler;
+    private final ArticleListHandler articleListHandler;
 
     // ----------------------------------------------------- Constructor
 
@@ -33,7 +35,9 @@ public class GlobalBeanContainer {
         this.userListRequestHandler = setUserListHandler(userRepository);
         this.articleRepository = setArticleRepository();
         this.articleWriteHandler = setArticleWriteHandler(articleRepository);
+        this.articleListHandler = setArticleListHandler(articleRepository);
     }
+
 
     public static GlobalBeanContainer getInstance() {
 
@@ -72,6 +76,10 @@ public class GlobalBeanContainer {
         return articleWriteHandler;
     }
 
+    public ArticleListHandler articleListHandler() {
+        return articleListHandler;
+    }
+
     // ----------------------------------------------------- Setter
     protected UserRepository setUserRepository() {
         return new JdbcUserRepository();
@@ -99,5 +107,9 @@ public class GlobalBeanContainer {
 
     protected ArticleWriteHandler setArticleWriteHandler(ArticleRepository articleRepository) {
         return new ArticleWriteHandler(articleRepository);
+    }
+
+    protected ArticleListHandler setArticleListHandler(ArticleRepository articleRepository) {
+        return new ArticleListHandler(articleRepository);
     }
 }

@@ -40,6 +40,29 @@
         </ul>
     </header>
     <div class="wrapper">
+
+        <section class="article-list-section">
+            <h2>아티클 리스트</h2>
+            <table class="article-table">
+                <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>작성일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <div my-forEach="article in articles">
+                    <tr>
+                        <td><a href="/article/{ article.articleId }">{ article.title }</a></td>
+                        <td>{ article.userId }</td>
+                        <td>{ article.createdAt }</td>
+                    </tr>
+                </div>
+                </tbody>
+            </table>
+        </section>
+
         <div class="post">
             <div class="post__account">
                 <img class="post__account__img"/>

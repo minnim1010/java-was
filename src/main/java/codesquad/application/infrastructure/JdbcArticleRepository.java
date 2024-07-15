@@ -47,7 +47,8 @@ public class JdbcArticleRepository implements ArticleRepository {
                         resultSet.getInt("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
-                        resultSet.getString("userId")
+                        resultSet.getString("userId"),
+                        resultSet.getTimestamp("createdAt").toLocalDateTime()
                 ));
             }
         } catch (SQLException e) {
@@ -70,7 +71,32 @@ public class JdbcArticleRepository implements ArticleRepository {
                         resultSet.getInt("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
-                        resultSet.getString("userId")));
+                        resultSet.getString("userId"),
+                        resultSet.getTimestamp("createdAt").toLocalDateTime()));
+            }
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return List.of();
+    }
+
+    public List<Article> findAllByOrderByCreatedAtLimit5() {
+        String selectSQL = "SELECT * FROM ARTICLE ORDER BY createdAt LIMIT 5";
+
+        try (Connection connection = DatabaseConnectionUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            ArrayList<Article> result = new ArrayList<>();
+            while (resultSet.next()) {
+                result.add(new Article(
+                        resultSet.getInt("articleId"),
+                        resultSet.getString("title"),
+                        resultSet.getString("content"),
+                        resultSet.getString("userId"),
+                        resultSet.getTimestamp("createdAt").toLocalDateTime()));
             }
             return result;
         } catch (SQLException e) {

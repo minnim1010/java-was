@@ -38,7 +38,7 @@ public class TemplateEngine {
             String compiledTemplate = compileTemplate(context, template);
             return processTemplate(compiledTemplate, context);
         } catch (Exception e) {
-            throw new CannotRenderTemplateException("cannot render: " + templatePath + " not found", e);
+            throw new CannotRenderTemplateException("cannot render: " + templatePath, e);
         }
     }
 
