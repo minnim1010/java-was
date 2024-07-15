@@ -41,7 +41,7 @@ class HttpRequestProcessorTest extends TestEnvironment {
             DynamicRequestHandlerResolver dynamicRequestHandlerResolver = new DynamicRequestHandlerResolver(
                     Collections.emptyMap());
             StaticResourceRequestHandler staticResourceRequestHandler = new StaticResourceRequestHandler(
-                    Set.of("/index.html"),
+                    Set.of("/login/index.html"),
                     Set.of("index.html"));
             httpRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                     staticResourceRequestHandler);
@@ -49,7 +49,7 @@ class HttpRequestProcessorTest extends TestEnvironment {
 
         @Test
         void 존재하는_정적_파일_요청을_처리할_수_있다() throws Exception {
-            HttpRequest request = Fixture.createHttpGetRequest();
+            HttpRequest request = Fixture.createHttpGetRequest("/login/index.html");
             HttpResponse response = new HttpResponse();
 
             httpRequestProcessor.processRequest(request, response);
@@ -61,7 +61,7 @@ class HttpRequestProcessorTest extends TestEnvironment {
 
         @Test
         void 디렉토리만_명시된_uri를_가진_요청인_경우_해당_디렉토리의_디폴트_파일을_반환하여_처리할_수_있다() throws Exception {
-            HttpRequest request = Fixture.createHttpGetRequest("/");
+            HttpRequest request = Fixture.createHttpGetRequest("/login");
             HttpResponse response = new HttpResponse();
 
             httpRequestProcessor.processRequest(request, response);
