@@ -4,7 +4,7 @@ import codesquad.application.handler.LoginHandler;
 import codesquad.application.handler.LogoutHandler;
 import codesquad.application.handler.UserCreateHandler;
 import codesquad.application.handler.UserListHandler;
-import codesquad.application.infrastructure.InMemoryUserRepository;
+import codesquad.application.infrastructure.JdbcUserRepository;
 import codesquad.application.persistence.UserRepository;
 
 public class GlobalBeanContainer {
@@ -58,7 +58,7 @@ public class GlobalBeanContainer {
 
     // ----------------------------------------------------- Setter
     protected UserRepository setUserRepository() {
-        return new InMemoryUserRepository();
+        return new JdbcUserRepository();
     }
 
     protected UserCreateHandler setUserProcessor(UserRepository userRepository) {

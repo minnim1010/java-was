@@ -17,6 +17,9 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.13'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.13'
 
+    implementation 'com.h2database:h2:2.2.224'
+    implementation 'org.apache.commons:commons-dbcp2:2.9.0'
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.assertj:assertj-core:3.21.0'
