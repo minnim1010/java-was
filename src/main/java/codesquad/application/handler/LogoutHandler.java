@@ -11,11 +11,6 @@ public class LogoutHandler extends AbstractDynamicRequestHandler {
     @Override
     public void processGet(HttpRequest httpRequest, HttpResponse httpResponse) {
         Session session = httpRequest.getSession();
-        if (session == null || session.getAttribute("userId") == null) {
-            httpResponse.sendRedirect("/login");
-            return;
-        }
-
         String sessionId = session.getSessionId();
         session.invalidate();
 

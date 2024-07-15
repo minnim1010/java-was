@@ -9,9 +9,12 @@ import codesquad.http.handler.RequestHandler;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
+import codesquad.http.session.Session;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class HttpRequestProcessor {
@@ -27,6 +30,7 @@ public class HttpRequestProcessor {
 
     private final DynamicRequestHandlerResolver dynamicRequestHandlerResolver;
     private final StaticResourceRequestHandler staticResourceRequestHandler;
+    private final Set<String> authenticatedURI = Set.of("/write.html", "/user/list", "/logout");
 
     public HttpRequestProcessor(DynamicRequestHandlerResolver dynamicRequestHandlerResolver,
                                 StaticResourceRequestHandler staticResourceRequestHandler) {
@@ -39,6 +43,16 @@ public class HttpRequestProcessor {
         httpResponse.setVersion(httpRequest.getVersion());
 
         RequestHandler requestHandler = resolveRequestHandler(httpRequest.getUri().getPath());
+
+        URI uri = httpRequest.getUri();
+        if (authenticatedURI.contains(uri.getPath())) {
+            Session session = httpRequest.getSession();
+            if (session == null || session.getAttribute("userId") == null) {
+                httpResponse.sendRedirect("/login");
+                return;
+            }
+        }
+
         requestHandler.handle(httpRequest, httpResponse);
 
         setDateHeader(httpResponse);
