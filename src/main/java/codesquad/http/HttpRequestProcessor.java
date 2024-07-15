@@ -30,7 +30,7 @@ public class HttpRequestProcessor {
 
     private final DynamicRequestHandlerResolver dynamicRequestHandlerResolver;
     private final StaticResourceRequestHandler staticResourceRequestHandler;
-    private final Set<String> authenticatedURI = Set.of("/write.html", "/user/list", "/logout");
+    private final Set<String> authenticatedURI = Set.of("/write.html", "/user/list", "/logout", "/article/write");
 
     public HttpRequestProcessor(DynamicRequestHandlerResolver dynamicRequestHandlerResolver,
                                 StaticResourceRequestHandler staticResourceRequestHandler) {

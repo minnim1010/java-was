@@ -29,11 +29,12 @@ public class WebContext {
     public WebContext() {
         GlobalBeanContainer globalBeanContainer = GlobalBeanContainer.getInstance();
         this.requestHandlerMap = setRequestHandlerMap(
-                List.of("/user/create", "/user/login", "/user/logout", "/user/list"),
+                List.of("/user/create", "/user/login", "/user/logout", "/user/list", "/article/write"),
                 List.of(globalBeanContainer.userRequestHandler(),
                         globalBeanContainer.loginRequestHandler(),
                         globalBeanContainer.logoutRequestHandler(),
-                        globalBeanContainer.userListRequestHandler()));
+                        globalBeanContainer.userListRequestHandler(),
+                        globalBeanContainer.articleWriteHandler()));
         this.staticResourcePaths = setStaticResourcePaths("static");
         this.defaultPages = setDefaultPages();
     }
