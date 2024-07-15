@@ -2,31 +2,17 @@ package codesquad.application.persistence;
 
 import codesquad.application.model.User;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class UserRepository {
+public interface UserRepository {
 
-    private static final Map<String, User> repository = new ConcurrentHashMap<>();
+    void save(User user);
 
-    public void save(User user) {
-        repository.put(user.getUserId(), user);
-    }
+    Optional<User> findById(String userId);
 
-    public Optional<User> findById(String userId) {
-        return Optional.ofNullable(repository.get(userId));
-    }
+    List<User> findAll();
 
-    public List<User> findAll() {
-        return List.copyOf(repository.values());
-    }
+    void delete(String userId);
 
-    public void delete(String userId) {
-        repository.remove(userId);
-    }
-
-    public void deleteAll() {
-        repository.clear();
-    }
+    void deleteAll();
 }
