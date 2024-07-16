@@ -67,7 +67,7 @@ public abstract class TestEnvironment {
         if (in != null) {
             return in;
         } else {
-            throw new IOException("Property file 'setting.yml' not found in the classpath");
+            throw new IOException("Property file 'setting.properties' not found in the classpath");
         }
     }
 

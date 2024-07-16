@@ -11,7 +11,7 @@ public class WasConfiguration {
 
     private static final WasConfiguration instance = new WasConfiguration();
     private static final Logger log = LoggerFactory.getLogger(WasConfiguration.class);
-    private static final String CONFIGURATION_FILE = "setting.yml";
+    private static final String CONFIGURATION_FILE = "setting.properties";
 
     private static Properties properties;
     private final int serverPort;
@@ -35,9 +35,8 @@ public class WasConfiguration {
                 this.getStringProperty("server.locale.country", "US"));
         this.sessionTimeout = Long.parseLong(this.getStringProperty("server.session.timeout", "1800000"));
         this.sessionPoolMaxSize = Integer.parseInt(this.getStringProperty("server.session.pool.max.size", "1000"));
-        this.datasourceUrl = this.getStringProperty("datasource.url",
-                "jdbc:h2:/Users/woowatech22/Desktop/java-was/src/main/resources/data/was;AUTO_SERVER=TRUE");
-        this.datasourceUser = this.getStringProperty("datasource.user", "sa");
+        this.datasourceUrl = this.getStringProperty("datasource.url", "");
+        this.datasourceUser = this.getStringProperty("datasource.user", "");
         this.datasourcePassword = this.getStringProperty("datasource.password", "");
     }
 
@@ -58,7 +57,7 @@ public class WasConfiguration {
             if (in != null) {
                 properties.load(in);
             } else {
-                throw new IOException("Property file 'setting.yml' not found in the classpath");
+                throw new IOException("Property file 'setting.properties' not found in the classpath");
             }
         } catch (IOException e) {
             log.error("IOException: ", e);
