@@ -53,10 +53,14 @@ public class NodeProcessor {
             List<?> list = (List<?>) listObject;
             StringBuilder repeatedContent = new StringBuilder();
             for (Object item : list) {
-                TemplateContext newContext = new TemplateContext();
+                TemplateContext newContext = new TemplateContext(context);
                 newContext.setValue(itemName, item);
                 String content = node.getInnerHtml();
-                repeatedContent.append(TemplateEngine.getInstance().processTemplate(content, newContext));
+                String processedContent = TemplateEngine.getInstance().processTemplate(content, newContext);
+
+                Node nestedNode = HtmlParser.parse(processedContent);
+                processForEach(nestedNode, newContext);
+                repeatedContent.append(nestedNode.toHtml());
             }
             node.setInnerHtml(repeatedContent.toString());
             node.removeAttribute(MY_FOR_EACH_TAG);

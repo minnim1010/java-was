@@ -7,8 +7,15 @@ import java.util.Map;
 public class TemplateContext {
 
     private final Map<String, Object> context;
+    private final TemplateContext parentContext;
 
     public TemplateContext() {
+        this.parentContext = null;
+        this.context = new HashMap<>();
+    }
+
+    public TemplateContext(TemplateContext parentContext) {
+        this.parentContext = parentContext;
         this.context = new HashMap<>();
     }
 
@@ -22,6 +29,9 @@ public class TemplateContext {
         }
         if (context.containsKey(key)) {
             return context.get(key);
+        }
+        if (parentContext != null) {
+            return parentContext.getValue(key);
         }
         return "null";
     }

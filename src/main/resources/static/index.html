@@ -16,6 +16,9 @@
                 <a class="btn btn_ghost btn_size_s">{ user }님</a>
             </li>
             <li class="header__menu__item" my-if="user != null">
+                <a class="btn btn_ghost btn_size_s" href="/write.html">글쓰기</a>
+            </li>
+            <li>
                 <form action="/user/list" method="get" style="display:inline;">
                     <button class="btn btn_contained btn_size_s" id="user-list-btn" type="submit">
                         사용자 목록
@@ -39,105 +42,63 @@
             </li>
         </ul>
     </header>
+
     <div class="wrapper">
-
-        <section class="article-list-section">
-            <h2>아티클 리스트</h2>
-            <table class="article-table">
-                <thead>
-                <tr>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                </tr>
-                </thead>
-                <tbody>
-                <div my-forEach="article in articles">
-                    <tr>
-                        <td><a href="/article/{ article.articleId }">{ article.title }</a></td>
-                        <td>{ article.userId }</td>
-                        <td>{ article.createdAt }</td>
-                    </tr>
+        <div my-forEach="article in articles">
+            <div class="post">
+                <div class="post__account">
+                    <img class="post__account__img"/>
+                    <p class="post__account__nickname">{ article.userId }</p>
                 </div>
-                </tbody>
-            </table>
-        </section>
+                <img class="post__img"/>
+                <div class="post__menu">
+                    <ul class="post__menu__personal">
+                        <li>
+                            <button class="post__menu__btn">
+                                <img src="./img/like.svg"/>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="post__menu__btn">
+                                <img src="./img/sendLink.svg"/>
+                            </button>
+                        </li>
+                    </ul>
+                    <button class="post__menu__btn">
+                        <img src="./img/bookMark.svg"/>
+                    </button>
+                </div>
+                <div>
+                    { article.title }
+                </div>
+                <p class="post__article">
+                    { article.content }
+                </p>
 
-        <div class="post">
-            <div class="post__account">
-                <img class="post__account__img"/>
-                <p class="post__account__nickname">{ article.userId }</p>
-            </div>
-            <img class="post__img"/>
-            <div class="post__menu">
-                <ul class="post__menu__personal">
-                    <li>
-                        <button class="post__menu__btn">
-                            <img src="./img/like.svg"/>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="post__menu__btn">
-                            <img src="./img/sendLink.svg"/>
-                        </button>
-                    </li>
-                </ul>
-                <button class="post__menu__btn">
-                    <img src="./img/bookMark.svg"/>
-                </button>
-            </div>
-            <div>
-                { article.title }
-            </div>
-            <p class="post__article">
-                { article.content }
-            </p>
-        </div>
-        <ul class="comment">
-            <div my-forEach="comment in comments">
-                <li class="comment__item">
-                    <div class="comment__item__user">
-                        <img class="comment__item__user__img"/>
-                        <p class="comment__item__user__nickname">{ comment.userId }</p>
+                <ul class="comment">
+                    <div my-forEach="comment in article.comments">
+                        <li class="comment__item">
+                            <div class="comment__item__user">
+                                <img class="comment__item__user__img"/>
+                                <p class="comment__item__user__nickname">{ comment.userId }</p>
+                            </div>
+                            <p class="comment__item__article">
+                                {comment.content}
+                            </p>
+                        </li>
                     </div>
-                    <p class="comment__item__article">
-                        {comment.content}
-                    </p>
-                </li>
-            </div>
+                </ul>
 
-            <button class="btn btn_ghost btn_size_m" id="show-all-btn">
-                모든 댓글 보기
-            </button>
-        </ul>
-        <nav class="nav">
-            <ul class="nav__menu">
-                <li class="nav__menu__item">
-                    <a class="nav__menu__item__btn" href="">
-                        <img
-                                class="nav__menu__item__img"
-                                src="./img/ci_chevron-left.svg"
-                        />
-                        이전 글
-                    </a>
-                </li>
-                <li class="nav__menu__item">
-                    <a class="btn btn_ghost btn_size_m" href="/write.html">글쓰기</a>
-                </li>
-                <li class="nav__menu__item">
-                    <a class="btn btn_ghost btn_size_m" href="/comment/write?articleId={article.articleId}">댓글 작성</a>
-                </li>
-                <li class="nav__menu__item">
-                    <a class="nav__menu__item__btn" href="">
-                        다음 글
-                        <img
-                                class="nav__menu__item__img"
-                                src="./img/ci_chevron-right.svg"
-                        />
-                    </a>
-                </li>
-            </ul>
-        </nav>
+                <nav class="nav">
+                    <ul class="nav__menu">
+                        <li class="nav__menu__item">
+                            <a class="btn btn_ghost btn_size_m" href="/comment/write?articleId={article.articleId}">댓글
+                                작성</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 </div>
 </body>

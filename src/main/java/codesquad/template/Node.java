@@ -40,13 +40,20 @@ public class Node {
 
     public List<Node> findNodesWithAttribute(String attribute) {
         List<Node> result = new ArrayList<>();
-        if (this.attributes.containsKey(attribute)) {
-            result.add(this);
-        }
-        for (Node child : children) {
-            result.addAll(child.findNodesWithAttribute(attribute));
-        }
+        findNodesWithAttributeHelper(this, attribute, result, false);
         return result;
+    }
+
+    private void findNodesWithAttributeHelper(Node node, String attribute, List<Node> result, boolean foundParent) {
+        if (node.attributes.containsKey(attribute)) {
+            result.add(node);
+            foundParent = true;
+        }
+        if (!foundParent) {
+            for (Node child : node.children) {
+                findNodesWithAttributeHelper(child, attribute, result, foundParent);
+            }
+        }
     }
 
     public String getInnerHtml() {
