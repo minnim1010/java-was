@@ -10,7 +10,7 @@
 <body>
 <div class="container">
     <header class="header">
-        <a href="/main"><img src="/img/signiture.svg"/></a>
+        <a href="/"><img src="/img/signiture.svg"/></a>
         <ul class="header__menu">
             <li class="header__menu__item" my-if="user != null">
                 <a class="btn btn_ghost btn_size_s">{ user }님</a>
@@ -44,7 +44,7 @@
     </header>
     <div class="page">
         <h2 class="page-title">게시글 작성</h2>
-        <form action="/article/write" class="form" method="post">
+        <form action="/article/write" class="form" enctype="multipart/form-data" method="post">
             <div class="textfield textfield_size_s">
                 <p class="title_textfield">제목</p>
                 <input
@@ -52,6 +52,7 @@
                         class="input_textfield"
                         name="title"
                         placeholder="글의 제목을 입력하세요"
+                        required
                 />
             </div>
             <div class="textfield textfield_size_m">
@@ -61,7 +62,17 @@
                         name="content"
                         class="input_textfield"
                         placeholder="글의 내용을 입력하세요"
+                        required
                 ></textarea>
+            </div>
+            <div class="textfield textfield_size_m">
+                <p class="title_textfield">이미지 업로드</p>
+                <input
+                        accept="image/*"
+                        class="input_textfield"
+                        name="image"
+                        type="file"
+                />
             </div>
             <button
                     class="btn btn_contained btn_size_m"
