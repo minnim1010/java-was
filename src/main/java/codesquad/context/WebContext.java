@@ -30,14 +30,15 @@ public class WebContext {
         ApplicationBeanContainer applicationBeanContainer = ApplicationBeanContainer.getInstance();
         this.requestHandlerMap = setRequestHandlerMap(
                 List.of("/", "/index.html", "/user/create", "/user/login", "/user/logout", "/user/list",
-                        "/article/write"),
+                        "/article/write", "/comment/write"),
                 List.of(applicationBeanContainer.articleListHandler(),
                         applicationBeanContainer.articleListHandler(),
                         applicationBeanContainer.userRequestHandler(),
                         applicationBeanContainer.loginRequestHandler(),
                         applicationBeanContainer.logoutRequestHandler(),
                         applicationBeanContainer.userListRequestHandler(),
-                        applicationBeanContainer.articleWriteHandler()));
+                        applicationBeanContainer.articleWriteHandler(),
+                        applicationBeanContainer.commentWriteHandler()));
         this.staticResourcePaths = setStaticResourcePaths("static");
         this.defaultPages = setDefaultPages();
     }

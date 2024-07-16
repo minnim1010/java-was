@@ -2,6 +2,7 @@ package codesquad.config;
 
 import codesquad.application.handler.ArticleListHandler;
 import codesquad.application.handler.ArticleWriteHandler;
+import codesquad.application.handler.CommentWriteHandler;
 import codesquad.application.handler.LoginHandler;
 import codesquad.application.handler.LogoutHandler;
 import codesquad.application.handler.UserCreateHandler;
@@ -28,6 +29,7 @@ public class ApplicationBeanContainer {
     private final ArticleListHandler articleListHandler;
 
     private final CommentRepository commentRepository;
+    private final CommentWriteHandler commentWriteHandler;
 
     // ----------------------------------------------------- Constructor
 
@@ -39,6 +41,7 @@ public class ApplicationBeanContainer {
         this.userListRequestHandler = setUserListHandler(userRepository);
 
         this.commentRepository = setCommentRepository();
+        this.commentWriteHandler = setCommentWriteHandler(commentRepository);
 
         this.articleRepository = setArticleRepository();
         this.articleWriteHandler = setArticleWriteHandler(articleRepository);
@@ -87,6 +90,14 @@ public class ApplicationBeanContainer {
         return articleListHandler;
     }
 
+    public CommentRepository commentRepository() {
+        return commentRepository;
+    }
+
+    public CommentWriteHandler commentWriteHandler() {
+        return commentWriteHandler;
+    }
+
     // ----------------------------------------------------- Setter
     protected UserRepository setUserRepository() {
         return new JdbcUserRepository();
@@ -123,5 +134,9 @@ public class ApplicationBeanContainer {
 
     protected CommentRepository setCommentRepository() {
         return new JdbcCommentRepository();
+    }
+
+    protected CommentWriteHandler setCommentWriteHandler(CommentRepository commentRepository) {
+        return new CommentWriteHandler(commentRepository);
     }
 }
