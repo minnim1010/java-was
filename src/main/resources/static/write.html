@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <link href="../reset.css" rel="stylesheet"/>
-    <link href="../global.css" rel="stylesheet"/>
+    <link href="/reset.css" rel="stylesheet"/>
+    <link href="/global.css" rel="stylesheet"/>
     <link href="/main.css" rel="stylesheet"/>
 </head>
 <body>
 <div class="container">
     <header class="header">
-        <a href="/main"><img src="../img/signiture.svg"/></a>
+        <a href="/main"><img src="/img/signiture.svg"/></a>
         <ul class="header__menu">
             <li class="header__menu__item" my-if="user != null">
                 <a class="btn btn_ghost btn_size_s">{ user }님</a>
             </li>
             <li class="header__menu__item" my-if="user != null">
+                <a class="btn btn_ghost btn_size_s" href="/write.html">글쓰기</a>
+            </li>
+            <li my-if="user != null">
                 <form action="/user/list" method="get" style="display:inline;">
                     <button class="btn btn_contained btn_size_s" id="user-list-btn" type="submit">
                         사용자 목록
