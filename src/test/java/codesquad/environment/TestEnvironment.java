@@ -87,23 +87,22 @@ public abstract class TestEnvironment {
 
     @BeforeEach
     protected void setUpTestEnvironment() throws Exception {
+        sessionManager.clear();
+
+        String jdbcUrl = "jdbc:h2:./data/test_was;AUTO_SERVER=TRUE";
+        String username = "test";
+        String password = "test";
+
         WasConfiguration instance = WasConfiguration.getInstance();
         setField(instance, "serverPort", 9090);
         setField(instance, "requestThreadSize", 10);
         setField(instance, "sessionTimeout", 3600000L);
         setField(instance, "sessionPoolMaxSize", 2000);
-        setField(instance, "datasourceUrl",
-                "jdbc:h2:/Users/woowatech22/Desktop/java-was/src/main/resources/data/test_was;AUTO_SERVER=TRUE");
-        setField(instance, "datasourceUser", "test");
-        setField(instance, "datasourcePassword", "test");
+        setField(instance, "datasourceUrl", jdbcUrl);
+        setField(instance, "datasourceUser", username);
+        setField(instance, "datasourcePassword", password);
 
-        sessionManager.clear();
-
-        String jdbcUrl = "jdbc:h2:/Users/woowatech22/Desktop/java-was/src/main/resources/data/test_was;AUTO_SERVER=TRUE";
-        String username = "test";
-        String password = "test";
         String sqlFilePath = "init.sql";
-
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
             executeSqlFile(connection, sqlFilePath);
         } catch (SQLException e) {
