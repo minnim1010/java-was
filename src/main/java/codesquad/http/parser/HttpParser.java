@@ -46,6 +46,7 @@ public class HttpParser {
 
             HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body);
             log.debug(httpRequest.toString());
+            log.info(method + " " + uri + " ");
 
             return httpRequest;
         } catch (Exception e) {
