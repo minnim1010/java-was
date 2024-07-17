@@ -89,7 +89,7 @@ public abstract class TestEnvironment {
     protected void setUpTestEnvironment() throws Exception {
         sessionManager.clear();
 
-        String jdbcUrl = "jdbc:h2:./data/test_was;AUTO_SERVER=TRUE";
+        String jdbcUrl = "jdbc:h2:~/data/db/test_was;AUTO_SERVER=TRUE";
         String username = "test";
         String password = "test";
 

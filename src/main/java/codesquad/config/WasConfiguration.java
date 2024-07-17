@@ -23,6 +23,7 @@ public class WasConfiguration {
     private final String datasourceUrl;
     private final String datasourceUser;
     private final String datasourcePassword;
+    private final String imagePath;
 
     private WasConfiguration() {
         properties = new Properties();
@@ -35,9 +36,12 @@ public class WasConfiguration {
                 this.getStringProperty("server.locale.country", "US"));
         this.sessionTimeout = Long.parseLong(this.getStringProperty("server.session.timeout", "1800000"));
         this.sessionPoolMaxSize = Integer.parseInt(this.getStringProperty("server.session.pool.max.size", "1000"));
-        this.datasourceUrl = this.getStringProperty("datasource.url", "");
+        this.datasourceUrl = this.getStringProperty("datasource.url", "")
+                .replaceFirst("~", System.getProperty("user.home"));
         this.datasourceUser = this.getStringProperty("datasource.user", "");
         this.datasourcePassword = this.getStringProperty("datasource.password", "");
+        this.imagePath = this.getStringProperty("image.upload.path", ".")
+                .replaceFirst("^~", System.getProperty("user.home"));
     }
 
     public static WasConfiguration getInstance() {
@@ -116,5 +120,9 @@ public class WasConfiguration {
 
     public String getDatasourcePassword() {
         return datasourcePassword;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }

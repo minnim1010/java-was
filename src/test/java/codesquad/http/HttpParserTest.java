@@ -160,7 +160,7 @@ class HttpParserTest {
                     POST /search HTTP/1.1\r
                     Host: www.example.com\r
                     Content-Type: application/x-www-form-urlencoded\r
-                    Content-Length: 21\r
+                    Content-Length: 29\r
                     \r
                     q=good&lang=ㅁㄴㅇㄹ@#$!!""");
 
@@ -182,7 +182,7 @@ class HttpParserTest {
                     POST /search HTTP/1.1\r
                     Host: www.example.com\r
                     Content-Type: application/x-www-form-urlencoded\r
-                    Content-Length: 24\r
+                    Content-Length: 32\r
                     \r
                     q=good&lang=ㅁㄴㅇ%26ㄹ@#$!!""");
 

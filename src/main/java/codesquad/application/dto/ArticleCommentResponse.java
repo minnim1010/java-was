@@ -11,6 +11,7 @@ public final class ArticleCommentResponse {
     private final String content;
     private final String userId;
     private final LocalDateTime createdAt;
+    private final String imagePath;
     private final List<CommentResponse> comments;
 
     public ArticleCommentResponse(int articleId,
@@ -18,12 +19,14 @@ public final class ArticleCommentResponse {
                                   String content,
                                   String userId,
                                   LocalDateTime createdAt,
+                                  String imagePath,
                                   List<CommentResponse> comments) {
         this.articleId = articleId;
         this.title = title;
         this.content = content;
         this.userId = userId;
         this.createdAt = createdAt;
+        this.imagePath = imagePath;
         this.comments = comments;
     }
 
@@ -41,6 +44,10 @@ public final class ArticleCommentResponse {
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 
     public LocalDateTime getCreatedAt() {
