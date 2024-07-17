@@ -1,5 +1,7 @@
 package codesquad.template.compile.node;
 
+import codesquad.template.TemplateContext;
+
 public class BinaryOperationNode extends ASTNode {
 
     private final ASTNode left;
@@ -13,7 +15,7 @@ public class BinaryOperationNode extends ASTNode {
     }
 
     @Override
-    public String evaluate(EvaluatorContext context) {
+    public String evaluate(TemplateContext context) {
         String leftValue = left.evaluate(context);
         String rightValue = right.evaluate(context);
 

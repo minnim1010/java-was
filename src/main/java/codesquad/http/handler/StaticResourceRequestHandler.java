@@ -11,8 +11,8 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.session.Session;
+import codesquad.template.TemplateContext;
 import codesquad.template.TemplateEngine;
-import codesquad.template.compile.node.EvaluatorContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,27 +33,31 @@ public class StaticResourceRequestHandler implements RequestHandler {
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
         String staticResourcePath = findStaticResourcePath(httpRequest.getUri().getPath());
         byte[] fileContent = readResource(staticResourcePath);
+        byte[] renderedFileContent = renderTemplate(httpRequest, staticResourcePath, fileContent);
 
-        if (staticResourcePath.endsWith("html")) {
-            EvaluatorContext evaluatorContext = new EvaluatorContext();
-            Session session = httpRequest.getSession();
-
-            if (session != null && session.getAttribute("userId") != null) {
-                evaluatorContext.setValue("user", session.getAttribute("userId"));
-            }
-
-            String templatedFileContent = TemplateEngine.getInstance().render(staticResourcePath, evaluatorContext);
-            httpResponse.setBody(templatedFileContent.getBytes());
-        } else {
-            httpResponse.setBody(fileContent);
-        }
-
+        httpResponse.setBody(renderedFileContent);
         httpResponse.setHeader(CONTENT_TYPE.getFieldName(), determineContentType(httpRequest, staticResourcePath));
-
         httpResponse.setStatus(HttpStatus.OK);
     }
 
-    protected String findStaticResourcePath(String path) {
+    private byte[] renderTemplate(HttpRequest httpRequest,
+                                  String staticResourcePath,
+                                  byte[] fileContent) {
+        if (!staticResourcePath.endsWith("html")) {
+            return fileContent;
+        }
+
+        TemplateContext templateContext = new TemplateContext();
+        Session session = httpRequest.getSession();
+
+        if (session != null && session.getAttribute("userId") != null) {
+            templateContext.setValue("user", session.getAttribute("userId"));
+        }
+
+        return TemplateEngine.getInstance().render(staticResourcePath, templateContext).getBytes();
+    }
+
+    private String findStaticResourcePath(String path) {
         if (staticResourcePaths.contains(path)) {
             return path;
         }
@@ -65,7 +69,7 @@ public class StaticResourceRequestHandler implements RequestHandler {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found: " + path));
     }
 
-    protected byte[] readResource(String staticResourcePath) throws IOException {
+    private byte[] readResource(String staticResourcePath) throws IOException {
         URL fileUrl = getClass().getClassLoader().getResource("static" + staticResourcePath);
         return loadFile(fileUrl);
     }
@@ -76,7 +80,7 @@ public class StaticResourceRequestHandler implements RequestHandler {
         }
     }
 
-    protected String determineContentType(HttpRequest httpRequest, String staticFilePath) {
+    private String determineContentType(HttpRequest httpRequest, String staticFilePath) {
         String fileExtension = getFileExtension(staticFilePath);
         if (fileExtension.isEmpty()) {
             return ContentType.UNKNOWN.getResponseType();

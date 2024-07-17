@@ -1,7 +1,6 @@
 package codesquad.template;
 
 import codesquad.http.error.CannotRenderTemplateException;
-import codesquad.template.compile.node.EvaluatorContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,17 +32,21 @@ public class TemplateEngine {
         return instance;
     }
 
-    public String render(String templatePath, EvaluatorContext context) {
+    public String render(String templatePath, TemplateContext context) {
         try {
             String template = readResource(templatePath);
-            String compiledTemplate = compileTemplate(context, template);
-            return processTemplate(compiledTemplate, context);
+            return processTemplate(template, context);
         } catch (Exception e) {
-            throw new CannotRenderTemplateException("cannot render: " + templatePath + " not found", e);
+            throw new CannotRenderTemplateException("cannot render: " + templatePath, e);
         }
     }
 
-    public String processTemplate(String compiledTemplate, EvaluatorContext context) {
+    public String processTemplate(String template, TemplateContext context) {
+        Node root = HtmlParser.parse(template);
+        nodeProcessor.processConditions(root, context);
+        nodeProcessor.processForEach(root, context);
+
+        String compiledTemplate = root.toHtml();
         StringBuilder result = new StringBuilder();
         Matcher matcher = replacePattern.matcher(compiledTemplate);
 
@@ -58,14 +61,6 @@ public class TemplateEngine {
         matcher.appendTail(result);
 
         return result.toString();
-    }
-
-    private String compileTemplate(EvaluatorContext context, String template) {
-        Node root = HtmlParser.parse(template);
-        nodeProcessor.processConditions(root, context);
-        nodeProcessor.processForEach(root, context);
-
-        return root.toHtml();
     }
 
     private String readResource(String path) throws IOException {

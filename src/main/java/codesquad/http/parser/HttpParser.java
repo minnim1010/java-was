@@ -46,6 +46,7 @@ public class HttpParser {
 
             HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body);
             log.debug(httpRequest.toString());
+            log.info(method + " " + uri + " ");
 
             return httpRequest;
         } catch (Exception e) {
@@ -57,7 +58,7 @@ public class HttpParser {
         Map<String, String> headers = new HashMap<>();
         String line;
         while (!(line = new String(reader.readLine()).trim()).isEmpty()) {
-            String[] headerTokens = line.split(": ", 2);
+            String[] headerTokens = line.split(":", 2);
             if (headerTokens.length != 2) {
                 throw new HttpRequestParseException("Invalid header: " + line);
             }
@@ -83,7 +84,8 @@ public class HttpParser {
                                                   byte[] body) {
         Map<String, String> queryMap = QueryParser.parse(uri.getQuery());
 
-        if (method == HttpMethod.POST && headers.get("Content-Type").equals("application/x-www-form-urlencoded")) {
+        if (method == HttpMethod.POST && headers.containsKey("Content-Type") &&
+                headers.get("Content-Type").equals("application/x-www-form-urlencoded")) {
             queryMap.putAll(QueryParser.parse(new String(body)));
         }
         return queryMap;

@@ -1,6 +1,6 @@
 package codesquad;
 
-import codesquad.config.GlobalConstants;
+import codesquad.config.WasConfiguration;
 import codesquad.context.WebContext;
 import codesquad.http.HttpProcessor;
 import codesquad.socket.ClientSocket;
@@ -27,10 +27,11 @@ public class WebServer {
     }
 
     public void run() {
-        ExecutorService threadPool = Executors.newFixedThreadPool(GlobalConstants.getInstance().getRequestThreadSize());
+        ExecutorService threadPool = Executors.newFixedThreadPool(
+                WasConfiguration.getInstance().getRequestThreadSize());
         boolean isRunning = true;
 
-        try (ServerSocket serverSocket = new ServerSocket(GlobalConstants.getInstance().getServerPort())) {
+        try (ServerSocket serverSocket = new ServerSocket(WasConfiguration.getInstance().getServerPort())) {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownServer(threadPool, serverSocket)));
 
             while (isRunning) {

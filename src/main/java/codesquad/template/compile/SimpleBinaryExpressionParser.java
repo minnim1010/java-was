@@ -4,18 +4,24 @@ import codesquad.template.compile.node.ASTNode;
 import codesquad.template.compile.node.BinaryOperationNode;
 import codesquad.template.compile.node.LiteralNode;
 import codesquad.template.compile.node.VariableNode;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SimpleBinaryExpressionParser {
 
+    private static final Pattern SYNTAX_PATTERN = Pattern.compile("\\w+|==|!=|\\(|\\)");
+
+    private SimpleBinaryExpressionParser() {
+    }
+
     public static ASTNode parse(String expression) {
         String[] tokens = tokenize(expression);
-        Stack<ASTNode> nodes = new Stack<>();
-        Stack<String> operators = new Stack<>();
+        Deque<ASTNode> nodes = new ArrayDeque<>();
+        Deque<String> operators = new ArrayDeque<>();
 
         for (String token : tokens) {
             if (token.equals("==") || token.equals("!=")) {
@@ -45,7 +51,7 @@ public class SimpleBinaryExpressionParser {
     }
 
     private static String[] tokenize(String expression) {
-        Matcher matcher = Pattern.compile("\\w+|==|!=|\\(|\\)").matcher(expression);
+        Matcher matcher = SYNTAX_PATTERN.matcher(expression);
         List<String> tokens = new ArrayList<>();
         while (matcher.find()) {
             tokens.add(matcher.group());

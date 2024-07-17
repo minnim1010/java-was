@@ -2,23 +2,36 @@ package codesquad.http;
 
 import static codesquad.http.header.HeaderField.DATE;
 
-import codesquad.config.GlobalConstants;
+import codesquad.config.WasConfiguration;
 import codesquad.http.handler.DynamicRequestHandler;
 import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.RequestHandler;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
+import codesquad.http.session.Session;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class HttpRequestProcessor {
 
+    private static final SimpleDateFormat dateFormat;
+
+    static {
+        WasConfiguration wasConfiguration = WasConfiguration.getInstance();
+
+        dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", wasConfiguration.getLocale());
+        dateFormat.setTimeZone(TimeZone.getTimeZone(wasConfiguration.getTimezone()));
+    }
+
     private final DynamicRequestHandlerResolver dynamicRequestHandlerResolver;
     private final StaticResourceRequestHandler staticResourceRequestHandler;
+    private final Set<String> authenticatedURI = Set.of("/write.html", "/user/list", "/logout", "/article/write",
+            "/comment/write");
 
     public HttpRequestProcessor(DynamicRequestHandlerResolver dynamicRequestHandlerResolver,
                                 StaticResourceRequestHandler staticResourceRequestHandler) {
@@ -31,6 +44,16 @@ public class HttpRequestProcessor {
         httpResponse.setVersion(httpRequest.getVersion());
 
         RequestHandler requestHandler = resolveRequestHandler(httpRequest.getUri().getPath());
+
+        URI uri = httpRequest.getUri();
+        if (authenticatedURI.contains(uri.getPath())) {
+            Session session = httpRequest.getSession();
+            if (session == null || session.getAttribute("userId") == null) {
+                httpResponse.sendRedirect("/login");
+                return;
+            }
+        }
+
         requestHandler.handle(httpRequest, httpResponse);
 
         setDateHeader(httpResponse);
@@ -46,13 +69,7 @@ public class HttpRequestProcessor {
     }
 
     private void setDateHeader(HttpResponse httpResponse) {
-        Locale locale = GlobalConstants.getInstance().getLocale();
-        String timezone = GlobalConstants.getInstance().getTimezone();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", locale);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(timezone));
         String date = dateFormat.format(new Date());
-
         httpResponse.setHeader(DATE.getFieldName(), date);
     }
 }

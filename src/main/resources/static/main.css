@@ -12,6 +12,7 @@
   flex-direction: column;
   align-items: start;
   gap: 16px;
+  margin-bottom: 16px;
 }
 
 .post__account {
@@ -197,4 +198,104 @@
 .user-list__item__name,
 .user-list__item__email {
   margin: 5px 0;
+}
+
+/* General styles for the container and sections */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.article-list-section {
+  margin: 20px 0;
+}
+
+.article-list-section h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Styles for the table */
+.article-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.article-table thead tr {
+  background-color: #f2f2f2;
+}
+
+.article-table th, .article-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.article-table th {
+  font-weight: bold;
+  color: #555;
+}
+
+.article-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Styles for links in the table */
+.article-table a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+.article-table a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design for mobile devices */
+@media (max-width: 768px) {
+  .article-table th, .article-table td {
+    padding: 8px;
+  }
+
+  .article-list-section h2 {
+    font-size: 1.2em;
+  }
+}
+
+.error-section {
+  text-align: center;
+  padding: 50px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.error-section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.error-section p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.error-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.error-section ul li {
+  margin-bottom: 10px;
+}
+
+.error-section ul li a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.error-section ul li a:hover {
+  text-decoration: underline;
 }

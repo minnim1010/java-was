@@ -100,7 +100,7 @@ class HttpProcessorTest extends TestEnvironment {
                     staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
-                    throw new UnsupportedOperationException();
+                    throw new UnsupportedOperationException("Not Acceptable");
                 }
             };
             HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
@@ -118,7 +118,7 @@ class HttpProcessorTest extends TestEnvironment {
                     staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
-                    throw new UnSupportedHttpMethodException();
+                    throw new UnSupportedHttpMethodException("Method Not Allowed");
                 }
             };
             HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
@@ -136,7 +136,7 @@ class HttpProcessorTest extends TestEnvironment {
                     staticResourceRequestHandler) {
                 @Override
                 public void processRequest(HttpRequest httpRequest, HttpResponse httpResponse) {
-                    throw new RuntimeException();
+                    throw new RuntimeException("Internal Server Error");
                 }
             };
             HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="/reset.css" rel="stylesheet"/>
+    <link href="/global.css" rel="stylesheet"/>
+    <link href="/main.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/"><img src="/img/signiture.svg"/></a>
+        <ul class="header__menu">
+            <li class="header__menu__item" my-if="user != null">
+                <a class="btn btn_ghost btn_size_s">{ user }님</a>
+            </li>
+            <li class="header__menu__item" my-if="user != null">
+                <a class="btn btn_ghost btn_size_s" href="/write.html">글쓰기</a>
+            </li>
+            <li my-if="user != null">
+                <form action="/user/list" method="get" style="display:inline;">
+                    <button class="btn btn_contained btn_size_s" id="user-list-btn" type="submit">
+                        사용자 목록
+                    </button>
+                </form>
+            </li>
+            <li class="header__menu__item" my-if="user == null">
+                <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+            </li>
+            <li class="header__menu__item" my-if="user == null">
+                <a class="btn btn_contained btn_size_s" href="/registration">
+                    회원 가입
+                </a>
+            </li>
+            <li class="header__menu__item" my-if="user != null">
+                <form action="/user/logout" method="get" style="display:inline;">
+                    <button class="btn btn_contained btn_size_s" id="logout-btn" type="submit">
+                        로그아웃
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </header>
+    <div class="page">
+        <h2 class="page-title">댓글 작성</h2>
+        <form action="/comment/write?articleId={articleId}" class="form" method="post">
+            <div class="textfield textfield_size_m">
+                <p class="title_textfield">내용</p>
+                <textarea
+                        autocomplete="content"
+                        name="content"
+                        class="input_textfield"
+                        placeholder="글의 내용을 입력하세요"
+                ></textarea>
+            </div>
+            <button
+                    class="btn btn_contained btn_size_m"
+                    id="registration-btn"
+                    style="margin-top: 24px"
+                    type="submit"
+            >
+                작성 완료
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
