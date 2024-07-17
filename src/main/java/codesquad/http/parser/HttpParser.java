@@ -4,6 +4,7 @@ import static codesquad.utils.StringUtils.BLANK;
 
 import codesquad.http.error.HttpRequestParseException;
 import codesquad.http.message.HttpRequest;
+import codesquad.http.parser.MultipartFormDataParser.Part;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import codesquad.socket.SocketReader;
@@ -39,12 +40,20 @@ public class HttpParser {
             Map<String, String> headers = parseHeaders(socketReader);
 
             // body
-            byte[] body = parseBody(socketReader, headers);
+            byte[] body = new byte[0];
+            Map<String, Part> multipartFormDatas = new HashMap<>();
+            if (headers.containsKey("Content-Type") && headers.get("Content-Type").startsWith("multipart/form-data")) {
+                multipartFormDatas.putAll(parseMultipartFormData(
+                        socketReader.readBytes(Integer.parseInt(headers.get("Content-Length"))), headers));
+            } else {
+                body = parseBody(socketReader, headers);
+            }
 
             // query
             Map<String, String> queryMap = parseQuery(uri, method, headers, body);
 
-            HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body);
+            HttpRequest httpRequest = new HttpRequest(method, uri, queryMap, version, headers, body,
+                    multipartFormDatas);
             log.debug(httpRequest.toString());
             log.info(method + " " + uri + " ");
 
@@ -74,8 +83,15 @@ public class HttpParser {
         if (!headers.containsKey("Content-Length")) {
             return new byte[0];
         }
+
         int contentLength = Integer.parseInt(headers.get("Content-Length"));
-        return new String(socketReader.readBytes(contentLength)).getBytes();
+        String body = new String(socketReader.readBytes(contentLength));
+        return body.getBytes();
+    }
+
+    private static Map<String, Part> parseMultipartFormData(byte[] body, Map<String, String> headers) {
+        String boundary = headers.get("Content-Type").split("boundary=")[1];
+        return MultipartFormDataParser.parse(body, boundary);
     }
 
     private static Map<String, String> parseQuery(URI uri,

@@ -39,7 +39,7 @@ class SocketReaderTest {
 
         @Test
         void 한_줄씩_읽어온다() throws IOException {
-            String expectedLine = "Hello, World!";
+            String expectedLine = "Hello, World!\n";
             String input = "Hello, World!\nWorld!! Hello";
             byte[] inputData = input.getBytes();
 
@@ -60,16 +60,16 @@ class SocketReaderTest {
 
             SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            char[] result = socketReader.readLine();
+            byte[] result = socketReader.readLine();
 
             assertEquals(expectedLine, new String(result));
         }
 
         @Test
         void 주어진_바이트_길이만큼_읽어온다() throws IOException {
-            String expectedLine = "Hello, World!\n";
-            String input = "Hello, World!\nWorld!! Hello";
-            int readLen = 14;
+            String expectedLine = "ㅇㅇㅇ, World!\n";
+            String input = "ㅇㅇㅇ, World!\nWorld!! Hello";
+            int readLen = expectedLine.getBytes().length;
             byte[] inputData = input.getBytes();
 
             pipedOutputStream.write(inputData);
@@ -89,7 +89,7 @@ class SocketReaderTest {
 
             SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            char[] result = socketReader.readBytes(readLen);
+            byte[] result = socketReader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));
@@ -120,7 +120,7 @@ class SocketReaderTest {
             SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
             socketReader.readLine();
-            char[] result = socketReader.readBytes(readLen);
+            byte[] result = socketReader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));

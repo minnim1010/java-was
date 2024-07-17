@@ -1,30 +1,35 @@
 package codesquad.socket;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class SocketReader {
 
-    private final BufferedReader bufferedReader;
+    private final InputStream inputStream;
 
     public SocketReader(InputStream inputStream) {
-        this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        this.inputStream = inputStream;
     }
 
-    public char[] readLine() throws IOException {
-        String input = bufferedReader.readLine();
-        if (input == null) {
-            return new char[0];
+    public byte[] readLine() throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int currentByte;
+
+        while ((currentByte = inputStream.read()) != -1) {
+            buffer.write(currentByte);
+            if (currentByte == '\n') {
+                break;
+            }
         }
 
-        return input.toCharArray();
+        return buffer.toByteArray();
     }
 
-    public char[] readBytes(int length) throws IOException {
-        char[] input = new char[length];
-        bufferedReader.read(input);
-        return input;
+    public byte[] readBytes(int length) throws IOException {
+        byte[] buffer = new byte[length];
+
+        inputStream.readNBytes(buffer, 0, length);
+        return buffer;
     }
 }
