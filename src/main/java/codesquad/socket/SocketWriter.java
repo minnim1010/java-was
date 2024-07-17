@@ -3,11 +3,11 @@ package codesquad.socket;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class Writer {
+public class SocketWriter {
 
     private final OutputStream outputStream;
 
-    public Writer(OutputStream outputStream) {
+    public SocketWriter(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 

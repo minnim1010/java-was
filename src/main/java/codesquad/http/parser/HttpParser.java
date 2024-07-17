@@ -6,7 +6,7 @@ import codesquad.http.error.HttpRequestParseException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
-import codesquad.socket.Reader;
+import codesquad.socket.SocketReader;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -21,9 +21,9 @@ public class HttpParser {
     private HttpParser() {
     }
 
-    public static HttpRequest parse(Reader reader) throws HttpRequestParseException {
+    public static HttpRequest parse(SocketReader socketReader) throws HttpRequestParseException {
         try {
-            String requestLine = new String(reader.readLine()).trim();
+            String requestLine = new String(socketReader.readLine()).trim();
 
             // start line
             String[] startLineTokens = requestLine.split(BLANK);
@@ -36,10 +36,10 @@ public class HttpParser {
             HttpVersion version = HttpVersion.of(startLineTokens[2]);
 
             // headers
-            Map<String, String> headers = parseHeaders(reader);
+            Map<String, String> headers = parseHeaders(socketReader);
 
             // body
-            byte[] body = parseBody(reader, headers);
+            byte[] body = parseBody(socketReader, headers);
 
             // query
             Map<String, String> queryMap = parseQuery(uri, method, headers, body);
@@ -54,10 +54,10 @@ public class HttpParser {
         }
     }
 
-    private static Map<String, String> parseHeaders(Reader reader) throws IOException {
+    private static Map<String, String> parseHeaders(SocketReader socketReader) throws IOException {
         Map<String, String> headers = new HashMap<>();
         String line;
-        while (!(line = new String(reader.readLine()).trim()).isEmpty()) {
+        while (!(line = new String(socketReader.readLine()).trim()).isEmpty()) {
             String[] headerTokens = line.split(":", 2);
             if (headerTokens.length != 2) {
                 throw new HttpRequestParseException("Invalid header: " + line);
@@ -69,13 +69,13 @@ public class HttpParser {
         return headers;
     }
 
-    private static byte[] parseBody(Reader reader,
+    private static byte[] parseBody(SocketReader socketReader,
                                     Map<String, String> headers) throws IOException {
         if (!headers.containsKey("Content-Length")) {
             return new byte[0];
         }
         int contentLength = Integer.parseInt(headers.get("Content-Length"));
-        return new String(reader.readBytes(contentLength)).getBytes();
+        return new String(socketReader.readBytes(contentLength)).getBytes();
     }
 
     private static Map<String, String> parseQuery(URI uri,

@@ -6,7 +6,7 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.parser.HttpParser;
 import codesquad.http.session.Session;
 import codesquad.http.session.SessionManager;
-import codesquad.socket.Reader;
+import codesquad.socket.SocketReader;
 import java.net.HttpCookie;
 import java.util.List;
 
@@ -18,8 +18,8 @@ public class HttpRequestPreprocessor {
         this.sessionManager = sessionManager;
     }
 
-    public HttpRequest process(Reader reader) {
-        HttpRequest request = HttpParser.parse(reader);
+    public HttpRequest process(SocketReader socketReader) {
+        HttpRequest request = HttpParser.parse(socketReader);
         setSession(request);
 
         return request;

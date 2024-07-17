@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class Reader {
+public class SocketReader {
 
     private final BufferedReader bufferedReader;
 
-    public Reader(InputStream inputStream) {
+    public SocketReader(InputStream inputStream) {
         this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
     }
 

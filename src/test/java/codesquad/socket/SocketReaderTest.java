@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("클라이언트 소켓 데이터 읽기 테스트")
-class ReaderTest {
+class SocketReaderTest {
 
     @Nested
     class 소켓에서_데이터를_읽는다 {
@@ -58,9 +58,9 @@ class ReaderTest {
                 }
             };
 
-            Reader reader = new Reader(customSocket.getInputStream());
+            SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            char[] result = reader.readLine();
+            char[] result = socketReader.readLine();
 
             assertEquals(expectedLine, new String(result));
         }
@@ -87,9 +87,9 @@ class ReaderTest {
                 }
             };
 
-            Reader reader = new Reader(customSocket.getInputStream());
+            SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            char[] result = reader.readBytes(readLen);
+            char[] result = socketReader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));
@@ -117,10 +117,10 @@ class ReaderTest {
                 }
             };
 
-            Reader reader = new Reader(customSocket.getInputStream());
+            SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            reader.readLine();
-            char[] result = reader.readBytes(readLen);
+            socketReader.readLine();
+            char[] result = socketReader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));
