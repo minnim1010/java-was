@@ -34,7 +34,7 @@ public class JdbcArticleRepository implements ArticleRepository {
     }
 
     @Override
-    public Optional<Article> findById(int articleId) {
+    public Optional<Article> findById(Integer articleId) {
         String selectSQL = "SELECT * FROM ARTICLE where articleId = ?";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();

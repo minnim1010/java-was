@@ -33,7 +33,7 @@ public class JdbcCommentRepository implements CommentRepository {
     }
 
     @Override
-    public Optional<Comment> findById(int commentId) {
+    public Optional<Comment> findById(Integer commentId) {
         String selectSQL = "SELECT * FROM COMMENT where commentId = ?";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
@@ -56,6 +56,31 @@ public class JdbcCommentRepository implements CommentRepository {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<Comment> findAll() {
+        String selectSQL = "SELECT * FROM COMMENT";
+
+        try (Connection connection = DatabaseConnectionUtils.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            ArrayList<Comment> result = new ArrayList<>();
+            while (resultSet.next()) {
+                result.add(new Comment(
+                        resultSet.getInt("commentId"),
+                        resultSet.getString("content"),
+                        resultSet.getTimestamp("createdAt").toLocalDateTime(),
+                        resultSet.getString("userId"),
+                        resultSet.getInt("articleId")));
+            }
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return List.of();
     }
 
     @Override
