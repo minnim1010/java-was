@@ -111,23 +111,6 @@ public class JdbcArticleRepository implements ArticleRepository {
     }
 
     @Override
-    public void delete(int articleId) {
-        String deleteSQL = "DELETE FROM ARTICLE WHERE articleId = ?";
-
-        try (Connection connection = DatabaseConnectionUtils.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);) {
-            preparedStatement.setInt(1, articleId);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("Deleting article failed");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void deleteAll() {
         String deleteSQL = "DELETE FROM ARTICLE";
 

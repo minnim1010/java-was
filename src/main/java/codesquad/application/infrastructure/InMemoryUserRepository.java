@@ -23,10 +23,6 @@ public class InMemoryUserRepository implements UserRepository {
         return List.copyOf(repository.values());
     }
 
-    public void delete(String userId) {
-        repository.remove(userId);
-    }
-
     public void deleteAll() {
         repository.clear();
     }

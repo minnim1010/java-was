@@ -12,7 +12,5 @@ public interface CommentRepository {
 
     List<Comment> findAllByArticleId(int articleId);
 
-    void delete(int commentId);
-
     void deleteAll();
 }

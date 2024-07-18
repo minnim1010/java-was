@@ -80,22 +80,6 @@ public class JdbcUserRepository implements UserRepository {
         return List.of();
     }
 
-    public void delete(String userId) {
-        String deleteSQL = "DELETE FROM MEMBER WHERE userId = ?";
-
-        try (Connection connection = DatabaseConnectionUtils.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);) {
-            preparedStatement.setString(1, userId);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("Deleting user failed");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void deleteAll() {
         String deleteSQL = "DELETE FROM MEMBER";
 

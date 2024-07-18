@@ -12,9 +12,5 @@ public interface ArticleRepository {
 
     List<Article> findAll();
 
-    List<Article> findAllByOrderByCreatedAtLimit5();
-
-    void delete(int articleId);
-
     void deleteAll();
 }

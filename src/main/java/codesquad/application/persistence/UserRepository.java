@@ -12,7 +12,5 @@ public interface UserRepository {
 
     List<User> findAll();
 
-    void delete(String userId);
-
     void deleteAll();
 }

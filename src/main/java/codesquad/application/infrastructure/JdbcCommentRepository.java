@@ -86,23 +86,6 @@ public class JdbcCommentRepository implements CommentRepository {
     }
 
     @Override
-    public void delete(int commentId) {
-        String deleteSQL = "DELETE FROM COMMENT WHERE commentId = ?";
-
-        try (Connection connection = DatabaseConnectionUtils.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);) {
-            preparedStatement.setInt(1, commentId);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("Deleting comment failed");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void deleteAll() {
         String deleteSQL = "DELETE FROM COMMENT";
 
