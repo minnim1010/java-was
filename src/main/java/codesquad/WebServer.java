@@ -4,9 +4,9 @@ import codesquad.config.WasConfiguration;
 import codesquad.context.WebContext;
 import codesquad.http.HttpProcessor;
 import codesquad.socket.ClientSocket;
-import codesquad.socket.Reader;
 import codesquad.socket.ServerSocket;
-import codesquad.socket.Writer;
+import codesquad.socket.SocketReader;
+import codesquad.socket.SocketWriter;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,10 +49,10 @@ public class WebServer {
         try (clientSocket) {
             log.debug("Client connected: port " + clientSocket.getPort());
 
-            Reader reader = clientSocket.getReader();
-            Writer writer = clientSocket.getWriter();
+            SocketReader socketReader = clientSocket.getReader();
+            SocketWriter socketWriter = clientSocket.getWriter();
 
-            httpProcessor.process(reader, writer);
+            httpProcessor.process(socketReader, socketWriter);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

@@ -59,6 +59,7 @@ public class ArticleListHandler extends AbstractDynamicRequestHandler {
                 article.getContent(),
                 article.getUserId(),
                 article.getCreatedAt(),
+                article.getImagePath(),
                 commentResponses
         );
     }

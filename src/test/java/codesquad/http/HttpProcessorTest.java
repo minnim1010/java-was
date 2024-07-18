@@ -9,8 +9,8 @@ import codesquad.http.handler.DynamicRequestHandlerResolver;
 import codesquad.http.handler.StaticResourceRequestHandler;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
-import codesquad.socket.Reader;
-import codesquad.socket.Writer;
+import codesquad.socket.SocketReader;
+import codesquad.socket.SocketWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -61,10 +61,10 @@ class HttpProcessorTest extends TestEnvironment {
 
         @Test
         void GET_요청_처리_시_200_OK_응답을_반환한다() throws Exception {
-            Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\nAccept: */*\n\r\n");
-            Writer writer = new Writer(outputStream);
+            SocketReader socketReader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\nAccept: */*\n\r\n");
+            SocketWriter socketWriter = new SocketWriter(outputStream);
 
-            httpProcessor.process(reader, writer);
+            httpProcessor.process(socketReader, socketWriter);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 200 OK"));
         }
@@ -74,28 +74,28 @@ class HttpProcessorTest extends TestEnvironment {
     class HTTP_요청_처리를_실패하는_경우 {
         @Test
         void 유효하지_않은_요청_포맷이라면_400_BAD_REQUEST_응답을_반환한다() throws Exception {
-            Reader reader = createReaderWithInput("INVALID REQUEST");
-            Writer writer = new Writer(outputStream);
+            SocketReader socketReader = createReaderWithInput("INVALID REQUEST");
+            SocketWriter socketWriter = new SocketWriter(outputStream);
 
-            httpProcessor.process(reader, writer);
+            httpProcessor.process(socketReader, socketWriter);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 400 Bad Request"));
         }
 
         @Test
         void 리소스를_찾을_수_없는_경우_404_NOT_FOUND_응답을_반환한다() throws Exception {
-            Reader reader = createReaderWithInput("GET /notfound HTTP/1.1\r\nHost: localhost\r\n\r\n");
-            Writer writer = new Writer(outputStream);
+            SocketReader socketReader = createReaderWithInput("GET /notfound HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            SocketWriter socketWriter = new SocketWriter(outputStream);
 
-            httpProcessor.process(reader, writer);
+            httpProcessor.process(socketReader, socketWriter);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 404 Not Found"));
         }
 
         @Test
         void 지원되지_않는_미디어_타입이라면_406_NOT_ACCEPTABLE_응답을_반환한다() throws Exception {
-            Reader reader = createReaderWithInput("GET /notfound HTTP/1.1\r\nHost: localhost\r\n\r\n");
-            Writer writer = new Writer(outputStream);
+            SocketReader socketReader = createReaderWithInput("GET /notfound HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            SocketWriter socketWriter = new SocketWriter(outputStream);
             HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                     staticResourceRequestHandler) {
                 @Override
@@ -105,15 +105,15 @@ class HttpProcessorTest extends TestEnvironment {
             };
             HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
 
-            testHttpProcessor.process(reader, writer);
+            testHttpProcessor.process(socketReader, socketWriter);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 406 Not Acceptable"));
         }
 
         @Test
         void 지원되지_않는_HTTP_method라면_405_Method_Not_Allowed_응답을_반환한다() throws Exception {
-            Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
-            Writer writer = new Writer(outputStream);
+            SocketReader socketReader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            SocketWriter socketWriter = new SocketWriter(outputStream);
             HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                     staticResourceRequestHandler) {
                 @Override
@@ -123,15 +123,15 @@ class HttpProcessorTest extends TestEnvironment {
             };
             HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
 
-            testHttpProcessor.process(reader, writer);
+            testHttpProcessor.process(socketReader, socketWriter);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 405 Method Not Allowed"));
         }
 
         @Test
         void 예기치_않은_예외가_발생하면_500_INTERNAL_SERVER_ERROR_응답을_반환한다() throws Exception {
-            Reader reader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
-            Writer writer = new Writer(outputStream);
+            SocketReader socketReader = createReaderWithInput("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+            SocketWriter socketWriter = new SocketWriter(outputStream);
             HttpRequestProcessor faultyRequestProcessor = new HttpRequestProcessor(dynamicRequestHandlerResolver,
                     staticResourceRequestHandler) {
                 @Override
@@ -141,7 +141,7 @@ class HttpProcessorTest extends TestEnvironment {
             };
             HttpProcessor testHttpProcessor = new HttpProcessor(httpRequestPreprocessor, faultyRequestProcessor);
 
-            testHttpProcessor.process(reader, writer);
+            testHttpProcessor.process(socketReader, socketWriter);
 
             assertTrue(outputStream.toString().startsWith("HTTP/1.1 500 Internal Server Error"));
         }

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import codesquad.environment.TestEnvironment;
 import codesquad.http.message.HttpRequest;
-import codesquad.socket.Reader;
+import codesquad.socket.SocketReader;
 import codesquad.utils.Fixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 class HttpRequestPreprocessorTest extends TestEnvironment {
 
     private HttpRequestPreprocessor preprocessor;
-    private Reader reader;
+    private SocketReader socketReader;
 
     @BeforeEach
     void setUp() {
@@ -32,18 +32,18 @@ class HttpRequestPreprocessorTest extends TestEnvironment {
         @Test
         void 쿠키에_세션ID가_있다면_세션ID를_요청에_설정한다() {
             sessionManager.createSession();
-            reader = Fixture.createReaderWithInput("GET / HTTP/1.1\r\nCookie: SID=session-id\r\n\r\n");
+            socketReader = Fixture.createReaderWithInput("GET / HTTP/1.1\r\nCookie: SID=session-id\r\n\r\n");
 
-            HttpRequest request = preprocessor.process(reader);
+            HttpRequest request = preprocessor.process(socketReader);
 
             assertThat(request.getSession()).isNotNull();
         }
 
         @Test
         void HTTP_요청에_쿠키가_없으면_세션을_설정하지_않는다() {
-            reader = Fixture.createReaderWithInput("GET / HTTP/1.1\r\n\r\n");
+            socketReader = Fixture.createReaderWithInput("GET / HTTP/1.1\r\n\r\n");
 
-            HttpRequest request = preprocessor.process(reader);
+            HttpRequest request = preprocessor.process(socketReader);
 
             assertThat(request.getSession()).isNull();
         }

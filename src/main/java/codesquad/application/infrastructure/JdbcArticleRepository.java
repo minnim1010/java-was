@@ -15,13 +15,14 @@ public class JdbcArticleRepository implements ArticleRepository {
 
     @Override
     public void save(Article article) {
-        String insertSQL = "INSERT INTO ARTICLE (title, content, userId) VALUES (?, ?, ?)";
+        String insertSQL = "INSERT INTO ARTICLE (title, content, imagePath, userId) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);) {
             preparedStatement.setString(1, article.getTitle());
             preparedStatement.setString(2, article.getContent());
-            preparedStatement.setString(3, article.getUserId());
+            preparedStatement.setString(3, article.getImagePath());
+            preparedStatement.setString(4, article.getUserId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
@@ -47,6 +48,7 @@ public class JdbcArticleRepository implements ArticleRepository {
                         resultSet.getInt("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
+                        resultSet.getString("imagePath"),
                         resultSet.getString("userId"),
                         resultSet.getTimestamp("createdAt").toLocalDateTime()
                 ));
@@ -71,6 +73,7 @@ public class JdbcArticleRepository implements ArticleRepository {
                         resultSet.getInt("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
+                        resultSet.getString("imagePath"),
                         resultSet.getString("userId"),
                         resultSet.getTimestamp("createdAt").toLocalDateTime()));
             }
@@ -95,6 +98,7 @@ public class JdbcArticleRepository implements ArticleRepository {
                         resultSet.getInt("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
+                        resultSet.getString("imagePath"),
                         resultSet.getString("userId"),
                         resultSet.getTimestamp("createdAt").toLocalDateTime()));
             }

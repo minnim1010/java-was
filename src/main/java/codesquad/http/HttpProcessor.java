@@ -8,8 +8,8 @@ import codesquad.http.error.UnSupportedHttpMethodException;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
 import codesquad.http.property.HttpStatus;
-import codesquad.socket.Reader;
-import codesquad.socket.Writer;
+import codesquad.socket.SocketReader;
+import codesquad.socket.SocketWriter;
 import codesquad.template.TemplateContext;
 import codesquad.template.TemplateEngine;
 import java.io.IOException;
@@ -29,12 +29,12 @@ public class HttpProcessor {
         this.httpRequestProcessor = httpRequestProcessor;
     }
 
-    public void process(Reader reader,
-                        Writer writer) throws IOException {
+    public void process(SocketReader socketReader,
+                        SocketWriter socketWriter) throws IOException {
         HttpResponse response = new HttpResponse();
 
         try {
-            HttpRequest request = httpRequestPreprocessor.process(reader);
+            HttpRequest request = httpRequestPreprocessor.process(socketReader);
             httpRequestProcessor.processRequest(request, response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
@@ -58,6 +58,6 @@ public class HttpProcessor {
             log.error(e.getMessage(), e);
         }
 
-        writer.write(response.format());
+        socketWriter.write(response.format());
     }
 }

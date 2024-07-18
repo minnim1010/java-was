@@ -11,7 +11,7 @@ import codesquad.http.message.HttpRequest;
 import codesquad.http.parser.HttpParser;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
-import codesquad.socket.Reader;
+import codesquad.socket.SocketReader;
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -29,9 +29,9 @@ class HttpParserTest {
 
         @Test
         void 헤더를_가지지_않는_요청인_경우() {
-            Reader reader = createReaderWithInput("GET /index.html HTTP/1.1\r\n\r\n");
+            SocketReader socketReader = createReaderWithInput("GET /index.html HTTP/1.1\r\n\r\n");
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -44,9 +44,10 @@ class HttpParserTest {
 
         @Test
         void 헤더를_가진_요청인_경우() {
-            Reader reader = createReaderWithInput("GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n");
+            SocketReader socketReader = createReaderWithInput(
+                    "GET /index.html HTTP/1.1\r\nHost: www.example.com\r\n\r\n");
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -59,7 +60,7 @@ class HttpParserTest {
 
         @Test
         void 여러_값을_가지는_헤더를_가진_요청인_경우() {
-            Reader reader = createReaderWithInput("""
+            SocketReader socketReader = createReaderWithInput("""
                     GET /index.html HTTP/1.1\r
                     Accept: text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8\r
                     Accept-Language: en-US,en;q=0.5\r
@@ -69,7 +70,7 @@ class HttpParserTest {
                     \r
                     """);
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -87,7 +88,7 @@ class HttpParserTest {
 
         @Test
         void 중복되는_타입이_있는_헤더_가진_요청인_경우() {
-            Reader reader = createReaderWithInput("""
+            SocketReader socketReader = createReaderWithInput("""
                     GET /index.html HTTP/1.1\r
                     Accept: text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8\r
                     Accept-Language: en-US,en;q=0.5\r
@@ -98,7 +99,7 @@ class HttpParserTest {
                     \r
                     """);
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -116,14 +117,14 @@ class HttpParserTest {
 
         @Test
         void 바디가_있는_요청인_경우() {
-            Reader reader = createReaderWithInput("""
+            SocketReader socketReader = createReaderWithInput("""
                     GET /index.html?name=John HTTP/1.1\r
                     Host: www.example.com\r
                     Content-Length: 13\r
                     \r
                     Hello World!!""");
 
-            HttpRequest httpRequest = HttpParser.parse(reader);
+            HttpRequest httpRequest = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(httpRequest),
@@ -138,10 +139,10 @@ class HttpParserTest {
 
         @Test
         void URL에_쿼리_파라미터가_있는_요청인_경우() {
-            Reader reader = createReaderWithInput(
+            SocketReader socketReader = createReaderWithInput(
                     "GET /search?q=good&lang=en HTTP/1.1\r\nHost: www.example.com\r\n\r\n");
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -155,15 +156,15 @@ class HttpParserTest {
 
         @Test
         void 바디에_쿼리_파라미터가_있는_요청인_경우() {
-            Reader reader = createReaderWithInput("""
+            SocketReader socketReader = createReaderWithInput("""
                     POST /search HTTP/1.1\r
                     Host: www.example.com\r
                     Content-Type: application/x-www-form-urlencoded\r
-                    Content-Length: 21\r
+                    Content-Length: 29\r
                     \r
                     q=good&lang=ㅁㄴㅇㄹ@#$!!""");
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -177,15 +178,15 @@ class HttpParserTest {
 
         @Test
         void 쿼리_파라미터값에_엠퍼센트가_있는_요청인_경우() {
-            Reader reader = createReaderWithInput("""
+            SocketReader socketReader = createReaderWithInput("""
                     POST /search HTTP/1.1\r
                     Host: www.example.com\r
                     Content-Type: application/x-www-form-urlencoded\r
-                    Content-Length: 24\r
+                    Content-Length: 32\r
                     \r
                     q=good&lang=ㅁㄴㅇ%26ㄹ@#$!!""");
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -199,13 +200,13 @@ class HttpParserTest {
 
         @Test
         void 헤더_값이_공백으로_시작하지_않는_경우() {
-            Reader reader = createReaderWithInput("""
+            SocketReader socketReader = createReaderWithInput("""
                     POST /search HTTP/1.1\r
                     Host:www.example.com\r
                     \r
                     """);
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),
@@ -217,13 +218,13 @@ class HttpParserTest {
 
         @Test
         void 헤더_값에_세미콜론이_있는_경우() {
-            Reader reader = createReaderWithInput("""
+            SocketReader socketReader = createReaderWithInput("""
                     POST /search HTTP/1.1\r
                     Host: www.example.com:8080\r
                     \r
                     """);
 
-            HttpRequest result = HttpParser.parse(reader);
+            HttpRequest result = HttpParser.parse(socketReader);
 
             assertAll(
                     () -> assertNotNull(result),

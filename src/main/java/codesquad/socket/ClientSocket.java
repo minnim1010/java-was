@@ -6,25 +6,25 @@ import java.net.Socket;
 public class ClientSocket implements AutoCloseable {
 
     private final Socket nativeSocket;
-    private final Reader reader;
-    private final Writer writer;
+    private final SocketReader socketReader;
+    private final SocketWriter socketWriter;
 
     public ClientSocket(Socket nativeSocket) throws IOException {
         this.nativeSocket = nativeSocket;
-        this.reader = new Reader(nativeSocket.getInputStream());
-        this.writer = new Writer(nativeSocket.getOutputStream());
+        this.socketReader = new SocketReader(nativeSocket.getInputStream());
+        this.socketWriter = new SocketWriter(nativeSocket.getOutputStream());
     }
 
     public int getPort() {
         return this.nativeSocket.getPort();
     }
 
-    public Reader getReader() {
-        return reader;
+    public SocketReader getReader() {
+        return socketReader;
     }
 
-    public Writer getWriter() {
-        return writer;
+    public SocketWriter getWriter() {
+        return socketWriter;
     }
 
     @Override

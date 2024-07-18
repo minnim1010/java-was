@@ -7,21 +7,25 @@ public class Article {
     private int articleId;
     private String title;
     private String content;
+    private String imagePath;
     private String userId;
     private LocalDateTime createdAt;
 
-    public Article(int articleId, String title, String content, String userId, LocalDateTime createdAt) {
+    public Article(String title, String content, String imagePath, String userId) {
+        this.title = title;
+        this.content = content;
+        this.imagePath = imagePath;
+        this.userId = userId;
+    }
+
+    public Article(int articleId, String title, String content, String imagePath, String userId,
+                   LocalDateTime createdAt) {
         this.articleId = articleId;
         this.title = title;
         this.content = content;
+        this.imagePath = imagePath;
         this.userId = userId;
         this.createdAt = createdAt;
-    }
-
-    public Article(String title, String content, String userId) {
-        this.title = title;
-        this.content = content;
-        this.userId = userId;
     }
 
     public int getArticleId() {
@@ -34,6 +38,10 @@ public class Article {
 
     public String getContent() {
         return content;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 
     public String getUserId() {

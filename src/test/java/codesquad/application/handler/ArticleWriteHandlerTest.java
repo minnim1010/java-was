@@ -11,6 +11,7 @@ import codesquad.config.ApplicationBeanContainer;
 import codesquad.environment.TestEnvironment;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.message.HttpResponse;
+import codesquad.http.parser.MultipartFormDataParser.Part;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpStatus;
 import codesquad.http.property.HttpVersion;
@@ -58,10 +59,12 @@ class ArticleWriteHandlerTest extends TestEnvironment {
             HttpRequest httpRequest = new HttpRequest(
                     HttpMethod.POST,
                     new URI("/article/write"),
-                    Map.of("title", "Sample Title", "content", "Sample Content"),
-                    HttpVersion.HTTP_1_1,
                     Collections.emptyMap(),
-                    new byte[0]);
+                    HttpVersion.HTTP_1_1,
+                    Map.of("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"),
+                    new byte[0],
+                    Map.of("title", new Part("title", null, "Sample Title".getBytes(), null),
+                            "content", new Part("content", null, "Sample Content".getBytes(), null)));
             HttpResponse httpResponse = new HttpResponse();
             Session session = SessionManager.getInstance().createSession();
             session.setAttribute("userId", "user1");

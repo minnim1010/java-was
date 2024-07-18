@@ -3,7 +3,7 @@ package codesquad.utils;
 import codesquad.http.message.HttpRequest;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
-import codesquad.socket.Reader;
+import codesquad.socket.SocketReader;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,7 +46,7 @@ public final class Fixture {
                 }, new byte[0]);
     }
 
-    public static Reader createReaderWithInput(String httpRequestStr) {
-        return new Reader(new ByteArrayInputStream(httpRequestStr.getBytes()));
+    public static SocketReader createReaderWithInput(String httpRequestStr) {
+        return new SocketReader(new ByteArrayInputStream(httpRequestStr.getBytes()));
     }
 }

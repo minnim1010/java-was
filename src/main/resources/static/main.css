@@ -299,3 +299,42 @@
 .error-section ul li a:hover {
   text-decoration: underline;
 }
+
+.comment__input-container {
+  width: 100%; /* Ensure the container takes the full width */
+  padding-bottom: 16px; /* Add padding to give space above the border */
+  border-bottom: 1px solid #ebebeb; /* Add bottom border */
+}
+
+.comment__input-container .comment-form {
+  display: flex;
+  align-items: center;
+  width: 100%; /* Ensure the form takes the full width */
+  gap: 10px; /* Adjust the gap as needed */
+}
+
+.comment__input-container .input_textfield {
+  flex: 1; /* Allows the input to take up remaining space */
+  padding: 8px;
+  border: 1px solid #ccc; /* Adjust border styling as needed */
+  border-radius: 4px; /* Adjust border-radius as needed */
+  box-sizing: border-box; /* Ensures padding and border are included in the element's total width */
+}
+
+.comment__input-container .btn {
+  flex-shrink: 0; /* Prevents the button from shrinking */
+  white-space: nowrap; /* Prevents button text from wrapping */
+  padding: 8px 12px; /* Adjust padding as needed */
+  border: none;
+  border-radius: 4px; /* Adjust border-radius as needed */
+  background-color: #007bff; /* Adjust button color as needed */
+  color: white; /* Adjust text color as needed */
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+}
+
+.comment__input-container .btn:hover {
+  background-color: #0056b3; /* Adjust hover color as needed */
+}

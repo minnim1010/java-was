@@ -50,7 +50,7 @@
                     <img class="post__account__img"/>
                     <p class="post__account__nickname">{ article.userId }</p>
                 </div>
-                <img class="post__img"/>
+                <img class="post__img" src="{article.imagePath}"/>
                 <div class="post__menu">
                     <ul class="post__menu__personal">
                         <li>
@@ -89,14 +89,14 @@
                     </div>
                 </ul>
 
-                <nav class="nav">
-                    <ul class="nav__menu">
-                        <li class="nav__menu__item">
-                            <a class="btn btn_ghost btn_size_m" href="/comment/write?articleId={article.articleId}">댓글
-                                작성</a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="comment__input-container">
+                    <form action="/comment/write?articleId={article.articleId}" class="comment-form" method="post">
+                        <input class="input_textfield" name="content" placeholder="댓글을 입력하세요..."/>
+                        <button class="btn btn_contained btn_size_m" id="registration-btn" type="submit">
+                            댓글 작성
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -31,7 +31,16 @@ public class StaticResourceRequestHandler implements RequestHandler {
 
     @Override
     public void handle(HttpRequest httpRequest, HttpResponse httpResponse) throws IOException {
-        String staticResourcePath = findStaticResourcePath(httpRequest.getUri().getPath());
+        String path = httpRequest.getUri().getPath();
+        if (path.startsWith(System.getProperty("user.home"))) {
+            byte[] fileContent = loadFile(new URL("file://" + path));
+            httpResponse.setBody(fileContent);
+            httpResponse.setHeader(CONTENT_TYPE.getFieldName(), determineContentType(httpRequest, path));
+            httpResponse.setStatus(HttpStatus.OK);
+            return;
+        }
+
+        String staticResourcePath = findStaticResourcePath(path);
         byte[] fileContent = readResource(staticResourcePath);
         byte[] renderedFileContent = renderTemplate(httpRequest, staticResourcePath, fileContent);
 

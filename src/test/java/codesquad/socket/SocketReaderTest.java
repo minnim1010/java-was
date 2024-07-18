@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("클라이언트 소켓 데이터 읽기 테스트")
-class ReaderTest {
+class SocketReaderTest {
 
     @Nested
     class 소켓에서_데이터를_읽는다 {
@@ -39,7 +39,7 @@ class ReaderTest {
 
         @Test
         void 한_줄씩_읽어온다() throws IOException {
-            String expectedLine = "Hello, World!";
+            String expectedLine = "Hello, World!\n";
             String input = "Hello, World!\nWorld!! Hello";
             byte[] inputData = input.getBytes();
 
@@ -58,18 +58,18 @@ class ReaderTest {
                 }
             };
 
-            Reader reader = new Reader(customSocket.getInputStream());
+            SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            char[] result = reader.readLine();
+            byte[] result = socketReader.readLine();
 
             assertEquals(expectedLine, new String(result));
         }
 
         @Test
         void 주어진_바이트_길이만큼_읽어온다() throws IOException {
-            String expectedLine = "Hello, World!\n";
-            String input = "Hello, World!\nWorld!! Hello";
-            int readLen = 14;
+            String expectedLine = "ㅇㅇㅇ, World!\n";
+            String input = "ㅇㅇㅇ, World!\nWorld!! Hello";
+            int readLen = expectedLine.getBytes().length;
             byte[] inputData = input.getBytes();
 
             pipedOutputStream.write(inputData);
@@ -87,9 +87,9 @@ class ReaderTest {
                 }
             };
 
-            Reader reader = new Reader(customSocket.getInputStream());
+            SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            char[] result = reader.readBytes(readLen);
+            byte[] result = socketReader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));
@@ -117,10 +117,10 @@ class ReaderTest {
                 }
             };
 
-            Reader reader = new Reader(customSocket.getInputStream());
+            SocketReader socketReader = new SocketReader(customSocket.getInputStream());
 
-            reader.readLine();
-            char[] result = reader.readBytes(readLen);
+            socketReader.readLine();
+            byte[] result = socketReader.readBytes(readLen);
 
             assertEquals(readLen, result.length);
             assertEquals(expectedLine, new String(result));

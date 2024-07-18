@@ -68,8 +68,8 @@ class ArticleListHandlerTest extends TestEnvironment {
                     new byte[0]);
             HttpResponse httpResponse = new HttpResponse();
 
-            Article article1 = new Article("Title 1", "Content 1", "user1");
-            Article article2 = new Article("Title 2", "Content 2", "user2");
+            Article article1 = new Article("Title 1", "Content 1", "", "user1");
+            Article article2 = new Article("Title 2", "Content 2", "", "user2");
             articleRepository.save(article1);
             articleRepository.save(article2);
 

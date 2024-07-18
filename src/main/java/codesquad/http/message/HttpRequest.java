@@ -3,6 +3,7 @@ package codesquad.http.message;
 import static codesquad.utils.StringUtils.BLANK;
 import static codesquad.utils.StringUtils.NEW_LINE;
 
+import codesquad.http.parser.MultipartFormDataParser.Part;
 import codesquad.http.property.HttpMethod;
 import codesquad.http.property.HttpVersion;
 import codesquad.http.session.Session;
@@ -17,6 +18,7 @@ public class HttpRequest {
     protected final HttpVersion version;
     protected final Map<String, String> headers;
     protected final byte[] body;
+    protected final Map<String, Part> multipartParts;
     protected Session session;
 
     public HttpRequest(HttpMethod method,
@@ -31,6 +33,23 @@ public class HttpRequest {
         this.version = version;
         this.headers = headers;
         this.body = body;
+        this.multipartParts = Map.of();
+    }
+
+    public HttpRequest(HttpMethod method,
+                       URI uri,
+                       Map<String, String> query,
+                       HttpVersion version,
+                       Map<String, String> headers,
+                       byte[] body,
+                       Map<String, Part> multipartParts) {
+        this.method = method;
+        this.uri = uri;
+        this.query = query;
+        this.version = version;
+        this.headers = headers;
+        this.body = body;
+        this.multipartParts = multipartParts;
     }
 
     public HttpVersion getVersion() {
@@ -71,6 +90,10 @@ public class HttpRequest {
         }
 
         this.session = session;
+    }
+
+    public Part getMultipartParts(String name) {
+        return multipartParts.get(name);
     }
 
     @Override
