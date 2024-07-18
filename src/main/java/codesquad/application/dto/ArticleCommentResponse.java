@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public final class ArticleCommentResponse {
 
-    private final int articleId;
+    private final String articleId;
     private final String title;
     private final String content;
     private final String userId;
@@ -14,7 +14,7 @@ public final class ArticleCommentResponse {
     private final String imagePath;
     private final List<CommentResponse> comments;
 
-    public ArticleCommentResponse(int articleId,
+    public ArticleCommentResponse(String articleId,
                                   String title,
                                   String content,
                                   String userId,
@@ -30,7 +30,7 @@ public final class ArticleCommentResponse {
         this.comments = comments;
     }
 
-    public int getArticleId() {
+    public String getArticleId() {
         return articleId;
     }
 

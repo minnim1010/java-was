@@ -3,6 +3,7 @@ package codesquad.application.model;
 import java.util.Objects;
 
 public final class User {
+
     private final String userId;
     private final String password;
     private final String name;

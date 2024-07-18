@@ -15,13 +15,14 @@ public class JdbcCommentRepository implements CommentRepository {
 
     @Override
     public void save(Comment comment) {
-        String insertSQL = "INSERT INTO COMMENT (content, userId, articleId) VALUES (?, ?, ?)";
+        String insertSQL = "INSERT INTO COMMENT (commentId, content, userId, articleId) VALUES (?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);) {
-            preparedStatement.setString(1, comment.getContent());
-            preparedStatement.setString(2, comment.getUserId());
-            preparedStatement.setInt(3, comment.getArticleId());
+            preparedStatement.setString(1, comment.getCommentId());
+            preparedStatement.setString(2, comment.getContent());
+            preparedStatement.setString(3, comment.getUserId());
+            preparedStatement.setString(4, comment.getArticleId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
@@ -33,22 +34,22 @@ public class JdbcCommentRepository implements CommentRepository {
     }
 
     @Override
-    public Optional<Comment> findById(Integer commentId) {
+    public Optional<Comment> findById(String commentId) {
         String selectSQL = "SELECT * FROM COMMENT where commentId = ?";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);) {
-            preparedStatement.setInt(1, commentId);
+            preparedStatement.setString(1, commentId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 return Optional.of(new Comment(
-                        resultSet.getInt("commentId"),
+                        resultSet.getString("commentId"),
                         resultSet.getString("content"),
                         resultSet.getTimestamp("createdAt").toLocalDateTime(),
                         resultSet.getString("userId"),
-                        resultSet.getInt("articleId")
+                        resultSet.getString("articleId")
                 ));
             }
         } catch (SQLException e) {
@@ -69,11 +70,11 @@ public class JdbcCommentRepository implements CommentRepository {
             ArrayList<Comment> result = new ArrayList<>();
             while (resultSet.next()) {
                 result.add(new Comment(
-                        resultSet.getInt("commentId"),
+                        resultSet.getString("commentId"),
                         resultSet.getString("content"),
                         resultSet.getTimestamp("createdAt").toLocalDateTime(),
                         resultSet.getString("userId"),
-                        resultSet.getInt("articleId")));
+                        resultSet.getString("articleId")));
             }
             return result;
         } catch (SQLException e) {
@@ -84,23 +85,23 @@ public class JdbcCommentRepository implements CommentRepository {
     }
 
     @Override
-    public List<Comment> findAllByArticleId(int articleId) {
+    public List<Comment> findAllByArticleId(String articleId) {
         String selectSQL = "SELECT * FROM COMMENT WHERE articleId = ?";
         List<Comment> comments = new ArrayList<>();
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);) {
-            preparedStatement.setInt(1, articleId);
+            preparedStatement.setString(1, articleId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 comments.add(new Comment(
-                        resultSet.getInt("commentId"),
+                        resultSet.getString("commentId"),
                         resultSet.getString("content"),
                         resultSet.getTimestamp("createdAt").toLocalDateTime(),
                         resultSet.getString("userId"),
-                        resultSet.getInt("articleId")
+                        resultSet.getString("articleId")
                 ));
             }
         } catch (SQLException e) {

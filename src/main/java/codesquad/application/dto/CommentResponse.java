@@ -4,11 +4,11 @@ import java.util.Objects;
 
 public final class CommentResponse {
 
-    private final int commentId;
+    private final String commentId;
     private final String content;
     private final String userId;
 
-    public CommentResponse(int commentId,
+    public CommentResponse(String commentId,
                            String content,
                            String userId) {
         this.commentId = commentId;
@@ -16,7 +16,7 @@ public final class CommentResponse {
         this.userId = userId;
     }
 
-    public int getCommentId() {
+    public String getCommentId() {
         return commentId;
     }
 

@@ -12,23 +12,23 @@ CREATE TABLE MEMBER
 
 CREATE TABLE ARTICLE
 (
-    articleId INT PRIMARY KEY AUTO_INCREMENT,
+    articleId VARCHAR(255) PRIMARY KEY,
     title     VARCHAR(255) NOT NULL,
     content   TEXT         NOT NULL,
     imagePath VARCHAR(255),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    userId    VARCHAR(255),
+    userId    VARCHAR(255) NOT NULL,
 
     FOREIGN KEY (userId) REFERENCES MEMBER (userId)
 );
 
 CREATE TABLE COMMENT
 (
-    commentId INT PRIMARY KEY AUTO_INCREMENT,
+    commentId VARCHAR(255) PRIMARY KEY,
     content   TEXT NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    userId    VARCHAR(255),
-    articleId INT,
+    userId    VARCHAR(255) NOT NULL,
+    articleId VARCHAR(255) NOT NULL,
 
     FOREIGN KEY (userId) REFERENCES MEMBER (userId),
     FOREIGN KEY (articleId) REFERENCES ARTICLE (articleId)

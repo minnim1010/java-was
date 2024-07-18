@@ -17,7 +17,7 @@ public class CommentWriteHandler extends AbstractDynamicRequestHandler {
     @Override
     public void processPost(HttpRequest httpRequest, HttpResponse httpResponse) {
         String content = httpRequest.getQuery("content");
-        int articleId = Integer.parseInt(httpRequest.getQuery("articleId"));
+        String articleId = httpRequest.getQuery("articleId");
 
         String userId = httpRequest.getSession().getAttribute("userId");
 

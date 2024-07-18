@@ -15,14 +15,15 @@ public class JdbcArticleRepository implements ArticleRepository {
 
     @Override
     public void save(Article article) {
-        String insertSQL = "INSERT INTO ARTICLE (title, content, imagePath, userId) VALUES (?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO ARTICLE (articleId, title, content, imagePath, userId) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);) {
-            preparedStatement.setString(1, article.getTitle());
-            preparedStatement.setString(2, article.getContent());
-            preparedStatement.setString(3, article.getImagePath());
-            preparedStatement.setString(4, article.getUserId());
+            preparedStatement.setString(1, article.getArticleId());
+            preparedStatement.setString(2, article.getTitle());
+            preparedStatement.setString(3, article.getContent());
+            preparedStatement.setString(4, article.getImagePath());
+            preparedStatement.setString(5, article.getUserId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
@@ -34,18 +35,18 @@ public class JdbcArticleRepository implements ArticleRepository {
     }
 
     @Override
-    public Optional<Article> findById(Integer articleId) {
+    public Optional<Article> findById(String articleId) {
         String selectSQL = "SELECT * FROM ARTICLE where articleId = ?";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(selectSQL);) {
-            preparedStatement.setInt(1, articleId);
+            preparedStatement.setString(1, articleId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
                 return Optional.of(new Article(
-                        resultSet.getInt("articleId"),
+                        resultSet.getString("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("imagePath"),
@@ -70,7 +71,7 @@ public class JdbcArticleRepository implements ArticleRepository {
             ArrayList<Article> result = new ArrayList<>();
             while (resultSet.next()) {
                 result.add(new Article(
-                        resultSet.getInt("articleId"),
+                        resultSet.getString("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("imagePath"),
@@ -95,7 +96,7 @@ public class JdbcArticleRepository implements ArticleRepository {
             ArrayList<Article> result = new ArrayList<>();
             while (resultSet.next()) {
                 result.add(new Article(
-                        resultSet.getInt("articleId"),
+                        resultSet.getString("articleId"),
                         resultSet.getString("title"),
                         resultSet.getString("content"),
                         resultSet.getString("imagePath"),

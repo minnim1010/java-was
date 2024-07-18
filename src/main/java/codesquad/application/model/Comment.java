@@ -1,22 +1,30 @@
 package codesquad.application.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Comment {
 
-    private int commentId;
+    private String commentId;
     private String content;
     private LocalDateTime createdAt;
     private String userId;
-    private int articleId;
+    private String articleId;
 
-    public Comment(String content, String userId, int articleId) {
+    public Comment(String content,
+                   String userId,
+                   String articleId) {
+        this.commentId = UUID.randomUUID().toString();
         this.content = content;
         this.userId = userId;
         this.articleId = articleId;
     }
 
-    public Comment(int commentId, String content, LocalDateTime createdAt, String userId, int articleId) {
+    public Comment(String commentId,
+                   String content,
+                   LocalDateTime createdAt,
+                   String userId,
+                   String articleId) {
         this.commentId = commentId;
         this.content = content;
         this.createdAt = createdAt;
@@ -24,7 +32,7 @@ public class Comment {
         this.articleId = articleId;
     }
 
-    public int getCommentId() {
+    public String getCommentId() {
         return commentId;
     }
 
@@ -40,7 +48,7 @@ public class Comment {
         return userId;
     }
 
-    public int getArticleId() {
+    public String getArticleId() {
         return articleId;
     }
 
