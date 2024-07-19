@@ -1,12 +1,16 @@
 package codesquad.application.infrastructure;
 
+import static codesquad.utils.TimeUtils.format;
+
 import codesquad.application.model.Comment;
 import codesquad.application.persistence.CommentRepository;
 import codesquad.utils.DatabaseConnectionUtils;
+import codesquad.utils.TimeUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,14 +19,15 @@ public class JdbcCommentRepository implements CommentRepository {
 
     @Override
     public void save(Comment comment) {
-        String insertSQL = "INSERT INTO COMMENT (commentId, content, userId, articleId) VALUES (?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO COMMENT (commentId, content, createdAt, userId, articleId) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);) {
             preparedStatement.setString(1, comment.getCommentId());
             preparedStatement.setString(2, comment.getContent());
-            preparedStatement.setString(3, comment.getUserId());
-            preparedStatement.setString(4, comment.getArticleId());
+            preparedStatement.setString(3, format(LocalDateTime.now()));
+            preparedStatement.setString(4, comment.getUserId());
+            preparedStatement.setString(5, comment.getArticleId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 0) {
@@ -47,7 +52,7 @@ public class JdbcCommentRepository implements CommentRepository {
                 return Optional.of(new Comment(
                         resultSet.getString("commentId"),
                         resultSet.getString("content"),
-                        resultSet.getTimestamp("createdAt").toLocalDateTime(),
+                        TimeUtils.toLocalDateTime(resultSet.getString("createdAt")),
                         resultSet.getString("userId"),
                         resultSet.getString("articleId")
                 ));
@@ -61,6 +66,7 @@ public class JdbcCommentRepository implements CommentRepository {
 
     @Override
     public List<Comment> findAll() {
+        // commentId,content,createdAt,userId,articleId
         String selectSQL = "SELECT * FROM COMMENT";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
@@ -72,7 +78,7 @@ public class JdbcCommentRepository implements CommentRepository {
                 result.add(new Comment(
                         resultSet.getString("commentId"),
                         resultSet.getString("content"),
-                        resultSet.getTimestamp("createdAt").toLocalDateTime(),
+                        TimeUtils.toLocalDateTime(resultSet.getString("createdAt")),
                         resultSet.getString("userId"),
                         resultSet.getString("articleId")));
             }
@@ -99,7 +105,7 @@ public class JdbcCommentRepository implements CommentRepository {
                 comments.add(new Comment(
                         resultSet.getString("commentId"),
                         resultSet.getString("content"),
-                        resultSet.getTimestamp("createdAt").toLocalDateTime(),
+                        TimeUtils.toLocalDateTime(resultSet.getString("createdAt")),
                         resultSet.getString("userId"),
                         resultSet.getString("articleId")
                 ));

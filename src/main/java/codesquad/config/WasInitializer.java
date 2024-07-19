@@ -1,12 +1,12 @@
 package codesquad.config;
 
 import java.io.File;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +22,15 @@ public class WasInitializer {
         initializeDatabase();
     }
 
-    private static void initializeDatabase() {
+    public static void initializeDatabase() {
         WasConfiguration wasConfiguration = WasConfiguration.getInstance();
         String datasourceUrl = wasConfiguration.getDatasourceUrl();
+
         int startIndex = datasourceUrl.lastIndexOf(":") + 1;
         int endIndex = datasourceUrl.indexOf(";");
+        if (endIndex == -1) {
+            endIndex = datasourceUrl.length();
+        }
 
         String datasourcePath = null;
         if (startIndex > 0 && endIndex > startIndex) {
@@ -37,28 +41,38 @@ public class WasInitializer {
             System.exit(-1);
         }
 
-        File dbFile = new File(datasourcePath + ".mv.db");
+        File dbFile = new File(datasourcePath);
         if (!dbFile.exists()) {
+            dbFile.mkdirs();
+
             log.info("Database file not found. Initializing database...");
 
-            try (Connection conn = DriverManager.getConnection(wasConfiguration.getDatasourceUrl(),
-                    wasConfiguration.getDatasourceUser(), wasConfiguration.getDatasourcePassword());
+            try (Connection conn = DriverManager.getConnection(datasourceUrl);
                  Statement stmt = conn.createStatement()) {
 
-                InputStream inputStream = WasInitializer.class.getResourceAsStream("/init.sql");
-                if (inputStream == null) {
-                    log.error("init.sql file not found in resources.");
-                    return;
-                }
+                List<String> init = new ArrayList<>();
+                init.add("CREATE TABLE MEMBER " +
+                        "(userId VARCHAR(255) PRIMARY KEY, " +
+                        "password VARCHAR(255) NOT NULL, " +
+                        "name VARCHAR(255) NOT NULL, " +
+                        "email VARCHAR(255) NOT NULL)");
+                init.add("CREATE TABLE ARTICLE " +
+                        "(articleId VARCHAR(255) PRIMARY KEY, " +
+                        "title VARCHAR(255) NOT NULL, " +
+                        "content TEXT NOT NULL, " +
+                        "imagePath VARCHAR(255) NOT NULL, " +
+                        "createdAt TIMESTAMP NOT NULL, " +
+                        "userId VARCHAR(255) NOT NULL)");
+                init.add("CREATE TABLE COMMENT " +
+                        "(commentId VARCHAR(255) PRIMARY KEY, " +
+                        "content TEXT NOT NULL, " +
+                        "createdAt TIMESTAMP NOT NULL, " +
+                        "userId VARCHAR(255) NOT NULL, " +
+                        "articleId VARCHAR(255) NOT NULL)");
 
-                Scanner scanner = new Scanner(inputStream, "UTF-8");
-                StringBuilder sql = new StringBuilder();
-                while (scanner.hasNextLine()) {
-                    sql.append(scanner.nextLine()).append("\n");
+                for (String sql : init) {
+                    stmt.execute(sql);
                 }
-                scanner.close();
-
-                stmt.execute(sql.toString());
                 log.info("Database initialized successfully.");
 
             } catch (SQLException e) {

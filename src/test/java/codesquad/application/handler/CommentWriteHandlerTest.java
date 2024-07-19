@@ -58,7 +58,7 @@ class CommentWriteHandlerTest extends TestEnvironment {
         void 댓글을_성공적으로_저장하고_리다이렉트한다() throws URISyntaxException {
             // Given
             userRepository.save(new User("user1", "password", "John Doe", "email@email.com"));
-            articleRepository.save(new Article("Sample Title", "Sample Content", null, "user1"));
+            articleRepository.save(new Article("Sample Title", "Sample Content", "", "user1"));
             Article article = articleRepository.findAll().get(0);
 
             HttpRequest httpRequest = new HttpRequest(

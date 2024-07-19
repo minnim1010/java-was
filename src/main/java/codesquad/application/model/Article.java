@@ -27,14 +27,14 @@ public class Article {
                    String title,
                    String content,
                    String imagePath,
-                   String userId,
-                   LocalDateTime createdAt) {
+                   LocalDateTime createdAt,
+                   String userId) {
         this.articleId = articleId;
         this.title = title;
         this.content = content;
         this.imagePath = imagePath;
-        this.userId = userId;
         this.createdAt = createdAt;
+        this.userId = userId;
     }
 
     public String getArticleId() {

@@ -30,7 +30,10 @@ public class ArticleWriteHandler extends AbstractDynamicRequestHandler {
             String imagePath = saveImage(image);
 
             String userId = httpRequest.getSession().getAttribute("userId");
-            Article article = new Article(new String(title.getBody()), new String(content.getBody()), imagePath,
+
+            Article article = new Article(new String(title.getBody()),
+                    new String(content.getBody()),
+                    imagePath,
                     userId);
             articleRepository.save(article);
 

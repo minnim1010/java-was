@@ -1,35 +1,26 @@
-DROP TABLE IF EXISTS COMMENT;
-DROP TABLE IF EXISTS ARTICLE;
-DROP TABLE IF EXISTS MEMBER;
-
 CREATE TABLE MEMBER
 (
-    userId   VARCHAR(255) PRIMARY KEY,
-    password VARCHAR(255) NOT NULL,
-    name     VARCHAR(255) NOT NULL,
-    email    VARCHAR(255) NOT NULL
+    userId   VARCHAR(255),
+    password VARCHAR(255),
+    name     VARCHAR(255),
+    email    VARCHAR(255)
 );
 
 CREATE TABLE ARTICLE
 (
-    articleId VARCHAR(255) PRIMARY KEY,
-    title     VARCHAR(255) NOT NULL,
-    content   TEXT         NOT NULL,
+    articleId VARCHAR(255),
+    title     VARCHAR(255),
+    content   TEXT,
     imagePath VARCHAR(255),
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    userId    VARCHAR(255) NOT NULL,
-
-    FOREIGN KEY (userId) REFERENCES MEMBER (userId)
+    createdAt TIMESTAMP,
+    userId    VARCHAR(255)
 );
 
 CREATE TABLE COMMENT
 (
-    commentId VARCHAR(255) PRIMARY KEY,
-    content   TEXT NOT NULL,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    userId    VARCHAR(255) NOT NULL,
-    articleId VARCHAR(255) NOT NULL,
-
-    FOREIGN KEY (userId) REFERENCES MEMBER (userId),
-    FOREIGN KEY (articleId) REFERENCES ARTICLE (articleId)
+    commentId VARCHAR(255),
+    content   TEXT,
+    createdAt TIMESTAMP,
+    userId    VARCHAR(255),
+    articleId VARCHAR(255)
 );
