@@ -37,56 +37,7 @@ public abstract class TestEnvironment {
     protected static TemplateEngine templateEngine = TemplateEngine.createInstance(new NodeProcessor());
 
     @BeforeAll
-    protected static void init() {
-
-    }
-
-    private static void executeSqlFile(Connection connection, String filePath) {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filePath)))) {
-            StringBuilder sql = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sql.append(line);
-                sql.append(System.lineSeparator());
-            }
-            executeSqlStatements(connection, sql.toString());
-        } catch (IOException e) {
-            log.error("IOException: ", e);
-        }
-    }
-
-    private static InputStream getInputStream(String fileName) throws IOException {
-        InputStream in = null;
-        ClassLoader threadCL = Thread.currentThread().getContextClassLoader();
-        if (threadCL != null) {
-            in = threadCL.getResourceAsStream(fileName);
-        }
-        if (in == null) {
-            in = ClassLoader.getSystemResourceAsStream(fileName);
-        }
-        if (in != null) {
-            return in;
-        } else {
-            throw new IOException("Property file 'setting.properties' not found in the classpath");
-        }
-    }
-
-    private static void executeSqlStatements(Connection connection, String sql) {
-        String[] sqlStatements = sql.split(";");
-        try (Statement statement = connection.createStatement()) {
-            for (String sqlStatement : sqlStatements) {
-                sqlStatement = sqlStatement.trim();
-                if (!sqlStatement.isEmpty()) {
-                    statement.execute(sqlStatement);
-                }
-            }
-        } catch (SQLException e) {
-            log.error("SQLException: ", e);
-        }
-    }
-
-    @BeforeEach
-    protected void setUpTestEnvironment() throws Exception {
+    protected static void init() throws Exception {
         sessionManager.clear();
 
         String jdbcUrl = "jdbc:h2:~/data/db/test_was;AUTO_SERVER=TRUE";
@@ -110,9 +61,52 @@ public abstract class TestEnvironment {
         }
     }
 
-    private void setField(Object instance, String fieldName, Object value) throws Exception {
+    private static void setField(Object instance, String fieldName, Object value) throws Exception {
         Field field = WasConfiguration.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(instance, value);
+    }
+
+    private static void executeSqlFile(Connection connection, String filePath) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(getInputStream(filePath), "UTF-8"))) {
+            StringBuilder sql = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sql.append(line).append(System.lineSeparator());
+            }
+            executeSqlStatements(connection, sql.toString());
+        } catch (IOException e) {
+            log.error("Error reading the SQL file: " + filePath, e);
+        }
+    }
+
+    private static InputStream getInputStream(String fileName) throws IOException {
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+        if (in == null) {
+            in = ClassLoader.getSystemResourceAsStream(fileName);
+        }
+        if (in == null) {
+            throw new IOException("Property file '" + fileName + "' not found in the classpath");
+        }
+        return in;
+    }
+
+    private static void executeSqlStatements(Connection connection, String sql) {
+        String[] sqlStatements = sql.split(";");
+        try (Statement statement = connection.createStatement()) {
+            for (String sqlStatement : sqlStatements) {
+                sqlStatement = sqlStatement.trim();
+                if (!sqlStatement.isEmpty()) {
+                    statement.execute(sqlStatement);
+                }
+            }
+        } catch (SQLException e) {
+            log.error("Error executing SQL statements: ", e);
+        }
+    }
+
+    @BeforeEach
+    protected void setUpTestEnvironment() {
+        sessionManager.clear();
     }
 }
