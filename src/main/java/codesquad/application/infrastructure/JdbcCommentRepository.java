@@ -14,8 +14,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JdbcCommentRepository implements CommentRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(JdbcCommentRepository.class);
 
     @Override
     public void save(Comment comment) {
@@ -34,7 +38,7 @@ public class JdbcCommentRepository implements CommentRepository {
                 throw new SQLException("Inserting comment failed");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to insert comment", e);
         }
     }
 
@@ -58,7 +62,7 @@ public class JdbcCommentRepository implements CommentRepository {
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to find comment", e);
         }
 
         return Optional.empty();
@@ -66,7 +70,6 @@ public class JdbcCommentRepository implements CommentRepository {
 
     @Override
     public List<Comment> findAll() {
-        // commentId,content,createdAt,userId,articleId
         String selectSQL = "SELECT * FROM COMMENT";
 
         try (Connection connection = DatabaseConnectionUtils.getConnection();
@@ -84,7 +87,7 @@ public class JdbcCommentRepository implements CommentRepository {
             }
             return result;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to find comment", e);
         }
 
         return List.of();
@@ -111,7 +114,7 @@ public class JdbcCommentRepository implements CommentRepository {
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to find comment", e);
         }
 
         return comments;
@@ -125,7 +128,7 @@ public class JdbcCommentRepository implements CommentRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to delete comment", e);
         }
     }
 }

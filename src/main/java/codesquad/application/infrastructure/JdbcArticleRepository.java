@@ -14,8 +14,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JdbcArticleRepository implements ArticleRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(JdbcArticleRepository.class);
 
     @Override
     public void save(Article article) {
@@ -35,7 +39,7 @@ public class JdbcArticleRepository implements ArticleRepository {
                 throw new SQLException("Inserting article failed");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to save article", e);
         }
     }
 
@@ -59,7 +63,7 @@ public class JdbcArticleRepository implements ArticleRepository {
                         resultSet.getString("userId")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to find article", e);
         }
 
         return Optional.empty();
@@ -84,7 +88,7 @@ public class JdbcArticleRepository implements ArticleRepository {
             }
             return result;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to find article", e);
         }
 
         return List.of();
@@ -98,7 +102,7 @@ public class JdbcArticleRepository implements ArticleRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(deleteSQL);) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Failed to delete article", e);
         }
     }
 }
