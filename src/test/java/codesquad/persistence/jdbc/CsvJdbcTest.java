@@ -65,7 +65,7 @@ class CsvJdbcTest {
     }
 
     @Test
-    void testCreateTable() {
+    void 테이블을_생성한다() {
         try (Connection conn = DriverManager.getConnection("jdbc:csv:" + CSV_DIRECTORY);
              Statement stmt = conn.createStatement()) {
 
@@ -90,7 +90,7 @@ class CsvJdbcTest {
     }
 
     @Test
-    void testSelectAllFromMember() {
+    void 테이블의_모든_데이터를_가져올_수_있다() {
         try (Connection conn = DriverManager.getConnection("jdbc:csv:" + CSV_DIRECTORY);
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM MEMBER");
              ResultSet rs = stmt.executeQuery()) {
@@ -120,7 +120,7 @@ class CsvJdbcTest {
     }
 
     @Test
-    void testSelectMemberByUserId() {
+    void 하나의_조건으로_필터링한_데이터를_가져올_수_있다() {
         try (Connection conn = DriverManager.getConnection("jdbc:csv:" + CSV_DIRECTORY);
              PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM MEMBER WHERE userId = ?")) {
 
@@ -140,7 +140,7 @@ class CsvJdbcTest {
     }
 
     @Test
-    void testInsertMember() {
+    void 데이터를_추가할_수_있다() {
         try (Connection conn = DriverManager.getConnection("jdbc:csv:" + CSV_DIRECTORY);
              PreparedStatement preparedStatement = conn.prepareStatement(
                      "INSERT INTO MEMBER (userId, password, name, email) VALUES (?, ?, ?, ?)")) {
@@ -171,7 +171,7 @@ class CsvJdbcTest {
     }
 
     @Test
-    void testDeleteAllMembers() {
+    void 모든_데이터를_삭제할_수_있다() {
         try (Connection conn = DriverManager.getConnection("jdbc:csv:" + CSV_DIRECTORY);
              PreparedStatement preparedStatement = conn.prepareStatement("DELETE FROM MEMBER")) {
 
