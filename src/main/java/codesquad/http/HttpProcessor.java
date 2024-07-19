@@ -29,12 +29,27 @@ public class HttpProcessor {
         this.httpRequestProcessor = httpRequestProcessor;
     }
 
+    private static void handleError(HttpRequest request, HttpResponse response, Exception e) {
+        TemplateContext templateContext = new TemplateContext();
+        if (request != null && request.getSession() != null && request.getSession().getAttribute("userId") != null) {
+            templateContext.setValue("user", request.getSession().getAttribute("userId"));
+        }
+        templateContext.setValue("errorCode", response.getStatus().getCode());
+        templateContext.setValue("errorMessage", e.getMessage());
+
+        String renderedTemplate = TemplateEngine.getInstance().render("/error.html", templateContext);
+
+        response.setBody(renderedTemplate.getBytes());
+        response.setHeader(CONTENT_TYPE.getFieldName(), "text/html");
+    }
+
     public void process(SocketReader socketReader,
                         SocketWriter socketWriter) throws IOException {
+        HttpRequest request = null;
         HttpResponse response = new HttpResponse();
 
         try {
-            HttpRequest request = httpRequestPreprocessor.process(socketReader);
+            request = httpRequestPreprocessor.process(socketReader);
             httpRequestProcessor.processRequest(request, response);
         } catch (Exception e) {
             if (e instanceof HttpRequestParseException) {
@@ -49,12 +64,7 @@ public class HttpProcessor {
                 response = new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            TemplateContext templateContext = new TemplateContext();
-            templateContext.setValue("errorCode", response.getStatus().getCode());
-            templateContext.setValue("errorMessage", e.getMessage());
-            String renderedTemplate = TemplateEngine.getInstance().render("/error.html", templateContext);
-            response.setBody(renderedTemplate.getBytes());
-            response.setHeader(CONTENT_TYPE.getFieldName(), "text/html");
+            handleError(request, response, e);
             log.error(e.getMessage(), e);
         }
 
